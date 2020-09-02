@@ -1,0 +1,30 @@
+{
+  "name": "Duo-Audio-Dl",
+  "version": "0.1",
+  "permissions": [
+    "downloads",
+    "tabs",
+    "contextMenus",
+    "webRequest"
+  ],
+  "background": {
+    "scripts": ["background.ts"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://duolingo.com/skill/*"
+      ],
+      "js": ["contentScripts/test.ts"],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": ["popup.html"],
+  "browser_action": {
+    "default_icon": "48.png",
+    "default_title": "open extension",
+    "default_popup": "popup.html"
+  },
+  "manifest_version": 2
+}

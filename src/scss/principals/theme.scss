@@ -1,0 +1,25 @@
+:root {
+  // brand
+  --ad-brand-main: #78C800;
+
+  // backgrounds
+  --ad-bg-main: #fff;
+
+  // text
+  --ad-heading-1: var(--brand-main);
+  --ad-heading-2: #100E17;
+  --ad-copy-main: #100E17;
+
+  --ad-font-default: "Helvetica, sans-serif"
+}
+
+@media (prefers-color-scheme: dark) {
+  // backgrounds
+  :root {
+    --ad-bg-main: #100E17;
+
+    // text
+    --ad-heading-2: #fff;
+    --ad-copy-main: #fff;
+  }
+}

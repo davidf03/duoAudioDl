@@ -1,0 +1,13 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family: var(--ad-font-default);
+}
+i {
+  font-style: italic;
+}
+img,
+video {
+  max-width: 100%;
+}

@@ -1,0 +1,16 @@
+// principals
+@import "scss/principals/theme.scss";
+@import "scss/principals/mixins.scss";
+@import "scss/principals/base.scss";
+
+// objects
+@import "scss/objects/text.scss";
+@import "scss/objects/containers.scss";
+@import "scss/objects/lists.scss";
+
+// components
+@import "scss/components/DownloadsList.scss";
+
+// pages
+@import "scss/pages/Home.scss";
+@import "scss/pages/Settings.scss";
