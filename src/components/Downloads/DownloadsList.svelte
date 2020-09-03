@@ -1,6 +1,5 @@
 <script>
   import Download from './Download.svelte';
-
   export let downloads = [];
 </script>
 

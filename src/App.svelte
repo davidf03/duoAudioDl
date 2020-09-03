@@ -17,6 +17,6 @@
 </script>
 
 <div>
-  <MainNav/>
+  <MainNav />
   <svelte:component this={currentPage.component}/>
 </div>
