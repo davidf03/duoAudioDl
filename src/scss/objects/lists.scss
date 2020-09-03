@@ -1,18 +1,14 @@
-:root {
-  --ad-list-item: var(--ad-copy-main);
-  --ad-list-item-bg: var(--ad-bg-main);
-}
-
-.ad-o-semantic-list {
+.aud-o-semantic-list {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.ad-o-list {
+.aud-o-list {
   
   &__item {
-    background-color: var(--ad-list-item-bg);
-    color: var(--ad-list-item);
+    background-color: token($t-list, bg);
+    color: token($t-list);
   }
+  
 }

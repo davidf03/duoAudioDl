@@ -1,8 +1,23 @@
 * {
+  all: unset;
   box-sizing: border-box;
 }
+div,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ul,
+ol,
+dl,
+li {
+  display: block;
+}
 body {
-  font-family: var(--ad-font-default);
+  font-family: token($t-type, font);
 }
 i {
   font-style: italic;

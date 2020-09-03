@@ -2,4 +2,4 @@
   export let dlData = {};
 </script>
 
-<li class="ad-o-list__item">{dlData.name}</li>
+<li class="aud-o-list__item">{dlData.name}</li>

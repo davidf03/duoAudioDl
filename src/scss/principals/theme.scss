@@ -1,25 +1,57 @@
+$color: (
+  white: #fff,
+  green: #78C800,
+);
+
 :root {
   // brand
-  --ad-brand-main: #78C800;
+  --aud-brand-main: #{build-token($color, green)};
 
   // backgrounds
-  --ad-bg-main: #fff;
+  --aud-bg-main: #{build-token($color, white)};
 
   // text
-  --ad-heading-1: var(--brand-main);
-  --ad-heading-2: #100E17;
-  --ad-copy-main: #100E17;
+  --aud-heading-1: var(--aud-brand-main);
+  --aud-heading-2: #100E17;
+  --aud-copy-main: #100E17;
 
-  --ad-font-default: "Helvetica, sans-serif"
+  --aud-font-main: "Arial, sans-serif";
 }
 
 @media (prefers-color-scheme: dark) {
   // backgrounds
   :root {
-    --ad-bg-main: #100E17;
+    --aud-bg-main: #100E17;
 
     // text
-    --ad-heading-2: #fff;
-    --ad-copy-main: #fff;
+    --aud-heading-2: #fff;
+    --aud-copy-main: #fff;
   }
 }
+
+// maps for organization and ease of access (are these really necessary anymore?)
+$t-brand: (
+  default: --aud-brand-main,
+);
+
+$t-bg: (
+  default: --aud-bg-main,
+);
+
+$t-type: (
+  default: (
+    font: --aud-font-main,
+  ),
+  heading: (
+    default: --aud-heading-1,
+    2: --aud-heading-2,
+  ),
+  copy: (
+    default: --aud-copy-main,
+  ),
+);
+
+$t-list: (
+  default: build-token($t-type, copy),
+  bg: build-token($t-bg),
+);

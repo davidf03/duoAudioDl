@@ -4,5 +4,5 @@
   let downloads = [{ name: 'test' }];
 </script>
 
-<h1 class="ad-o-h1">Hello</h1>
+<h1 class="aud-o-h1">Hello</h1>
 <DownloadsList downloads={downloads} />

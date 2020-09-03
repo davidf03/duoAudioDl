@@ -4,15 +4,9 @@
   import Home from './components/Main/Home.svelte'
 
   let currentPage = {component:Home}
-  let quote
 
-  onMount(async () => {
-    try {
-      const response = await fetch(`https://api.quotable.io/random`)
-      console.log(11, response)
-    } catch (e) {
-      // nothing
-    }
+  onMount(() => {
+    console.log('extension popup mounted');
   })
 </script>
 

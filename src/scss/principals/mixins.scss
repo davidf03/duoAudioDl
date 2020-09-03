@@ -1,0 +1,77 @@
+@function build-token($map, $key-chain: ()) {
+  @return token($map, $key-chain, true);
+}
+
+@function token($map, $key-chain: (), $raw: false) {
+  @if (type-of($map) != "map") {
+    @error "token() param $map is not a map";
+  }
+  @if (type-of($key-chain) != "list") {
+    $key-chain: ($key-chain);
+  }
+
+  $key: "";
+  @if (length($key-chain) > 0) {
+    $key: nth($key-chain, 1);
+  }
+  
+  $token: null;
+  @if (map-has-key($map, $key)) {
+    $token: map-get($map, $key);
+    $key-chain: shift-list($key-chain);
+  } @else if (map-has-key($map, default)) {
+    $token: map-get($map, default);
+  } @else {
+    @error "token() param $key-chain invalid/$map has no default";
+  }
+
+  @if (type-of($token) == "map") {
+    @return token($token, $key-chain, $raw);
+  }
+  @if ($raw) {
+    @return $token;
+  }
+  @return var(#{$token});
+
+}
+
+// https://stackoverflow.com/a/52375669
+@function str-split($string, $separator) {
+  // empty array/list
+  $split-arr: ();
+  // first index of separator in string
+  $index : str-index($string, $separator);
+  // loop through string
+  @while $index != null {
+      // get the substring from the first character to the separator
+      $item: str-slice($string, 1, $index - 1);
+      // push item to array
+      $split-arr: append($split-arr, $item);
+      // remove item and separator from string
+      $string: str-slice($string, $index + 1);
+      // find new index of separator
+      $index : str-index($string, $separator);
+  }
+  // add the remaining string to list (the last item)
+  $split-arr: append($split-arr, $string);
+
+  @return $split-arr;
+}
+
+@function shift-list($list) {
+  @return sublist($list, 2, length($list));
+}
+
+@function sublist($list, $start, $end) {
+  $sublist: ();
+  @if $end < $start {
+    @return $sublist;
+  }
+  @if not testVarType($list, 'list') {
+    @return $sublist;
+  }
+  @for $i from $start through $end {
+    $sublist: append($sublist, nth($list, $i));
+  }
+  @return $sublist;
+}

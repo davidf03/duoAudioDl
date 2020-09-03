@@ -23,7 +23,7 @@
   "web_accessible_resources": ["popup.html"],
   "browser_action": {
     "default_icon": "48.png",
-    "default_title": "open extension",
+    "default_title": "Duolingo Audio Downloader",
     "default_popup": "popup.html"
   },
   "manifest_version": 2
