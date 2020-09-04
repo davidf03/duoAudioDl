@@ -1,6 +1,9 @@
 .aud-u-d-c {
   display: contents !important;
 }
+.aud-u-d-b {
+  display: block !important;
+}
 .aud-u-d-ib {
   display: inline-block !important;
 }
@@ -10,6 +13,9 @@
 }
 .aud-u-xd-r {
   flex-direction: row !important;
+}
+.aud-u-xg-1 {
+  flex-grow: 1 !important;
 }
 .aud-u-as-e {
   align-self: end !important;

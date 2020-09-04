@@ -2,4 +2,8 @@
   margin-inline: -$aud-block-padding-inline;
   margin-block-start: $aud-gap-m;
   margin-block-end: -$aud-block-padding-block + $aud-gap-s;
+
+  &__item-spinner {
+    height: 100%;
+  }
 }

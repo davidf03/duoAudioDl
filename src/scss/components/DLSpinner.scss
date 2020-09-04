@@ -1,11 +1,12 @@
 .aud-c-dl-spinner {
   border-radius: 50%;
 
-  &__main {
-    fill: var(--aud-dl-spinner-incomplete);
-  }
+  animation: turn 16s linear infinite;
 
+  &__track {
+    fill: var(--aud-dl-spinner-track);
+  }
   &__progress {
-    fill: var(--aud-dl-spinner-complete);
+    fill: var(--aud-dl-spinner-progress);
   }
 }

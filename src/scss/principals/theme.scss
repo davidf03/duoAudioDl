@@ -47,8 +47,8 @@ $aud-type-font: "Arial, sans-serif";
   --aud-clear-btn-disabled: var(--aud-grey-4);
 
   // spinner
-  --aud-dl-spinner-complete: var(--aud-brand-main-1);
-  --aud-dl-spinner-incomplete: var(--aud-grey-5);
+  --aud-dl-spinner-track: var(--aud-grey-5);
+  --aud-dl-spinner-progress: var(--aud-brand-main-1);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -74,6 +74,6 @@ $aud-type-font: "Arial, sans-serif";
     --aud-clear-btn-disabled: var(--aud-grey-2);
 
     // spinner
-    --aud-dl-spinner-incomplete: var(--aud-grey-1);
+    --aud-dl-spinner-track: var(--aud-grey-1);
   }
 }

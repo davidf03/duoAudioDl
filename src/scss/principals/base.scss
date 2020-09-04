@@ -1,7 +1,7 @@
 * {
-  all: unset;
   box-sizing: border-box;
 }
+
 div,
 h1,
 h2,
@@ -14,14 +14,18 @@ ul,
 ol,
 dl,
 li {
+  all: unset;
   display: block;
 }
+
 body {
   font-family: var(--aud-type-font);
 }
+
 i {
   font-style: italic;
 }
+
 img,
 video {
   max-width: 100%;

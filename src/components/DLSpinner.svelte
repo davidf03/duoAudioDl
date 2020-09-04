@@ -3,7 +3,17 @@
   export let percentage = 0
 
   let r = 24
-  let innerR = 0.2*r
+  let ringW = 0.2*r
+  let innerR = r - ringW
+
+  let rotation = 0;
+  incRotation();
+  function incRotation() {
+    setTimeout(() => {
+      rotation = (rotation + 0.24)%360;
+      incRotation();
+    },10);
+  }
 
   // https://stackoverflow.com/questions/5736398/how-to-calculate-the-svg-path-for-an-arc-of-a-circle
   function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
@@ -23,7 +33,7 @@
     var d = [
       "M", start.x, start.y, 
       "A", radius, radius, 0, largeArcFlag, 0, end.x, end.y
-    ].join(" ");
+    ].join(' ');
 
     return d;       
   }
@@ -36,17 +46,24 @@
 >
 <!-- title={`${Math.floor(percentage*100)}%`} -->
   <defs>
-    <clipPath id={`${id}-clip-path`}>
-        <path clip-rule="evenodd" d={`M ${r} ${r} m -${r},0 a ${r},${r} 0 1,0 ${2*r},0 a ${r},${r} 0 1,0 -${2*r},0 M ${innerR} ${innerR} m -${innerR},0 a ${innerR},${innerR} 0 1,0 ${2*innerR},0 a ${innerR},${innerR} 0 1,0 -${2*innerR},0`} />
+    <clipPath id={`${id}-clip-track`}>
+      <path
+        clip-rule="evenodd"
+        d={`M ${r} ${r} m -${r},0 a ${r},${r} 0 1,0 ${2*r},0 a ${r},${r} 0 1,0 -${2*r},0 M ${r} ${r} m -${innerR},0 a ${innerR},${innerR} 0 1,0 ${2*innerR},0 a ${innerR},${innerR} 0 1,0 -${2*innerR},0`}
+      />
+    </clipPath>
+    <clipPath id={`${id}-clip-progress`}>
+      <path d={`M ${r} ${r} L ${[].concat.apply([], Object.values(polarToCartesian(r,r,r,rotation))).join(' ')} ${describeArc(r,r,r,rotation,rotation + 360*(percentage))} L ${r} ${r}`} />
     </clipPath>
   </defs>
-  <g clip-path={`url(#${id}-clip-path)`}>
+  <g clip-path={`url(#${id}-clip-track)`}>
     <path
       d={`M ${r} ${r} m -${r},0 a ${r},${r} 0 1,0 ${2*r},0 a ${r},${r} 0 1,0 -${2*r},0`}
-      class="aud-c-dl-spinner__main"
+      class="aud-c-dl-spinner__track"
     />
     <path
-      d={`M ${r} ${r} L ${r} ${2*r} ${describeArc(r,r,r,0,percentage*360)} L ${r} ${r}`}
+      clip-path={`url(#${id}-clip-progress)`}
+      d={`M ${r} ${r} m -${r},0 a ${r},${r} 0 1,0 ${2*r},0 a ${r},${r} 0 1,0 -${2*r},0`}
       class="aud-c-dl-spinner__progress"
     />
   </g>
