@@ -4,7 +4,8 @@
   "permissions": [
     "downloads",
     "tabs",
-    "contextMenus"
+    "contextMenus",
+    "webRequest"
   ],
   "background": {
     "scripts": ["background.ts"],
