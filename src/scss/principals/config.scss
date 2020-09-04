@@ -2,9 +2,10 @@ $aud-gap-xl: 25px;
 $aud-gap-l: 20px;
 $aud-gap-m: 15px;
 $aud-gap-s: 10px;
+$aud-gap-xs: 5px;
 
-$aud-font-size-xl: 24px;
-$aud-font-size-l: 18px;
+$aud-font-size-xl: 20px;
+$aud-font-size-l: 16px;
 $aud-font-size-m: 12px;
 $aud-font-size-s: 8px;
 
@@ -13,3 +14,6 @@ $aud-curosr-clickable: pointer;
 $aud-cursor-disabled: not-allowed;
 
 $aud-border-s: 1px;
+
+$aud-block-padding-inline: $aud-gap-l;
+$aud-block-padding-block: $aud-gap-m;

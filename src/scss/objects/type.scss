@@ -1,19 +1,23 @@
 .aud-o-h-xl {
+  margin-block-end: $aud-gap-xs;
   font-size: $aud-font-size-xl;
   color: var(--aud-type-h-xl);
 }
 
 .aud-o-h-l {
+  margin-block-end: $aud-gap-xs;
   font-size: $aud-font-size-l;
   color: var(--aud-type-h-l);
 }
 
 .aud-o-h-m {
+  margin-block-end: $aud-gap-xs;
   font-size: $aud-font-size-m;
   color: var(--aud-type-h-m);
 }
 
 .aud-o-p {
+  margin-block-end: $aud-gap-xs;
   font-size: $aud-font-size-m;
   color: var(--aud-type);
 

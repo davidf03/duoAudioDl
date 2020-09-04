@@ -4,7 +4,7 @@
 </script>
 
 <h2 class="aud-o-h-l">Downloads</h2>
-<ol class="aud-o-list aud-o-semantic-list">
+<ol class="aud-c-downloads-list aud-o-list aud-o-semantic-list">
   {#each downloads as dlData}
     <Download dlData={dlData} />
   {/each}
