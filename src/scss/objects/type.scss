@@ -1,11 +1,26 @@
-.aud-o-h1 {
-  color: token($t-type, heading);
+.aud-o-h-xl {
+  font-size: $aud-font-size-xl;
+  color: var(--aud-type-h-xl);
 }
 
-.aud-o-h2 {
-  color: token($t-type, heading 2);
+.aud-o-h-l {
+  font-size: $aud-font-size-l;
+  color: var(--aud-type-h-l);
+}
+
+.aud-o-h-m {
+  font-size: $aud-font-size-m;
+  color: var(--aud-type-h-m);
 }
 
 .aud-o-p {
-  color: token($t-type, copy);
+  font-size: $aud-font-size-m;
+  color: var(--aud-type);
+
+  &--sm {
+    font-size: $aud-font-size-s;
+  }
+  &--t-subtle {
+    color: var(--aud-type-subtle);
+  }
 }

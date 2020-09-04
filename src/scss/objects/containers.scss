@@ -1,3 +1,5 @@
 .aud-o-block {
-  background-color: token($t-bg);
+  padding-inline: $aud-gap-xl;
+  padding-block: $aud-gap-l;
+  background-color: var(--aud-bg);
 }

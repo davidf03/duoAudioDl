@@ -31,7 +31,7 @@
   @if ($raw) {
     @return $token;
   }
-  @return var(#{$token});
+  @return var($token);
 
 }
 
@@ -67,11 +67,15 @@
   @if $end < $start {
     @return $sublist;
   }
-  @if not testVarType($list, 'list') {
+  @if not testVarType($list, "list") {
     @return $sublist;
   }
   @for $i from $start through $end {
     $sublist: append($sublist, nth($list, $i));
   }
   @return $sublist;
+}
+
+@function test-var-type($var, $type) {
+  @return type-of($var) == $type;
 }

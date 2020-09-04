@@ -1,57 +1,72 @@
-$color: (
-  white: #fff,
-  green: #78C800,
-);
+$aud-type-font: "Arial, sans-serif";
 
 :root {
   // brand
-  --aud-brand-main: #{build-token($color, green)};
+  --aud-brand-main-0: #628300;
+  --aud-brand-main-1: #78C800;
+  --aud-brand-main-2: #99e820;
+  --aud-brand-main-3:  #aeed4d;
+
+  --aud-grey-0: #1b1b1b;
+  --aud-grey-1: #333;
+  --aud-grey-2: #565656;
+  --aud-grey-3: #797979;
+  --aud-grey-4: #a2a2a2;
+  --aud-grey-5: #c8c8c8;
+  --aud-grey-6: #f3f3f3;
 
   // backgrounds
-  --aud-bg-main: #{build-token($color, white)};
+  --aud-bg: var(--aud-grey-6);
+  --aud-bg-hover: var(--aud-grey-5);
 
-  // text
-  --aud-heading-1: var(--aud-brand-main);
-  --aud-heading-2: #100E17;
-  --aud-copy-main: #100E17;
+  // type
+  --aud-type: var(--aud-grey-2);
+  --aud-type-hover: var(--aud-grey-3);
+  --aud-type-h-xl: var(--aud-brand-main-1);
+  --aud-type-h-l: var(--aud-grey-1);
+  --aud-type-h-m: var(--aud-grey-2);
+  --aud-type-subtle: var(--aud-grey-4);
 
-  --aud-font-main: "Arial, sans-serif";
+  // borders
+  --aud-border: var(--aud-grey-4);
+
+  // border radius
+  --aud-border-radius-m: 5px;
+  --aud-border-radius-s: 2px;
+  
+  // buttons
+  --aud-btn-type: var(--aud-grey-6);
+  --aud-btn-main: var(--aud-brand-main-1);
+  --aud-btn-main-hover: var(--aud-brand-main-2);
+  --aud-btn-main-active: var(--aud-brand-main-0);
+  --aud-btn-main-disabled: var(--aud-brand-main-3);
+
+  --aud-clear-btn: var(--aud-grey-2);
+  --aud-clear-btn-hover: var(--aud-grey-3);
+  --aud-clear-btn-active: var(--aud-grey-1);
+  --aud-clear-btn-disabled: var(--aud-grey-4);
 }
 
 @media (prefers-color-scheme: dark) {
-  // backgrounds
   :root {
-    --aud-bg-main: #100E17;
+    // backgrounds
+    --aud-bg: var(--aud-grey-0);
+    --aud-bg-hover: var(--aud-grey-1);
 
-    // text
-    --aud-heading-2: #fff;
-    --aud-copy-main: #fff;
+    // type
+    --aud-type: var(--aud-grey-4);
+    --aud-type-hover: var(--aud-grey-3);
+    --aud-type-h-l: var(--aud-grey-5);
+    --aud-type-h-m: var(--aud-grey-4);
+    --aud-type-subtle: var(--aud-grey-2);
+
+    // borders
+    --aud-border: var(--aud-grey-2);
+
+    //buttons
+    --aud-clear-btn: var(--aud-grey-4);
+    --aud-clear-btn-hover: var(--aud-grey-3);
+    --aud-clear-btn-active: var(--aud-grey-5);
+    --aud-clear-btn-disabled: var(--aud-grey-2);
   }
 }
-
-// maps for organization and ease of access (are these really necessary anymore?)
-$t-brand: (
-  default: --aud-brand-main,
-);
-
-$t-bg: (
-  default: --aud-bg-main,
-);
-
-$t-type: (
-  default: (
-    font: --aud-font-main,
-  ),
-  heading: (
-    default: --aud-heading-1,
-    2: --aud-heading-2,
-  ),
-  copy: (
-    default: --aud-copy-main,
-  ),
-);
-
-$t-list: (
-  default: build-token($t-type, copy),
-  bg: build-token($t-bg),
-);

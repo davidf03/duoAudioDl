@@ -4,5 +4,7 @@
   let downloads = [{ name: 'test' }];
 </script>
 
-<h1 class="aud-o-h1">Hello</h1>
-<DownloadsList downloads={downloads} />
+<div class="aud-o-block">
+  <h1 class="aud-o-h-xl">Duolingo Audio Downloader</h1>
+  <DownloadsList downloads={downloads} />
+</div>

@@ -1,11 +1,13 @@
 // principals
 @import "scss/principals/mixins.scss";
 @import "scss/principals/theme.scss";
+@import "scss/principals/config.scss";
 @import "scss/principals/base.scss";
 
 // // objects
-@import "scss/objects/type.scss";
 @import "scss/objects/containers.scss";
+@import "scss/objects/type.scss";
+@import "scss/objects/buttons.scss";
 @import "scss/objects/lists.scss";
 
 // // components

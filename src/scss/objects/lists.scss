@@ -7,8 +7,20 @@
 .aud-o-list {
   
   &__item {
-    background-color: token($t-list, bg);
-    color: token($t-list);
+    padding-block: $aud-gap-m;
+    padding-inline: $aud-gap-l;
+
+    border-top: $aud-border-s solid var(--aud-border);
+    background-color: var(--aud-bg);
+    color: var(--aud-type);
   }
-  
+  &__item.aud-is-hovered {
+    background-color: var(--aud-bg-hover);
+    color: var(--aud-brand-main-2);
+  }
+  &__item.aud-is-active {
+    background-color: var(--aud-bg);
+    color: var(--aud-brand-main-0);
+  }
+
 }
