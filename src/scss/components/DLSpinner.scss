@@ -1,12 +1,13 @@
 .aud-c-dl-spinner {
   border-radius: 50%;
 
-  animation: turn 16s linear infinite;
-
   &__track {
-    fill: var(--aud-dl-spinner-track);
+    stroke: var(--aud-dl-spinner-track);
+    fill: none;
   }
   &__progress {
-    fill: var(--aud-dl-spinner-progress);
+    stroke: var(--aud-dl-spinner-progress);
+    stroke-linecap: round;
+    fill: none;
   }
 }

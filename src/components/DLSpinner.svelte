@@ -2,15 +2,16 @@
   export const id = ""
   export let percentage = 0
 
-  let r = 24
-  let ringW = 0.2*r
-  let innerR = r - ringW
+  let totalR = 24
+  let w = 0.2*totalR
+  let r = totalR - w/2
 
   let rotation = 0;
   incRotation();
   function incRotation() {
     setTimeout(() => {
-      rotation = (rotation + 0.24)%360;
+      rotation += 0.28
+      rotation %= 360
       incRotation();
     },10);
   }
@@ -28,7 +29,7 @@
     var start = polarToCartesian(x, y, radius, endAngle);
     var end = polarToCartesian(x, y, radius, startAngle);
 
-    var largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+    var largeArcFlag = (endAngle - startAngle)%360 <= 180 ? "0" : "1";
 
     var d = [
       "M", start.x, start.y, 
@@ -41,29 +42,19 @@
 
 <svg
   version="1.1" xmlns="http://www.w3.org/2000/svg"
-  viewBox={`0 0 ${2*r} ${2*r}`}
+  viewBox={`0 0 ${2*totalR} ${2*totalR}`}
   class="aud-c-dl-spinner"
 >
 <!-- title={`${Math.floor(percentage*100)}%`} -->
-  <defs>
-    <clipPath id={`${id}-clip-track`}>
-      <path
-        clip-rule="evenodd"
-        d={`M ${r} ${r} m -${r},0 a ${r},${r} 0 1,0 ${2*r},0 a ${r},${r} 0 1,0 -${2*r},0 M ${r} ${r} m -${innerR},0 a ${innerR},${innerR} 0 1,0 ${2*innerR},0 a ${innerR},${innerR} 0 1,0 -${2*innerR},0`}
-      />
-    </clipPath>
-    <clipPath id={`${id}-clip-progress`}>
-      <path d={`M ${r} ${r} L ${[].concat.apply([], Object.values(polarToCartesian(r,r,r,rotation))).join(' ')} ${describeArc(r,r,r,rotation,rotation + 360*(percentage))} L ${r} ${r}`} />
-    </clipPath>
-  </defs>
-  <g clip-path={`url(#${id}-clip-track)`}>
-    <path
-      d={`M ${r} ${r} m -${r},0 a ${r},${r} 0 1,0 ${2*r},0 a ${r},${r} 0 1,0 -${2*r},0`}
+  <g>
+    <circle
+      cx={totalR} cy={totalR} r={r}
+      stroke-width={w}
       class="aud-c-dl-spinner__track"
     />
     <path
-      clip-path={`url(#${id}-clip-progress)`}
-      d={`M ${r} ${r} m -${r},0 a ${r},${r} 0 1,0 ${2*r},0 a ${r},${r} 0 1,0 -${2*r},0`}
+      d={describeArc(totalR, totalR, r, rotation, rotation + 360*percentage)}
+      stroke-width={w}
       class="aud-c-dl-spinner__progress"
     />
   </g>

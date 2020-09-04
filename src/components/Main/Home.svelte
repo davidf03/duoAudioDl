@@ -6,7 +6,8 @@
   inc();
   function inc() {
     setTimeout(() => {
-      downloads[0].percentage += 0.0007;
+      downloads[0].percentage += 0.0007
+      downloads[0].percentage %= 360
       inc();
     },10);
   }
