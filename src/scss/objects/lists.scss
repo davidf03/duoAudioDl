@@ -10,7 +10,7 @@
     padding-block: $aud-gap-m;
     padding-inline: $aud-gap-l;
 
-    border-top: $aud-border-s solid var(--aud-border);
+    border-top: $aud-border-s solid var(--aud-border-light);
     background-color: var(--aud-bg);
     color: var(--aud-type);
   }
@@ -21,6 +21,22 @@
   &__item.aud-is-active {
     background-color: var(--aud-bg);
     color: var(--aud-brand-main-0);
+  }
+  &__item:last-child {
+    border-bottom: $aud-border-s solid var(--aud-border-light);
+  }
+
+  &:after {
+    content: "";
+    display: block;
+    margin-inline: auto;
+    margin-block: $aud-gap-m;
+
+    width: $aud-list-stop-w;
+    height: $aud-list-stop-w;
+
+    border-radius: 50%;
+    background-color: var(--aud-list-stop);
   }
 
 }

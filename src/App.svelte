@@ -10,7 +10,7 @@
   })
 </script>
 
-<div>
+<div class="aud-c-main">
   <MainNav />
   <svelte:component this={currentPage.component}/>
 </div>

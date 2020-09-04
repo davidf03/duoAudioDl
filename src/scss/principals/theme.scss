@@ -29,6 +29,7 @@ $aud-type-font: "Arial, sans-serif";
 
   // borders
   --aud-border: var(--aud-grey-4);
+  --aud-border-light: var(--aud-grey-5);
 
   // border radius
   --aud-border-radius-m: 5px;
@@ -46,9 +47,14 @@ $aud-type-font: "Arial, sans-serif";
   --aud-clear-btn-active: var(--aud-grey-1);
   --aud-clear-btn-disabled: var(--aud-grey-4);
 
-  // spinner
+  // icons
   --aud-dl-spinner-track: var(--aud-grey-5);
   --aud-dl-spinner-progress: var(--aud-brand-main-1);
+
+  // lists
+  --aud-list-separator: var(--aud-border-light);
+  --aud-list-stop: var(--aud-list-separator);
+  --aud-list-collapse-chevron: var(--aud-list-separator);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -66,6 +72,7 @@ $aud-type-font: "Arial, sans-serif";
 
     // borders
     --aud-border: var(--aud-grey-2);
+    --aud-border-light: var(--aud-grey-1);
 
     //buttons
     --aud-clear-btn: var(--aud-grey-4);
@@ -75,5 +82,7 @@ $aud-type-font: "Arial, sans-serif";
 
     // spinner
     --aud-dl-spinner-track: var(--aud-grey-1);
+
+    --aud-list-collapse-chevron: var(--aud-grey-2);
   }
 }

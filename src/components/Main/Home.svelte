@@ -1,7 +1,18 @@
 <script>
-  import DownloadsList from '../Downloads/DownloadsList.svelte';
+  import DownloadsList from '../Downloads/DownloadsList.svelte'
 
-  let downloads = [{ name: 'test', percentage: 0 }];
+  let downloads = [
+    {
+      skill: "skill name",
+      date: "some date",
+      percentage: 0,
+      files: [
+        {
+          name: 'test',
+        }
+      ]
+    }
+  ];
 
   inc();
   function inc() {

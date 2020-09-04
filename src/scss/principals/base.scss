@@ -14,12 +14,15 @@ ul,
 ol,
 dl,
 li {
-  all: unset;
+  all: initial;
   display: block;
 }
 
 body {
+  margin: 0;
+  padding: 0;
   font-family: var(--aud-type-font);
+  color: var(--aud-type);
 }
 
 i {
@@ -27,6 +30,7 @@ i {
 }
 
 img,
-video {
+video,
+svg {
   max-width: 100%;
 }

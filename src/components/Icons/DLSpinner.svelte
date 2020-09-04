@@ -1,10 +1,11 @@
 <script>
-  export const id = ""
+  export let id = ""
+  export let classlist = ""
   export let percentage = 0
 
-  let totalR = 24
-  let w = 0.2*totalR
-  let r = totalR - w/2
+  const totalR = 1
+  const w = 0.2*totalR
+  const r = totalR - w/2
 
   let rotation = 0;
   incRotation();
@@ -18,7 +19,7 @@
 
   // https://stackoverflow.com/questions/5736398/how-to-calculate-the-svg-path-for-an-arc-of-a-circle
   function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
-    var angleInRadians = (angleInDegrees-90) * Math.PI / 180.0;
+    const angleInRadians = (angleInDegrees-90) * Math.PI / 180.0;
 
     return {
       x: centerX + (radius * Math.cos(angleInRadians)),
@@ -26,12 +27,12 @@
     };
   }
   function describeArc(x, y, radius, startAngle, endAngle){
-    var start = polarToCartesian(x, y, radius, endAngle);
-    var end = polarToCartesian(x, y, radius, startAngle);
+    const start = polarToCartesian(x, y, radius, endAngle);
+    const end = polarToCartesian(x, y, radius, startAngle);
 
-    var largeArcFlag = (endAngle - startAngle)%360 <= 180 ? "0" : "1";
+    const largeArcFlag = (endAngle - startAngle)%360 <= 180 ? "0" : "1";
 
-    var d = [
+    const d = [
       "M", start.x, start.y, 
       "A", radius, radius, 0, largeArcFlag, 0, end.x, end.y
     ].join(' ');
@@ -43,9 +44,8 @@
 <svg
   version="1.1" xmlns="http://www.w3.org/2000/svg"
   viewBox={`0 0 ${2*totalR} ${2*totalR}`}
-  class="aud-c-dl-spinner"
+  class={`aud-c-dl-spinner ${classlist}`}
 >
-<!-- title={`${Math.floor(percentage*100)}%`} -->
   <g>
     <circle
       cx={totalR} cy={totalR} r={r}

@@ -1,9 +1,13 @@
 .aud-c-downloads-list {
   margin-inline: -$aud-block-padding-inline;
-  margin-block-start: $aud-gap-m;
-  margin-block-end: -$aud-block-padding-block + $aud-gap-s;
+  margin-block-end: -$aud-block-padding-block;
 
-  &__item-spinner {
-    height: 100%;
+  &__set-files-toggle {
+    background: none;
+    border: 0;
+    padding: 0;
+  }
+  &__set-spinner {
+    width: $aud-dl-spinner-w;
   }
 }
