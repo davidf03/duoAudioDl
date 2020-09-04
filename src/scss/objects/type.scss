@@ -1,3 +1,7 @@
+.aud-o-key-type {
+  color: var(--aud-brand-main-1);
+}
+
 .aud-o-h-xl {
   margin-block-end: $aud-gap-xs;
   font-size: $aud-font-size-xl;
@@ -21,7 +25,7 @@
   font-size: $aud-font-size-m;
   color: var(--aud-type);
 
-  &--sm {
+  &--s {
     font-size: $aud-font-size-s;
   }
   &--t-subtle {

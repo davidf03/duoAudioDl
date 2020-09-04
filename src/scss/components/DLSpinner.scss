@@ -1,0 +1,11 @@
+.aud-c-dl-spinner {
+  border-radius: 50%;
+
+  &__main {
+    fill: var(--aud-dl-spinner-incomplete);
+  }
+
+  &__progress {
+    fill: var(--aud-dl-spinner-complete);
+  }
+}

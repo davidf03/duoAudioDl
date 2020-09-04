@@ -45,6 +45,10 @@ $aud-type-font: "Arial, sans-serif";
   --aud-clear-btn-hover: var(--aud-grey-3);
   --aud-clear-btn-active: var(--aud-grey-1);
   --aud-clear-btn-disabled: var(--aud-grey-4);
+
+  // spinner
+  --aud-dl-spinner-complete: var(--aud-brand-main-1);
+  --aud-dl-spinner-incomplete: var(--aud-grey-5);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -68,5 +72,8 @@ $aud-type-font: "Arial, sans-serif";
     --aud-clear-btn-hover: var(--aud-grey-3);
     --aud-clear-btn-active: var(--aud-grey-5);
     --aud-clear-btn-disabled: var(--aud-grey-2);
+
+    // spinner
+    --aud-dl-spinner-incomplete: var(--aud-grey-1);
   }
 }

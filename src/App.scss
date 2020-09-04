@@ -4,15 +4,19 @@
 @import "scss/principals/config.scss";
 @import "scss/principals/base.scss";
 
-// // objects
+// objects
 @import "scss/objects/containers.scss";
 @import "scss/objects/type.scss";
 @import "scss/objects/buttons.scss";
 @import "scss/objects/lists.scss";
 
-// // components
+// components
+@import "scss/components/DLSpinner.scss";
 @import "scss/components/DownloadsList.scss";
 
-// // pages
+// pages
 @import "scss/pages/Home.scss";
 @import "scss/pages/Settings.scss";
+
+// utilities
+@import "scss/utilities/display.scss";
