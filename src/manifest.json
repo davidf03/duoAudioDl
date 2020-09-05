@@ -5,7 +5,8 @@
     "downloads",
     "tabs",
     "contextMenus",
-    "webRequest"
+    "webRequest",
+    "<all_urls>"
   ],
   "background": {
     "scripts": ["background.ts"],
