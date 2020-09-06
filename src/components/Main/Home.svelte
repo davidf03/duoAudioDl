@@ -1,29 +1,31 @@
 <script>
-  import DownloadsList from '../Downloads/DownloadsList.svelte'
+  import { onMount, onDestroy } from 'svelte';
+  import AudioCardList from '../AudioCards/AudioCardList.svelte'
 
-  let downloads = [
-    {
-      skill: "skill name",
-      date: "some date",
-      percentage: 0,
-      files: [
-        {
-          name: 'test',
-        }
-      ]
-    }
-  ];
+  let acqPromise;
 
-  inc();
-  function inc() {
-    setTimeout(() => {
-      downloads[0].percentage += 0.0007
-      downloads[0].percentage %= 360
-      inc();
-    },10);
+  onMount(async () => {
+    updateQueue();
+    browser.storage.onChanged.addListener(updateQueue);
+  });
+  onDestroy(async () => {
+    browser.storage.onChanged.removeListener(updateQueue);
+  });
+
+  function updateQueue() {
+    acqPromise = browser.storage.local.get('duoAudioDl');
   }
 </script>
 
 <div class="aud-o-block">
-  <DownloadsList downloads={downloads} />
+  {#if acqPromise}
+    {#await acqPromise}
+      <p>loading, please wait</p>
+    {:then res}
+      <!-- <p>{value.duoAudioDl}</p> -->
+      <AudioCardList audioCards={res.duoAudioDl.audioCardQueue} pending />
+    {:catch err}
+      <p>failed to load</p>
+    {/await}
+  {/if}
 </div>

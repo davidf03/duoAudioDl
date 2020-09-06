@@ -1,38 +1,36 @@
 const pattern = 'https://*.cloudfront.net/astrid/*';
-const files = [];
+let duoAudioDl;
 
 browser.webRequest.onBeforeRequest.addListener(
-  downloadFile,
-  {urls:[pattern]},
+  addFileToQueue,
+  { urls: [pattern] },
 );
 
-function downloadFile(requestDetails) {
-  const url = requestDetails.url;
+async function addFileToQueue(req) {
+  duoAudioDl || await browser.storage.local.get('duoAudioDl').then(res => ({ duoAudioDl } = res));
 
-  let folder = requestDetails.originUrl.split('/')
-  folder = folder[folder.length - 2];
+  duoAudioDl.audioCardQueue = duoAudioDl.audioCardQueue || [];
 
-  const name = url.split('astrid/')[1];
-  let folderIndex = files.findIndex(f => f.folder === folder);
+  const url = req.url;
+  let skill;
+  await browser.tabs.get(req.tabId).then(res => skill = res.url.split('/').reverse()[1]);
+  // let skill = req.originUrl.split('/')
+  // skill = skill[skill.length - 2];
 
-  if (folderIndex !== -1) {
-    if (files[folderIndex].files.includes(name)) {
+  let skillIndex = duoAudioDl.audioCardQueue.findIndex(f => f.skill === skill);
+  if (skillIndex !== -1) {
+    if (duoAudioDl.audioCardQueue[skillIndex].urls.includes(url)) {
       return;
     }
-    folderIndex = files.length;
-    files.push({
-      folder,
-      files: []
+  } else {
+    skillIndex = duoAudioDl.audioCardQueue.length;
+    duoAudioDl.audioCardQueue.push({
+      skill,
+      urls: []
     });
   }
-  files[folderIndex].files.push(name);
+  duoAudioDl.audioCardQueue[skillIndex].urls.push(url);
+  console.log(duoAudioDl);
 
-  let downloading = browser.downloads.download({
-    url: url,
-    filename: `duoAudioDlFiles/${folder}/${name}.mp3`,
-  }).catch(() => {
-    files.splice(files.indexOf(name), 1);
-  });
-
-  console.log(files);
+  await browser.storage.local.set({ duoAudioDl });
 }

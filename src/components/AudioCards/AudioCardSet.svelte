@@ -4,7 +4,7 @@
 
   import ListCollapseChevron from '../Icons/ListCollapseChevron.svelte';
   import DLSpinner from '../Icons/DLSpinner.svelte';
-  import Download from './Download.svelte';
+  import Download from './AudioCard.svelte';
 </script>
 
 <li class="aud-c-downloads-list__set-container">
