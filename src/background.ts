@@ -7,9 +7,9 @@ browser.webRequest.onBeforeRequest.addListener(
 );
 
 async function addFileToQueue(req) {
-  duoAudioDl || await browser.storage.local.get('duoAudioDl').then(res => ({ duoAudioDl } = res));
+  duoAudioDl || await browser.storage.local.get('duoAudioDl').then(res => duoAudioDl = res.duoAudioDl ?? {});
 
-  duoAudioDl.audioCardQueue = duoAudioDl.audioCardQueue || [];
+  duoAudioDl.cardQueue ??= [];
 
   const url = req.url;
   let skill;
@@ -17,19 +17,19 @@ async function addFileToQueue(req) {
   // let skill = req.originUrl.split('/')
   // skill = skill[skill.length - 2];
 
-  let skillIndex = duoAudioDl.audioCardQueue.findIndex(f => f.skill === skill);
+  let skillIndex = duoAudioDl.cardQueue.findIndex(f => f.skill === skill);
   if (skillIndex !== -1) {
-    if (duoAudioDl.audioCardQueue[skillIndex].urls.includes(url)) {
+    if (duoAudioDl.cardQueue[skillIndex].cards.includes(c => c.url === url)) {
       return;
     }
   } else {
-    skillIndex = duoAudioDl.audioCardQueue.length;
-    duoAudioDl.audioCardQueue.push({
+    skillIndex = duoAudioDl.cardQueue.length;
+    duoAudioDl.cardQueue.push({
       skill,
-      urls: []
+      cards: []
     });
   }
-  duoAudioDl.audioCardQueue[skillIndex].urls.push(url);
+  duoAudioDl.cardQueue[skillIndex].cards.push({ url, pending: true });
   console.log(duoAudioDl);
 
   await browser.storage.local.set({ duoAudioDl });

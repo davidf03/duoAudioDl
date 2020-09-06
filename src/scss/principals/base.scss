@@ -1,21 +1,6 @@
 * {
   box-sizing: border-box;
-}
-
-div,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-ul,
-ol,
-dl,
-li {
-  all: initial;
-  display: block;
+  max-width: 100%; // TODO
 }
 
 body {
@@ -23,6 +8,10 @@ body {
   padding: 0;
   font-family: var(--aud-type-font);
   color: var(--aud-type);
+}
+
+h1, h2, h3, h4, h5, h6, p {
+  margin: 0;
 }
 
 i {
