@@ -22,7 +22,6 @@
     {#await acqPromise}
       <p>loading, please wait</p>
     {:then res}
-      <!-- <p>{value.duoAudioDl}</p> -->
       <AudioCardList audioCards={res.duoAudioDl.audioCardQueue} pending />
     {:catch err}
       <p>failed to load</p>
