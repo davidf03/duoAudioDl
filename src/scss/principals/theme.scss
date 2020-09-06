@@ -57,32 +57,32 @@ $aud-type-font: "Arial, sans-serif";
   --aud-list-collapse-chevron: var(--aud-list-separator);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    // backgrounds
-    --aud-bg: var(--aud-grey-0);
-    --aud-bg-hover: var(--aud-grey-1);
+// @media (prefers-color-scheme: dark) {
+//   :root {
+//     // backgrounds
+//     --aud-bg: var(--aud-grey-0);
+//     --aud-bg-hover: var(--aud-grey-1);
 
-    // type
-    --aud-type: var(--aud-grey-4);
-    --aud-type-hover: var(--aud-grey-3);
-    --aud-type-h-l: var(--aud-grey-5);
-    --aud-type-h-m: var(--aud-grey-4);
-    --aud-type-subtle: var(--aud-grey-2);
+//     // type
+//     --aud-type: var(--aud-grey-4);
+//     --aud-type-hover: var(--aud-grey-3);
+//     --aud-type-h-l: var(--aud-grey-5);
+//     --aud-type-h-m: var(--aud-grey-4);
+//     --aud-type-subtle: var(--aud-grey-2);
 
-    // borders
-    --aud-border: var(--aud-grey-2);
-    --aud-border-light: var(--aud-grey-1);
+//     // borders
+//     --aud-border: var(--aud-grey-2);
+//     --aud-border-light: var(--aud-grey-1);
 
-    //buttons
-    --aud-clear-btn: var(--aud-grey-4);
-    --aud-clear-btn-hover: var(--aud-grey-3);
-    --aud-clear-btn-active: var(--aud-grey-5);
-    --aud-clear-btn-disabled: var(--aud-grey-2);
+//     //buttons
+//     --aud-clear-btn: var(--aud-grey-4);
+//     --aud-clear-btn-hover: var(--aud-grey-3);
+//     --aud-clear-btn-active: var(--aud-grey-5);
+//     --aud-clear-btn-disabled: var(--aud-grey-2);
 
-    // spinner
-    --aud-dl-spinner-track: var(--aud-grey-1);
+//     // spinner
+//     --aud-dl-spinner-track: var(--aud-grey-1);
 
-    --aud-list-collapse-chevron: var(--aud-grey-2);
-  }
-}
+//     --aud-list-collapse-chevron: var(--aud-grey-2);
+//   }
+// }
