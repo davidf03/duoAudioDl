@@ -10,10 +10,12 @@
   const navItems = [
     {
       alias: 'queue',
+      name: 'Queue',
       icon: 'Q'
     },
     {
       alias: 'settings',
+      name: 'Settings',
       icon: 'S'
     }
   ];
@@ -30,7 +32,7 @@
 >Skip Navigation</a>
 
 <nav class="aud-c-main-nav">
-  <h1 class="aud-c-main-nav__brand">Duolingo Anki Generator</h1>
+  <h1 class="aud-c-main-nav__brand">Duo-Anki Generator</h1>
   <ul class="aud-c-main-nav__list aud-o-semantic-list">
     {#each navItems as item}
       <li class="aud-c-main-nav__item">

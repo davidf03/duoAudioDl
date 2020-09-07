@@ -20,13 +20,25 @@ const createWritableStore = (key, startValue) => {
 }
 
 export const history = createWritableStore('history', []);
+export const ignored = createWritableStore('ignored', []);
 export const queue = createWritableStore('queue', []);
 export const deck = createWritableStore('deck', 0);
 export const loading = createWritableStore('loading', true);
 
-browser.storage.local.get(['history', 'queue', 'deck']).then(res => {
-  const { history: historyLocal, queue: queueLocal, deck: deckLocal } = res;
+browser.storage.local.get([
+  'history',
+  'ignored',
+  'queue',
+  'deck'
+]).then(res => {
+  const {
+    history: historyLocal,
+    ignored: ignoredLocal,
+    queue: queueLocal,
+    deck: deckLocal
+  } = res;
   history.set(historyLocal || []);
+  ignored.set(ignoredLocal || []);
   queue.set(queueLocal || []);
   deck.set(deckLocal || 0);
 

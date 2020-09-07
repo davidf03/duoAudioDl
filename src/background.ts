@@ -17,21 +17,21 @@ function collectNewQueueEntries(req) {
 }
 
 async function addEntriesToQueue() {
-  const { history = [], queue = [] } = await browser.storage.local.get(['history','queue']);
+  const { history = [], ignored = [], queue = [] } = await browser.storage.local.get(['history','queue']);
 
   let hasAddedToQueue = false;
 
   for (const req of reqs) {
     const url = req.url;
-    if (history.includes(url)) {
+    if (ignored.includes(url) || history.includes(url)) {
       return;
     }
-    const skill = await browser.tabs.get(req.tabId).then(res => res.url.split('/').reverse()[1]);
-    let index = queue.findIndex(f => f.skill === skill);
+    const group = await browser.tabs.get(req.tabId).then(res => res.url.split('/').reverse()[1]);
+    let index = queue.findIndex(f => f.group === group);
     if (index === -1) {
       index = queue.length;
       queue.push({
-        skill,
+        group,
         cards: []
       });
     } else if (queue[index].cards.includes(c => c.url === url)) {

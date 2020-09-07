@@ -1,5 +1,6 @@
 <script>
   export let alias = '';
+  export let name = '';
   export let icon = '';
   export let toggled = false;
 
@@ -17,6 +18,7 @@
   on:click={dispatchClick}
   href="#"
   tabindex="0"
+  title={name}
   class="aud-c-main-nav-btn aud-u-c-p"
   class:aud-c-main-nav-btn--toggled={toggled}
 >{icon}</a>

@@ -7,6 +7,8 @@ import CardSet from './CardSet.svelte';
 
 <ol class="aud-c-card-list aud-o-semantic-list">
   {#each cardlist as cardset}
-    <CardSet {cardset} {pending} />
+    <li class="aud-c-card-list__group">
+      <CardSet {cardset} {pending} />
+    </li>
   {/each}
 </ol>
