@@ -17,38 +17,32 @@ function collectNewQueueEntries(req) {
 }
 
 async function addEntriesToQueue() {
-  await browser.storage.local.get(['history','queue']).then(res => {
-    const { history = [], queue = [] } = res;
-    handler(history, queue);
-  });
+  const { history = [], queue = [] } = await browser.storage.local.get(['history','queue']);
 
-  async function handler(history, queue) {
-    for (const req of reqs) {
-      const url = req.url;
-      if (history.includes(url)) {
-        return;
-      }
-      const skill = await browser.tabs.get(req.tabId).then(res => res.url.split('/').reverse()[1]);
-      let index = queue.findIndex(f => f.skill === skill);
-      if (index === -1) {
-        index = queue.length;
-        queue.push({
-          skill,
-          cards: []
-        });
-      } else if (queue[index].cards.includes(c => c.url === url)) {
-        return;
-      }
-      queue[index].cards.push({ url, pending: true, fields: [] });
+  for (const req of reqs) {
+    const url = req.url;
+    if (history.includes(url)) {
+      return;
     }
-
-    await browser.storage.local.set({ history, queue });
-    reqs = [];
-    if (queue.length) {
-      setIconToPending();
+    const skill = await browser.tabs.get(req.tabId).then(res => res.url.split('/').reverse()[1]);
+    let index = queue.findIndex(f => f.skill === skill);
+    if (index === -1) {
+      index = queue.length;
+      queue.push({
+        skill,
+        cards: []
+      });
+    } else if (queue[index].cards.includes(c => c.url === url)) {
+      return;
     }
-    console.log(history, queue);
+    queue[index].cards.push({ url, pending: true, fields: [] });
   }
+
+  browser.storage.local.set({ queue });
+  if (queue.length) {
+    setIconToPending();
+  }
+  reqs = [];
 }
 
 function setIconToPending() {
