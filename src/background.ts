@@ -19,6 +19,8 @@ function collectNewQueueEntries(req) {
 async function addEntriesToQueue() {
   const { history = [], queue = [] } = await browser.storage.local.get(['history','queue']);
 
+  let hasAddedToQueue = false;
+
   for (const req of reqs) {
     const url = req.url;
     if (history.includes(url)) {
@@ -36,12 +38,10 @@ async function addEntriesToQueue() {
       return;
     }
     queue[index].cards.push({ url, pending: true, fields: [] });
+    hasAddedToQueue = true;
   }
 
-  browser.storage.local.set({ queue });
-  if (queue.length) {
-    setIconToPending();
-  }
+  hasAddedToQueue && browser.storage.local.set({ queue });
   reqs = [];
 }
 
