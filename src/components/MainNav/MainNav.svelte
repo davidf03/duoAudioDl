@@ -4,6 +4,7 @@
 
   import { createEventDispatcher } from 'svelte'
   import MainNavItem from './MainNavItem.svelte'
+  import LanguageSelector from './LanguageSelector.svelte'
 
   const dispatch = createEventDispatcher()
 
@@ -12,6 +13,11 @@
       alias: 'queue',
       name: 'Queue',
       icon: 'Q'
+    },
+    {
+      alias: 'history',
+      name: 'History',
+      icon: 'H'
     },
     {
       alias: 'settings',
@@ -41,3 +47,5 @@
     {/each}
   </ul>
 </nav>
+
+<LanguageSelector />

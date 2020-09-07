@@ -1,10 +1,8 @@
 <script>
-  // reset card status
-    // per language
-    // per deck
-  // reset history
-  // reset ignored
-  // set default deck for saving cards to
+  // set default deck
+  // set default template
+  // clear history
+  // clear ignored
 
   import { history, ignored, deck } from '../../store'
   import { onMount } from 'svelte'
@@ -31,7 +29,7 @@
   </div>
 {/if}
 {#if !loadingDecks}
-  <label for="deck-selector">Save Cards to</label>
+  <label for="deck-selector">Create in deck</label>
   <select
     id="deck-selector"
     bind:value={$deck}

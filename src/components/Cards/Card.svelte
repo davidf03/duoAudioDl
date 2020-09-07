@@ -7,9 +7,9 @@
   // [body click]
   //   fields
   //     (id)
-  //     deck [default pre-selected]
-  //     original
-  //     translation
+  //     deck [with default]
+  //     template [with default]
+  //     [template fields]
   //     tags
   //   save
 

@@ -19,28 +19,33 @@ const createWritableStore = (key, startValue) => {
   };
 }
 
+export const prefs = createWritableStore('prefs', {});
+export const lngs = createWritableStore('lngs', []);
+export const lng =  createWritableStore('lng', '');
 export const history = createWritableStore('history', []);
-export const ignored = createWritableStore('ignored', []);
 export const queue = createWritableStore('queue', []);
-export const deck = createWritableStore('deck', '');
+
 export const loading = createWritableStore('loading', true);
 
 browser.storage.local.get([
+  'prefs',
+  'lngs',
+  'lng',
   'history',
-  'ignored',
-  'queue',
-  'deck'
+  'queue'
 ]).then(res => {
   const {
+    prefs: prefsLocal,
+    lngs: lngsLocal,
+    lng: lngLocal,
     history: historyLocal,
-    ignored: ignoredLocal,
-    queue: queueLocal,
-    deck: deckLocal
+    queue: queueLocal
   } = res;
+  prefs.set(prefsLocal || {});
+  lngs.set(lngsLocal || []);
+  lng.set(lngLocal || lngs[0]);
   history.set(historyLocal || []);
-  ignored.set(ignoredLocal || []);
   queue.set(queueLocal || []);
-  deck.set(deckLocal || '');
 
   loading.set(false);
 });
