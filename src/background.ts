@@ -1,45 +1,56 @@
 const pattern = 'https://*.cloudfront.net/astrid/*';
-let duoAudioDl;
+let reqs = [], timeout;
 
-browser.storage.local.get('duoAduioDl').then(res => {
-  if (res?.duoAudioDl?.cardQueue?.length) {
-    return;
-  }
-  setIconToPending();
-});
+(function init() {
+  browser.webRequest.onBeforeRequest.addListener(
+    collectNewQueueEntries,
+    { urls: [pattern] },
+  );
+  browser.storage.onChanged.addListener(() => {
+    browser.storage.local.get('queue').then(res => res?.queue?.length > 0 && setIconToPending());
+  });
+})();
 
-browser.webRequest.onBeforeRequest.addListener(
-  addFileToQueue,
-  { urls: [pattern] },
-);
-
-async function addFileToQueue(req) {
-  duoAudioDl || await browser.storage.local.get('duoAudioDl').then(res => ({ duoAudioDl = {} } = res));
-
-  duoAudioDl.cardQueue ??= [];
-
-  const url = req.url;
-  let skill;
-  await browser.tabs.get(req.tabId).then(res => skill = res.url.split('/').reverse()[1]);
-  // let skill = req.originUrl.split('/')
-  // skill = skill[skill.length - 2];
-
-  let skillIndex = duoAudioDl.cardQueue.findIndex(f => f.skill === skill);
-  if (skillIndex === -1) {
-    skillIndex = duoAudioDl.cardQueue.length;
-    duoAudioDl.cardQueue.push({
-      skill,
-      cards: []
-    });
-  } else if (duoAudioDl.cardQueue[skillIndex].cards.includes(c => c.url === url)) {
-    return;
-  }
-  duoAudioDl.cardQueue[skillIndex].cards.push({ url, pending: true });
-
-  await browser.storage.local.set({ duoAudioDl });
-  setIconToPending();
+function collectNewQueueEntries(req) {
+  timeout = setTimeout(addEntriesToQueue, 100);
+  reqs.push(req);
 }
 
-async function setIconToPending() {
+async function addEntriesToQueue() {
+  await browser.storage.local.get(['history','queue']).then(res => {
+    const { history = [], queue = [] } = res;
+    handler(history, queue);
+  });
+
+  async function handler(history, queue) {
+    for (const req of reqs) {
+      const url = req.url;
+      if (history.includes(url)) {
+        return;
+      }
+      const skill = await browser.tabs.get(req.tabId).then(res => res.url.split('/').reverse()[1]);
+      let index = queue.findIndex(f => f.skill === skill);
+      if (index === -1) {
+        index = queue.length;
+        queue.push({
+          skill,
+          cards: []
+        });
+      } else if (queue[index].cards.includes(c => c.url === url)) {
+        return;
+      }
+      queue[index].cards.push({ url, pending: true, fields: [] });
+    }
+
+    await browser.storage.local.set({ history, queue });
+    reqs = [];
+    if (queue.length) {
+      setIconToPending();
+    }
+    console.log(history, queue);
+  }
+}
+
+function setIconToPending() {
   browser.browserAction.setIcon({ path: './icons/48-pending.png' });
 }
