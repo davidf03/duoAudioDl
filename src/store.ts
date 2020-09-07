@@ -22,7 +22,7 @@ const createWritableStore = (key, startValue) => {
 export const history = createWritableStore('history', []);
 export const ignored = createWritableStore('ignored', []);
 export const queue = createWritableStore('queue', []);
-export const deck = createWritableStore('deck', 0);
+export const deck = createWritableStore('deck', '');
 export const loading = createWritableStore('loading', true);
 
 browser.storage.local.get([
@@ -40,7 +40,7 @@ browser.storage.local.get([
   history.set(historyLocal || []);
   ignored.set(ignoredLocal || []);
   queue.set(queueLocal || []);
-  deck.set(deckLocal || 0);
+  deck.set(deckLocal || '');
 
   loading.set(false);
 });

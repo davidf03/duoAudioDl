@@ -19,10 +19,6 @@
       icon: 'S'
     }
   ];
-
-  function dispatchMoveToPage(e) {
-    dispatch('move-to-page', e.detail);
-  }
 </script>
 
 <a
@@ -38,7 +34,7 @@
       <li class="aud-c-main-nav__item">
         <MainNavItem
           {...item}
-          on:click={dispatchMoveToPage}
+          on:move-to-page
           toggled={currentPage === item.alias}
         />
       </li>

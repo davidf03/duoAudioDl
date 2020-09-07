@@ -8,14 +8,17 @@
 
   const dispatch = createEventDispatcher();
 
-  function dispatchClick() {
-    dispatch('click', { alias });
+  function dispatchMoveToPage() {
+    if (toggled) {
+      return;
+    }
+    dispatch('move-to-page', { alias });
   }
 </script>
 
 <!-- on:click={dispatch('click')} -->
 <a
-  on:click={dispatchClick}
+  on:click={dispatchMoveToPage}
   href="#"
   tabindex="0"
   title={name}

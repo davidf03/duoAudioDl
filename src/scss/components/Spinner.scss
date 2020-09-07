@@ -1,0 +1,25 @@
+@keyframes spin {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
+}
+
+.aud-c-spinner {
+  width: $aud-spinner-w;
+  border-radius: 50%;
+  animation: spin .5s infinite linear;
+
+  &__track {
+    stroke: var(--aud-spinner-track);
+    fill: none;
+  }
+  &__progress {
+    stroke: var(--aud-spinner-progress);
+    stroke-linecap: round;
+    fill: none;
+
+  }
+}
