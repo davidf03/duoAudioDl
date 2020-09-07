@@ -21,6 +21,8 @@
   let open = false
 </script>
 
-<li class="aud-c-card">
-  <MediaPlayer url={card.url} />
-</li>
+<div class="aud-c-card">
+  {#if open}
+    <MediaPlayer url={card.url} />
+  {/if}
+</div>

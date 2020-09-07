@@ -2,7 +2,9 @@
 export let cardlist = [];
 export let pending = false;
 
-import CardSet from './CardSet.svelte';
+import CardGroup from './CardGroup.svelte';
+
+console.log(cardlist[0]);
 </script>
 
 <ol class="aud-c-card-list aud-o-semantic-list">

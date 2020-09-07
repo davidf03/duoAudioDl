@@ -26,12 +26,12 @@ async function addEntriesToQueue() {
     if (ignored.includes(url) || history.includes(url)) {
       return;
     }
-    const group = await browser.tabs.get(req.tabId).then(res => res.url.split('/').reverse()[1]);
-    let index = queue.findIndex(f => f.group === group);
+    const name = await browser.tabs.get(req.tabId).then(res => res.url.split('/').reverse()[1]);
+    let index = queue.findIndex(f => f.name === name);
     if (index === -1) {
       index = queue.length;
       queue.push({
-        group,
+        name,
         cards: []
       });
     } else if (queue[index].cards.includes(c => c.url === url)) {
