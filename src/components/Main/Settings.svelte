@@ -4,3 +4,5 @@
   // per deck
 // reset history
 </script>
+
+<p>settings</p>

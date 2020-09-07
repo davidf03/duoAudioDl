@@ -1,13 +1,45 @@
 <script>
-  function changePage(key) {
-    
+  export let mainContentId = '';
+  export let currentPage = '';
+
+  import { createEventDispatcher } from 'svelte'
+  import MainNavItem from './MainNavItem.svelte'
+
+  const dispatch = createEventDispatcher()
+
+  const navItems = [
+    {
+      alias: 'queue',
+      icon: 'Q'
+    },
+    {
+      alias: 'settings',
+      icon: 'S'
+    }
+  ];
+
+  function dispatchMoveToPage(e) {
+    dispatch('move-to-page', e.detail);
   }
 </script>
 
-<nav class="aud-c-main-nav aud-u-d-x aud-u-xd-r">
-  <h1 class="aud-c-main-nav__brand aud-o-key-type">Duolingo Anki Generator</h1>
-  <ul class="aud-c-main-nav__list aud-o-semantic-list aud-u-as-e">
-    <li class="aud-c-main-nav__list-item aud-u-d-ib"><a href="#">D</a></li>
-    <li class="aud-c-main-nav__list-item aud-u-d-ib"><a href="#">S</a></li>
+<a
+  href={`#${mainContentId}`}
+  tabindex="0"
+  class="aud-c-skip-nav"
+>Skip Navigation</a>
+
+<nav class="aud-c-main-nav">
+  <h1 class="aud-c-main-nav__brand">Duolingo Anki Generator</h1>
+  <ul class="aud-c-main-nav__list aud-o-semantic-list">
+    {#each navItems as item}
+      <li class="aud-c-main-nav__item">
+        <MainNavItem
+          {...item}
+          on:click={dispatchMoveToPage}
+          toggled={currentPage === item.alias}
+        />
+      </li>
+    {/each}
   </ul>
 </nav>

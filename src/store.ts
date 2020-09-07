@@ -22,11 +22,13 @@ const createWritableStore = (key, startValue) => {
 export const history = createWritableStore('history', []);
 export const queue = createWritableStore('queue', []);
 export const deck = createWritableStore('deck', 0);
+export const loading = createWritableStore('loading', true);
 
 browser.storage.local.get(['history', 'queue', 'deck']).then(res => {
   const { history: historyLocal, queue: queueLocal, deck: deckLocal } = res;
-  console.log(historyLocal, queueLocal);
   history.set(historyLocal || []);
   queue.set(queueLocal || []);
   deck.set(deckLocal || 0);
+
+  loading.set(false);
 });
