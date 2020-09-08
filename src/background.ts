@@ -29,7 +29,7 @@ async function addEntriesToQueue() {
     const lng = originUrl[2];
 
     if (history[lng]?.includes(url)) {
-      return;
+      continue;
     }
 
     // if lang absent from queue, create group array and, if lang absent from lngs, add it
@@ -47,7 +47,6 @@ async function addEntriesToQueue() {
     // console.log(groupIndex);
     // console.log(queue[lng].filter(g => g.name === groupname));
     if (groupIndex === -1) {
-      console.log('pushing new group entry')
       // if absent, add new group
       groupIndex = queue[lng].length;
       queue[lng].unshift({
@@ -63,7 +62,7 @@ async function addEntriesToQueue() {
       const group = queue[lng].splice(groupIndex, 1);
       queue[lng].unshift(group);
       hasModifiedQueue = true;
-      return;
+      continue;
     }
     // add card to (potentially new) group of (potentially new) lang
     queue[lng][groupIndex].cards.unshift({ url, pending: true, fields: [] });
