@@ -3,7 +3,7 @@
   import ISO6391 from 'iso-639-1';
 </script>
 
-{#if !loading}
+{#if !$loading}
   <select
     id="language-selector"
     bind:value={$lng}
