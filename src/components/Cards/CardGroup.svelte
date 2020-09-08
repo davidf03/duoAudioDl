@@ -6,13 +6,16 @@
   import Card from './Card.svelte';
 
   let showCards = false;
+  function fnShowCards() {
+    console.log('click registered');
+    showCards = !showCards;
+  }
 
-  console.log(cardgroup.cards[0]);
 </script>
 
 <div class="aud-c-card-set">
   <button
-    on:click={() => {showCards = !showCards}}
+    on:click={fnShowCards}
     class="aud-c-card-set__toggle"
   >{cardgroup.name}</button>
   {#if showCards}

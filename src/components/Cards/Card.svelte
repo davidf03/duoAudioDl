@@ -19,9 +19,11 @@
   import MediaPlayer from '../MediaPlayer.svelte'
 
   let open = false
+
 </script>
 
 <div class="aud-c-card">
+  {card.url}
   {#if open}
     <MediaPlayer url={card.url} />
   {/if}

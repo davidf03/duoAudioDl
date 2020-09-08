@@ -4,7 +4,7 @@
   // clear history
   // clear ignored
 
-  import { history, ignored, deck } from '../../store'
+  import { history } from '../../store'
   import { onMount } from 'svelte'
   import ankiConnect from '../../contentScripts/ankiConnect'
   import Spinner from '../Icons/Spinner.svelte'
@@ -12,18 +12,18 @@
   let decks = []
   let loadingDecks = true
 
-  onMount(async () => {
-    const decksRes = await ankiConnect('deckNamesAndIds', 6);
-    decks = Object.keys(decksRes).map(k => ({ name: k, id: decksRes[k] }));
-    if (!decks.includes(d => d.id === $deck)) {
-      $deck = decks[0].id;
-      deck.useLocalStorage();
-    }
-    loadingDecks = false;
-  });
+  // onMount(async () => {
+  //   const decksRes = await ankiConnect('deckNamesAndIds', 6);
+  //   decks = Object.keys(decksRes).map(k => ({ name: k, id: decksRes[k] }));
+  //   if (!decks.includes(d => d.id === $deck)) {
+  //     $deck = decks[0].id;
+  //     deck.useLocalStorage();
+  //   }
+  //   loadingDecks = false;
+  // });
 </script>
 
-{#if loadingDecks}
+<!-- {#if loadingDecks}
   <div class="aud-u-ta-c">
     <Spinner />
   </div>
@@ -43,4 +43,4 @@
       >{d.name}</option>
     {/each}
   </select>
-{/if}
+{/if} -->

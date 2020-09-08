@@ -5,5 +5,6 @@
 
 <audio id="test" controls="controls">
   <!-- <source src={url} /> -->
-  <!-- <source src={testUrl} /> -->
+  <source src={testUrl} />
+  <track kind="captions" />
 </audio>

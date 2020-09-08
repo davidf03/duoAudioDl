@@ -43,9 +43,11 @@ browser.storage.local.get([
   } = res;
   prefs.set(prefsLocal || {});
   lngs.set(lngsLocal || []);
-  lng.set(lngLocal || lngs[0]);
+  lng.set(lngLocal || lngsLocal[0]);
   history.set(historyLocal || []);
   queue.set(queueLocal || []);
+
+  console.log(lngsLocal, queueLocal);
 
   loading.set(false);
 });

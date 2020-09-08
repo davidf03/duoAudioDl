@@ -12,46 +12,52 @@ let reqs = [], timeout;
 })();
 
 function collectNewQueueEntries(req) {
-  timeout = setTimeout(addEntriesToQueue, 100);
+  timeout = setTimeout(addEntriesToQueue, 1000);
   reqs.push(req);
 }
 
 async function addEntriesToQueue() {
-  const { history = {}, queue = {}, lngs = {} } = await browser.storage.local.get(['history','queue','lngs']);
+  const { lngs = [], history = {}, queue = {} } = await browser.storage.local.get(['lngs','history','queue']);
 
   let hasAddedToQueue = false;
 
   for (const req of reqs) {
     const url = req.url;
+
     const originUrl = await browser.tabs.get(req.tabId).then(res => res.url.split('/').reverse());
     const lng = originUrl[2];
+
     if (history[lng]?.includes(url)) {
       return;
     }
+
     // if lang absent from queue, create group array and, if lang absent from lngs, add it
-    queue[lng] ??= [] && lngs.find(lng) || lngs.push(lng);
+    if (!queue[lng]) {
+      queue[lng] = [];
+      lngs.indexOf(lng) === -1 && lngs.push(lng);
+    }
 
     const groupname = originUrl[1]
     //find index of group within lang
-    let groupIndex = queue[lng].findIndex(f => f.name === groupname);
+    let groupIndex = queue[lng].findIndex(g => g.name === groupname);
+    // console.log(groupIndex);
+    // console.log(queue[lng].filter(g => g.name === groupname));
     if (groupIndex === -1) {
+      console.log('pushing new group entry')
       // if absent, add new group
-      groupIndex = queue[lng].cards.length;
+      groupIndex = queue[lng].length;
       queue[lng].unshift({
         name: groupname,
         cards: []
       });
     } else if (queue[lng][groupIndex].cards.includes(c => c.url === url)) {
       // if present, reprioritize card and its group
-      queue[lng][groupIndex].cards.unshift(
-        queue[lng][groupIndex].cards.splice(
-          queue[lng][groupIndex].cards.findIndex(c => c.url === url),
-          1
-        )
+      const card = queue[lng][groupIndex].cards.splice(
+        queue[lng][groupIndex].cards.findIndex(c => c.url === url), 1
       );
-      queue[lng].unshift(
-        queue[lng].splice(groupIndex, 1)
-      );
+      queue[lng][groupIndex].cards.unshift(card);
+      const group = queue[lng].splice(groupIndex, 1);
+      queue[lng].unshift(group);
       return;
     }
     // add card to (potentially new) group of (potentially new) lang
@@ -61,6 +67,7 @@ async function addEntriesToQueue() {
 
   // update storage.local accordingly
   hasAddedToQueue && lngs.sort() && browser.storage.local.set({ queue, lngs });
+  // console.log(queue);
   reqs = [];
 }
 

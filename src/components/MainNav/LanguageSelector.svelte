@@ -9,10 +9,10 @@
     bind:value={$lng}
     on:blur={lng.useLocalStorage()}
   >
-    {#each lngs as l}
+    {#each $lngs as l}
       <option
         value={l}
-        checked={l === lng}
+        checked={l === $lng}
       >{ISO6391.getName(l)}</option>
     {/each}
   </select>
