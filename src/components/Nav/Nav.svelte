@@ -5,7 +5,6 @@
 
   import { createEventDispatcher } from 'svelte'
   import NavItem from './NavItem.svelte'
-  import LanguageSelector from '../LanguageSelector.svelte'
 
   const dispatch = createEventDispatcher()
 </script>

@@ -12,7 +12,7 @@
     if (toggled) {
       return;
     }
-    dispatch('move-to-page', { alias });
+    dispatch('move-to-section', { alias });
   }
 </script>
 
