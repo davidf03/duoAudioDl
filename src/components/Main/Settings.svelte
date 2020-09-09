@@ -1,9 +1,4 @@
 <script>
-  // set default deck
-  // set default template
-  // clear history
-  // clear ignored
-
   import { history } from '../../store'
   import { onMount } from 'svelte'
   import ankiConnect from '../../contentScripts/ankiConnect'

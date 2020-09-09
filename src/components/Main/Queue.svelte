@@ -7,12 +7,10 @@ import CardList from '../Cards/CardList.svelte'
   {#if $lng}
     {#if $queue[$lng].length > 0}
       <CardList cardlist={$queue[$lng]} pending/>
-    {/if}
-    {#if $queue[$lng].length === 0}
+    {:else}
       <p>No cards in queue</p>
     {/if}
-  {/if}
-  {#if !$lng}
+  {:else}
     Start using DuoLingo to fill the queue
   {/if}
 </div>

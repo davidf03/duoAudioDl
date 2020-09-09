@@ -1,3 +1,2 @@
 <script>
-  // choose deck
 </script>
