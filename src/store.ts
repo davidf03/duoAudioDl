@@ -20,34 +20,24 @@ const createWritableStore = (key, startValue) => {
 }
 
 export const prefs = createWritableStore('prefs', {});
-export const lngs = createWritableStore('lngs', []);
-export const lng =  createWritableStore('lng', '');
-export const history = createWritableStore('history', []);
-export const queue = createWritableStore('queue', []);
+export const history = createWritableStore('history', {});
+export const queue = createWritableStore('queue', {});
 
 export const loading = createWritableStore('loading', true);
 
 browser.storage.local.get([
   'prefs',
-  'lngs',
-  'lng',
   'history',
   'queue'
 ]).then(res => {
   const {
     prefs: prefsLocal,
-    lngs: lngsLocal,
-    lng: lngLocal,
     history: historyLocal,
     queue: queueLocal
   } = res;
   prefs.set(prefsLocal || {});
-  lngs.set(lngsLocal || []);
-  lng.set(lngLocal || lngsLocal[0]);
-  history.set(historyLocal || []);
-  queue.set(queueLocal || []);
-
-  console.log(lngsLocal, queueLocal);
+  history.set(historyLocal || {});
+  queue.set(queueLocal || {});
 
   loading.set(false);
 });

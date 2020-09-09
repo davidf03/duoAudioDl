@@ -5,9 +5,8 @@
 [ ] develop styles
 
 ## Store
-[ ] get rid of lngs and lng stores; replace with prefs.lngs and .lng
-[ ] make prefs.lngs object with keys for each lng, rather than array, to store e.g. deck and template preferences
-[ ] make default template pref each language prefer last template used before template at first index
+[X] get rid of lngs and lng stores; replace with prefs.lngs and .lng
+[XS] make prefs.lngs object with keys for each lng, rather than array, to store e.g. deck and template preferences
 
 ## Nav
 [X] rename mainnav to nav
@@ -17,7 +16,7 @@
 [X] simplify section-change function (currentSection = navItems.find(s => s.alias === e.detail.alias))
 [X] rename mainContentId prop to skipId
 [ ] implement language selector as &lt;select&gt;
-[ ] figure out correct html for language selector, given potential for nice transitions here and interoperability of generic parts with other contexts
+[ ] figure out correct html for language selector, given potential for nice transitions here vs interoperability of generic parts with other contexts, e.g. deck selection on History and defaults selections on Settings
 
 ## Queue
 [ ] card ignore
@@ -29,6 +28,7 @@
 [ ] set default template
 [ ] clear history
 [ ] clear ignored
+[ ] make default template pref each language prefer last template used before template at first index
 
 ## History
 [ ] card history after queue
