@@ -30,7 +30,7 @@ async function addEntriesToQueue() {
 
     // ignore url if already dealt with
     if (history[lng]?.includes(url)) {
-      return;
+      continue;
     }
 
     // if lang absent from queue, create group array
@@ -57,7 +57,7 @@ async function addEntriesToQueue() {
       const group = queue[lng].splice(groupIndex, 1);
       queue[lng].unshift(group);
       hasModifiedQueue = true;
-      return;
+      continue;
     }
     // add card to (potentially new) group of (potentially new) lng
     queue[lng][groupIndex].cards.unshift({ url, pending: true, fields: [] });
