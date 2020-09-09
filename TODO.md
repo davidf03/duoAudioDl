@@ -6,7 +6,7 @@
 
 ## Store
 [X] get rid of lngs and lng stores; replace with prefs.lngs and .lng
-[XS] make prefs.lngs object with keys for each lng, rather than array, to store e.g. deck and template preferences
+[X] make prefs.lngs object with keys for each lng, rather than array, to store e.g. deck and template preferences
 
 ## Nav
 [X] rename mainnav to nav

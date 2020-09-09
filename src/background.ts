@@ -28,11 +28,12 @@ async function addEntriesToQueue() {
     const originUrl = await browser.tabs.get(req.tabId).then(res => res.url.split('/').reverse());
     const lng = originUrl[2];
 
+    // ignore url if already dealt with
     if (history[lng]?.includes(url)) {
       return;
     }
 
-    // if lang absent from queue, create group array and, if lang absent from lngs, add it
+    // if lang absent from queue, create group array and, if lng absent from prefs, add it
     if (!queue[lng]) {
       queue[lng] = [];
       if (!prefs[lng]) {
@@ -42,10 +43,8 @@ async function addEntriesToQueue() {
     }
 
     const groupname = originUrl[1]
-    //find index of group within lang
+    //find index of group
     let groupIndex = queue[lng].findIndex(g => g.name === groupname);
-    // console.log(groupIndex);
-    // console.log(queue[lng].filter(g => g.name === groupname));
     if (groupIndex === -1) {
       console.log('pushing new group entry')
       // if absent, add new group
@@ -65,7 +64,7 @@ async function addEntriesToQueue() {
       hasModifiedQueue = true;
       return;
     }
-    // add card to (potentially new) group of (potentially new) lang
+    // add card to (potentially new) group of (potentially new) lng
     queue[lng][groupIndex].cards.unshift({ url, pending: true, fields: [] });
     hasModifiedQueue = true;
   }
