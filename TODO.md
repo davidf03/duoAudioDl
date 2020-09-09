@@ -15,20 +15,21 @@
 [X] rename currentPage to currentSection
 [X] simplify section-change function (currentSection = navItems.find(s => s.alias === e.detail.alias))
 [X] rename mainContentId prop to skipId
-[ ] implement language selector as &lt;select&gt;
+[X] implement language selector as &lt;select&gt;
 [ ] figure out correct html for language selector, given potential for nice transitions here vs interoperability of generic parts with other contexts, e.g. deck selection on History and defaults selections on Settings
+- consider making language selector a wrapper containing special toggle, around a collapsed select-like radio set
 
 ## Queue
 [ ] card ignore
 [ ] card fields dynamically after template
 [ ] card create
+[ ] make default template pref each language prefer last template used before template at first index
 
 ## Settings
 [ ] set default deck
 [ ] set default template
 [ ] clear history
 [ ] clear ignored
-[ ] make default template pref each language prefer last template used before template at first index
 
 ## History
 [ ] card history after queue

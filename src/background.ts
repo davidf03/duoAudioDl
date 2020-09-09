@@ -17,7 +17,7 @@ function collectNewQueueEntries(req) {
 }
 
 async function addEntriesToQueue() {
-  const { history = {}, queue = {}, prefs = {} } = await browser.storage.local.get(['history','queue','prefs']);
+  const { history = {}, queue = {}, lngs = [] } = await browser.storage.local.get(['history','queue','lngs']);
 
   let hasModifiedQueue = false;
   let hasAddedLng = false;
@@ -33,20 +33,15 @@ async function addEntriesToQueue() {
       return;
     }
 
-    // if lang absent from queue, create group array and, if lng absent from prefs, add it
-    if (!queue[lng]) {
-      queue[lng] = [];
-      if (!prefs[lng]) {
-        prefs[lng] = {};
-        hasAddedLng = true;
-      }
-    }
+    // if lang absent from queue, create group array
+    queue[lng] ??= [];
+    // if lng absent from lngs, add it
+    lngs.indexOf(lng) === -1 && lngs.push(lng), hasAddedLng = true;
 
     const groupname = originUrl[1]
     //find index of group
     let groupIndex = queue[lng].findIndex(g => g.name === groupname);
     if (groupIndex === -1) {
-      console.log('pushing new group entry')
       // if absent, add new group
       groupIndex = queue[lng].length;
       queue[lng].unshift({
@@ -70,7 +65,8 @@ async function addEntriesToQueue() {
   }
 
   // update storage.local accordingly
-  hasAddedLng && browser.storage.local.set({ prefs });
+  hasAddedLng && lngs.sort() && browser.storage.local.set({ lngs });
+  console.log(lngs);
   hasModifiedQueue && browser.storage.local.set({ queue });
   reqs = [];
 }

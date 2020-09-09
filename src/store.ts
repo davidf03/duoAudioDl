@@ -19,25 +19,33 @@ const createWritableStore = (key, startValue) => {
   };
 }
 
-export const prefs = createWritableStore('prefs', {});
-export const history = createWritableStore('history', {});
+export const lngs = createWritableStore('lngs', []);
+export const lng = createWritableStore('lng', '');
 export const queue = createWritableStore('queue', {});
+export const history = createWritableStore('history', {});
+export const prefs = createWritableStore('prefs', {});
 
-export const loading = createWritableStore('loading', true);
+export const loadingStore = createWritableStore('loadingStore', true);
 
 browser.storage.local.get([
-  'prefs',
+  'lngs',
+  'lng',
+  'queue',
   'history',
-  'queue'
+  'prefs'
 ]).then(res => {
   const {
-    prefs: prefsLocal,
+    lngs: lngsLocal,
+    lng: lngLocal,
+    queue: queueLocal,
     history: historyLocal,
-    queue: queueLocal
+    prefs: prefsLocal
   } = res;
-  prefs.set(prefsLocal || {});
-  history.set(historyLocal || {});
+  lngs.set(lngsLocal || []);
+  lng.set(lngLocal || lngsLocal[0]);
   queue.set(queueLocal || {});
+  history.set(historyLocal || {});
+  prefs.set(prefsLocal || {});
 
-  loading.set(false);
+  loadingStore.set(false);
 });

@@ -1,36 +1,27 @@
 <script>
-  import { prefs, loading } from '../store'
+  import { lngs, lng, loadingStore } from '../store'
   import ISO6391 from 'iso-639-1'
 
   const id = 'aud-language-selector-label'
-  let collapsed = true
-
-  function getOptionId(language) {
-    return `#${id}-${Object.keys($prefs.lngs).indexOf(language)}`;
-  }
 </script>
 
-{#if !$loading}
-<div class="aud-c-language-selector">
-  <button class="aud-c-language-selector__toggle">{$prefs.lng}</button>
-  {#if !collapsed}
-  <span {id}>Choose Language</span>
-  <fieldset aria-describedby={id}>
-    {#each Object.keys($prefs.lngs) as language}
-      <input
-        id={getOptionId(language)}
-        type="radio"
-        bind:group={$prefs.lng}
-        value={language}
-        on:change={prefs.useLocalStorage()}
-        class="aud-c-language-selector__input"
-      />
-      <label
-        for={getOptionId(language)}
-        class="aud-c-language-selector__entry"
-      >{ISO6391.getName(language)}</label>
-    {/each}
-  </fieldset>
+<label
+  for={id}
+  class="aud-u-accessible-hidden"
+>Choose Language</label>
+<select
+  {id}
+  bind:value={$lng}
+  on:blur={lng.useLocalStorage()}
+  disabled={$loadingStore}
+>
+  {#if $loadingStore}
+    <option value={undefined}>Loading...</option>
   {/if}
-</div>
-{/if}
+  {#each $lngs as l}
+    <option
+      value={l}
+      default={$lngs.indexOf(l) === $lngs.indexOf($lng)}
+    >{ISO6391.getName(l)}</option>
+  {/each}
+</select>

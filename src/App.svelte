@@ -1,7 +1,8 @@
 <script>
-  import { loading, queue } from './store'
-  import Nav from './components/Nav/Nav.svelte'
+  import { queue, lngs, loadingStore } from './store'
   import Spinner from './components/Icons/Spinner.svelte'
+  import Nav from './components/Nav/Nav.svelte'
+  import LanguageSelector from './components/LanguageSelector.svelte'
   import Queue from './components/Main/Queue.svelte'
   import History from './components/Main/History.svelte'
   import Settings from './components/Main/Settings.svelte'
@@ -41,8 +42,11 @@
     {currentSection}
     on:move-to-section={moveToSection}
   />
+  {#if $lngs.length > 0}
+    <LanguageSelector />
+  {/if}
   <div id={mainContentId}>
-    {#if $loading}
+    {#if $loadingStore}
       <Spinner />
     {:else}
       <svelte:component this={currentSection.component}/>
