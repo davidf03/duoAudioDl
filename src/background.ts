@@ -66,7 +66,6 @@ async function addEntriesToQueue() {
 
   // update storage.local accordingly
   hasAddedLng && lngs.sort() && browser.storage.local.set({ lngs });
-  console.log(lngs);
   hasModifiedQueue && browser.storage.local.set({ queue });
   reqs = [];
 }
