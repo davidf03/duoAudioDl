@@ -16,9 +16,17 @@
 export let card = {}
 export let pending = false
 
+import { onDestroy } from 'svelte'
+import { lng } from '../../store'
 import MediaPlayer from '../MediaPlayer.svelte'
 
 let open = false
+
+const unsubFromLng = lng.subscribe(val => {
+  open = false;
+});
+onDestroy(unsubFromLng);
+
 </script>
 
 <div class="aud-c-card">
