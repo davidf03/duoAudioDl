@@ -1,5 +1,5 @@
 <script>
-  export let url = ''
+  // export let url = ''
   const testUrl = 'https://freesound.org/data/previews/534/534313_11861866-lq.mp3'
 </script>
 

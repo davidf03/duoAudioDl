@@ -11,6 +11,6 @@ import CardList from '../Cards/CardList.svelte'
       <p>No cards in queue</p>
     {/if}
   {:else}
-    Start using DuoLingo to fill the queue
+    Use DuoLingo to generate cards
   {/if}
 </div>

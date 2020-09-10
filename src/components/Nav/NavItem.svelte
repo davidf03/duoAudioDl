@@ -3,6 +3,7 @@
   export let name = '';
   export let icon = '';
   export let toggled = false;
+  export let disabled = false;
 
   import { createEventDispatcher } from 'svelte'
 
@@ -17,11 +18,18 @@
 </script>
 
 <!-- on:click={dispatch('click')} -->
-<a
-  on:click={dispatchMoveToPage}
-  href="#"
-  tabindex="0"
-  title={name}
-  class="aud-c-main-nav-btn aud-u-c-p"
-  class:aud-c-main-nav-btn--toggled={toggled}
->{icon}</a>
+{#if disabled}
+  <span
+    class="aud-c-main-nav-btn aud-u-c-p"
+    class:aud-c-main-nav-btn--toggled={toggled}
+  >{icon}</span>
+{:else}
+  <a
+    on:click={dispatchMoveToPage}
+    href="#"
+    tabindex="0"
+    title={name}
+    class="aud-c-main-nav-btn aud-u-c-p"
+    class:aud-c-main-nav-btn--toggled={toggled}
+  >{icon}</a>
+{/if}

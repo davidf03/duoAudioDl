@@ -3,10 +3,7 @@
   export let currentSection = {}
   export let navItems = []
 
-  import { createEventDispatcher } from 'svelte'
   import NavItem from './NavItem.svelte'
-
-  const dispatch = createEventDispatcher()
 </script>
 
 <a
@@ -20,7 +17,10 @@
     <span class="aud-c-main-nav__brand">Duo-Anki Generator</span>
     <ul class="aud-c-main-nav__list aud-o-semantic-list">
       {#each navItems as item}
-        <li class="aud-c-main-nav__item">
+        <li
+          aria-hidden={item.disabled}
+          class="aud-c-main-nav__item"
+        >
           <NavItem
             {...item}
             on:move-to-section

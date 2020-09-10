@@ -1,4 +1,4 @@
-const pattern = 'https://*.cloudfront.net/astrid/*';
+const pattern = 'https://*.cloudfront.net/*/*';
 let reqs = [], timeout;
 
 (function init() {
@@ -17,7 +17,7 @@ function collectNewQueueEntries(req) {
 }
 
 async function addEntriesToQueue() {
-  const { history = {}, queue = {}, lngs = [] } = await browser.storage.local.get(['history','queue','lngs']);
+  const { history = {}, ignored = {}, queue = {}, lngs = [] } = await browser.storage.local.get(['history','ignored','queue','lngs']);
 
   let hasModifiedQueue = false;
   let hasAddedLng = false;
@@ -28,8 +28,8 @@ async function addEntriesToQueue() {
     const originUrl = await browser.tabs.get(req.tabId).then(res => res.url.split('/').reverse());
     const lng = originUrl[2];
 
-    // ignore url if already dealt with
-    if (history[lng]?.includes(url)) {
+    // ignore lng if invalid or ignore url if already dealt with
+    if (!lng || ignored[lng]?.includes(url) || history[lng]?.includes(url)) {
       continue;
     }
 

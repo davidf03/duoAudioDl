@@ -23,6 +23,7 @@ export const lngs = createWritableStore('lngs', []);
 export const lng = createWritableStore('lng', '');
 export const queue = createWritableStore('queue', {});
 export const history = createWritableStore('history', {});
+export const ignored = createWritableStore('ignored', {});
 export const prefs = createWritableStore('prefs', {});
 
 export const loadingStore = createWritableStore('loadingStore', true);
@@ -32,6 +33,7 @@ browser.storage.local.get([
   'lng',
   'queue',
   'history',
+  'ignored',
   'prefs'
 ]).then(res => {
   const {
@@ -39,12 +41,14 @@ browser.storage.local.get([
     lng: lngLocal,
     queue: queueLocal,
     history: historyLocal,
+    ignored: ignoredLocal,
     prefs: prefsLocal
   } = res;
   lngs.set(lngsLocal || []);
-  lng.set(lngLocal || lngsLocal[0]);
+  lng.set(lngLocal || lngsLocal && lngsLocal[0] || '');
   queue.set(queueLocal || {});
   history.set(historyLocal || {});
+  ignored.set(ignoredLocal || {});
   prefs.set(prefsLocal || {});
 
   loadingStore.set(false);

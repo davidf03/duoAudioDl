@@ -2,6 +2,8 @@
   import { lngs, lng, loadingStore } from '../store'
   import ISO6391 from 'iso-639-1'
 
+  lng.useLocalStorage()
+
   const id = 'aud-language-selector-label'
 </script>
 
@@ -12,7 +14,6 @@
 <select
   {id}
   bind:value={$lng}
-  on:blur={lng.useLocalStorage()}
   disabled={$loadingStore}
 >
   {#if $loadingStore}
@@ -22,6 +23,6 @@
     <option
       value={l}
       default={$lngs.indexOf(l) === $lngs.indexOf($lng)}
-    >{ISO6391.getName(l)}</option>
+    >{l}</option>
   {/each}
 </select>

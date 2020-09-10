@@ -1,5 +1,5 @@
 <script>
-  import { queue, lngs, loadingStore } from './store'
+  import { lngs, lng, loadingStore } from './store'
   import Spinner from './components/Icons/Spinner.svelte'
   import Nav from './components/Nav/Nav.svelte'
   import LanguageSelector from './components/LanguageSelector.svelte'
@@ -13,19 +13,22 @@
       alias: 'queue',
       component: Queue,
       name: 'Queue',
-      icon: 'Q'
+      icon: 'Q',
+      disabled: $lng?.length > 0
     },
     {
       alias: 'history',
       component: History,
       name: 'History',
-      icon: 'H'
+      icon: 'H',
+      disabled: $lng?.length > 0
     },
     {
       alias: 'settings',
       component: Settings,
       name: 'Settings',
-      icon: 'S'
+      icon: 'S',
+      disabled: $lng?.length > 0
     }
   ]
   let currentSection = navItems[0]
