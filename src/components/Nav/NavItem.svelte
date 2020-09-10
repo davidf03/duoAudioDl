@@ -10,9 +10,6 @@ import { createEventDispatcher } from 'svelte'
 const dispatch = createEventDispatcher();
 
 function dispatchMoveToPage() {
-  if (toggled) {
-    return;
-  }
   dispatch('move-to-section', { alias });
 }
 </script>

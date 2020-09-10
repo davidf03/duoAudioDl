@@ -15,6 +15,7 @@ let decks = [{
   name: 'Loading Decks...'
 }];
 let deck = decks[0].id;
+let hasDeckChanged = false;
 
 let loadingTemplates = true;
 let templates = [{
@@ -22,6 +23,7 @@ let templates = [{
   name: 'Loading Templates...'
 }];
 let template = templates[0].id;
+let hasTemplateChanged = false;
 
 (async function loadDecks () {
   const res = await ankiConnect('deckNamesAndIds', 6);
@@ -61,19 +63,25 @@ const unsubFromLng = lng.subscribe(l => {
 onDestroy(unsubFromLng);
 
 function setDeckToLngDefault () {
-  deck = $prefs[$lng]?.deck || decks.find(d => d.id === defaultDeckId).id
+  // if pref exists and can be found, otherwise use true default
+  deck = $prefs[$lng]?.deck && decks.includes(d => d.id === $prefs[$lng].deck) || decks.find(d => d.id === defaultDeckId).id
 }
 function setTemplateToLngDefault () {
-  template = $prefs[$lng]?.template ?? templates[0].id
+  // if pref exists and can be found, otherwise use true default
+  template = $prefs[$lng]?.template && templates.includes(t => t.id === $prefs[$lng].template) || templates[0].id
 }
 
 function onBlurDecks () {
-  if (!$prefs[$lng]) $prefs[$lng] = {}
+  if (!hasDeckChanged) return;
+  $prefs[$lng] ??= {}
   $prefs[$lng].deck = deck;
+  hasDeckChanged = false;
 }
 function onBlurTemplates () {
-  if (!$prefs[$lng]) $prefs[$lng] = {}
+  if (!hasTemplateChanged) return;
+  $prefs[$lng] ??= {}
   $prefs[$lng].template = template;
+  hasTemplateChanged = false;
 }
 </script>
 
@@ -86,6 +94,7 @@ function onBlurTemplates () {
   <select
     id="deck-selector"
     bind:value={deck}
+    on:change={hasDeckChanged = true}
     on:blur={onBlurDecks}
     disabled={$loadingStore || loadingDecks}
   >
@@ -107,6 +116,7 @@ function onBlurTemplates () {
   <select
     id="deck-selector"
     bind:value={template}
+    on:change={hasTemplateChanged = true}
     on:blur={onBlurTemplates}
     disabled={$loadingStore || loadingTemplates}
   >

@@ -23,8 +23,8 @@ import NavItem from './NavItem.svelte'
         >
           <NavItem
             {...item}
-            on:move-to-section
             toggled={currentSection.alias === item.alias}
+            on:move-to-section
           />
         </li>
       {/each}

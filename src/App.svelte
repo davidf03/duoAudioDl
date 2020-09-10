@@ -14,26 +14,31 @@ const navItems = [
     component: Queue,
     name: 'Queue',
     icon: 'Q',
-    disabled: !$lng
+    disabled: false //!$lng
   },
   {
     alias: 'history',
     component: History,
     name: 'History',
     icon: 'H',
-    disabled: !$lng
+    disabled: false //!$lng
   },
   {
     alias: 'settings',
     component: Settings,
     name: 'Settings',
     icon: 'S',
-    disabled: !$lng
+    disabled: false //!$lng
   }
 ]
 let currentSection = navItems[0]
 
 function moveToSection(e) {
+  const { alias } = e.details;
+  if (alias === currentSection.alias) {
+    // reload section ?
+    return;
+  }
   currentSection = navItems.find(s => s.alias === e.detail.alias)
 }
 </script>

@@ -7,20 +7,20 @@ export default function ankiconnect(action, version, params={}) {
       try {
         const response = JSON.parse(xhr.responseText);
         if (Object.getOwnPropertyNames(response).length != 2) {
-            throw 'response has an unexpected number of fields';
+          throw 'response has an unexpected number of fields';
         }
         if (!response.hasOwnProperty('error')) {
-            throw 'response is missing required error field';
+          throw 'response is missing required error field';
         }
         if (!response.hasOwnProperty('result')) {
-            throw 'response is missing required result field';
+          throw 'response is missing required result field';
         }
         if (response.error) {
-            throw response.error;
+          throw response.error;
         }
         resolve(response.result);
       } catch (e) {
-          reject(e);
+        reject(e);
       }
     });
 
