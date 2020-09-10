@@ -9,24 +9,23 @@ import { createEventDispatcher } from 'svelte'
 
 const dispatch = createEventDispatcher();
 
-function dispatchMoveToPage() {
+function dispatchMoveToSection() {
   dispatch('move-to-section', { alias });
 }
 </script>
 
-<!-- on:click={dispatch('click')} -->
-{#if disabled}
+<!-- {#if disabled}
   <span
     class="aud-c-main-nav-btn aud-u-c-p"
     class:aud-c-main-nav-btn--toggled={toggled}
   >{icon}</span>
-{:else}
+{:else} -->
   <a
-    on:click={dispatchMoveToPage}
     href="#"
     tabindex="0"
     title={name}
     class="aud-c-main-nav-btn aud-u-c-p"
     class:aud-c-main-nav-btn--toggled={toggled}
+    on:click={dispatchMoveToSection}
   >{icon}</a>
-{/if}
+<!-- {/if} -->
