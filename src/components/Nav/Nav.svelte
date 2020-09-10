@@ -1,9 +1,9 @@
 <script>
-  export let skipId = ''
-  export let currentSection = {}
-  export let navItems = []
+export let skipId = ''
+export let currentSection = {}
+export let navItems = []
 
-  import NavItem from './NavItem.svelte'
+import NavItem from './NavItem.svelte'
 </script>
 
 <a

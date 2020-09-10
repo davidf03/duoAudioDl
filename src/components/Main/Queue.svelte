@@ -1,6 +1,12 @@
 <script>
-import { queue, lng } from '../../store';
+import { onDestroy } from 'svelte'
+import { queue, lng } from '../../store'
 import CardList from '../Cards/CardList.svelte'
+
+const unsubFromLng = lng.subscribe(val => {
+  // scroll to top
+});
+onDestroy(unsubFromLng);
 </script>
 
 <div class="aud-c-home aud-o-block">

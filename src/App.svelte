@@ -1,41 +1,41 @@
 <script>
-  import { lngs, lng, loadingStore } from './store'
-  import Spinner from './components/Icons/Spinner.svelte'
-  import Nav from './components/Nav/Nav.svelte'
-  import LanguageSelector from './components/LanguageSelector.svelte'
-  import Queue from './components/Main/Queue.svelte'
-  import History from './components/Main/History.svelte'
-  import Settings from './components/Main/Settings.svelte'
+import { lngs, lng, loadingStore } from './store'
+import Spinner from './components/Icons/Spinner.svelte'
+import Nav from './components/Nav/Nav.svelte'
+import LanguageSelector from './components/LanguageSelector.svelte'
+import Queue from './components/Main/Queue.svelte'
+import History from './components/Main/History.svelte'
+import Settings from './components/Main/Settings.svelte'
 
-  const mainContentId = 'main-content'
-  const navItems = [
-    {
-      alias: 'queue',
-      component: Queue,
-      name: 'Queue',
-      icon: 'Q',
-      disabled: $lng?.length > 0
-    },
-    {
-      alias: 'history',
-      component: History,
-      name: 'History',
-      icon: 'H',
-      disabled: $lng?.length > 0
-    },
-    {
-      alias: 'settings',
-      component: Settings,
-      name: 'Settings',
-      icon: 'S',
-      disabled: $lng?.length > 0
-    }
-  ]
-  let currentSection = navItems[0]
-
-  function moveToSection(e) {
-    currentSection = navItems.find(s => s.alias === e.detail.alias)
+const mainContentId = 'main-content'
+const navItems = [
+  {
+    alias: 'queue',
+    component: Queue,
+    name: 'Queue',
+    icon: 'Q',
+    disabled: !$lng
+  },
+  {
+    alias: 'history',
+    component: History,
+    name: 'History',
+    icon: 'H',
+    disabled: !$lng
+  },
+  {
+    alias: 'settings',
+    component: Settings,
+    name: 'Settings',
+    icon: 'S',
+    disabled: !$lng
   }
+]
+let currentSection = navItems[0]
+
+function moveToSection(e) {
+  currentSection = navItems.find(s => s.alias === e.detail.alias)
+}
 </script>
 
 <div class="aud-c-main">

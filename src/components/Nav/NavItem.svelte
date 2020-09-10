@@ -1,20 +1,20 @@
 <script>
-  export let alias = '';
-  export let name = '';
-  export let icon = '';
-  export let toggled = false;
-  export let disabled = false;
+export let alias = '';
+export let name = '';
+export let icon = '';
+export let toggled = false;
+export let disabled = false;
 
-  import { createEventDispatcher } from 'svelte'
+import { createEventDispatcher } from 'svelte'
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher();
 
-  function dispatchMoveToPage() {
-    if (toggled) {
-      return;
-    }
-    dispatch('move-to-section', { alias });
+function dispatchMoveToPage() {
+  if (toggled) {
+    return;
   }
+  dispatch('move-to-section', { alias });
+}
 </script>
 
 <!-- on:click={dispatch('click')} -->

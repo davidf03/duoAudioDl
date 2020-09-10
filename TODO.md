@@ -38,7 +38,7 @@
 [ ] make default template pref each language prefer last template used before template at first index
 
 ## Settings
-[ ] set default deck
+[X] set default deck
 
 [ ] set default template
 

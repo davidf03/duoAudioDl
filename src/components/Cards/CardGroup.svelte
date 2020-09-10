@@ -1,24 +1,30 @@
 <script>
-  // export let classlist = '';
-  export let cardgroup = {};
-  export let pending = false;
+// export let classlist = '';
+export let cardgroup = {};
+export let pending = false;
 
-  import Card from './Card.svelte';
+import { onDestroy } from 'svelte';
+import { lng } from '../../store';
+import Card from './Card.svelte';
 
-  let showCards = false;
-  function fnShowCards() {
-    console.log('click registered');
-    showCards = !showCards;
-  }
+let isShowingCards = false;
+function showCards() {
+  console.log('click registered');
+  showCards = !showCards;
+}
 
+const unsubFromLng = lng.subscribe(val => {
+  isShowingCards = false;
+});
+onDestroy(unsubFromLng);
 </script>
 
 <div class="aud-c-card-set">
   <button
-    on:click={fnShowCards}
+    on:click={showCards}
     class="aud-c-card-set__toggle"
   >{cardgroup.name}</button>
-  {#if showCards}
+  {#if isShowingCards}
     <ol class="aud-c-card-set__list aud-o-semantic-list">
       {#each cardgroup.cards as card}
         <li>

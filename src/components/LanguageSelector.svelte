@@ -1,10 +1,10 @@
 <script>
-  import { lngs, lng, loadingStore } from '../store'
-  import ISO6391 from 'iso-639-1'
+import { lngs, lng, loadingStore } from '../store'
+import ISO6391 from 'iso-639-1'
 
-  lng.useLocalStorage()
+lng.useLocalStorage()
 
-  const id = 'aud-language-selector-label'
+const id = 'aud-language-selector-label'
 </script>
 
 <label
