@@ -9,8 +9,7 @@ import Card from './Card.svelte';
 
 let isShowingCards = false;
 function showCards() {
-  console.log('click registered');
-  showCards = !showCards;
+  isShowingCards = !isShowingCards;
 }
 
 const unsubFromLng = lng.subscribe(val => {

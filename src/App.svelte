@@ -34,7 +34,7 @@ const navItems = [
 let currentSection = navItems[0]
 
 function moveToSection(e) {
-  const { alias } = e.details;
+  const { alias } = e.detail;
   if (alias === currentSection.alias) {
     // reload section ?
     return;

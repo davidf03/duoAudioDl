@@ -1,6 +1,6 @@
 <script>
 export let classlist = ""
-let percentage = .2
+let percentage = .16
 
 const totalR = 1
 const w = 0.24*totalR

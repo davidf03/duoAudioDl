@@ -14,12 +14,12 @@ function dispatchMoveToSection() {
 }
 </script>
 
-<!-- {#if disabled}
+{#if disabled}
   <span
     class="aud-c-main-nav-btn aud-u-c-p"
     class:aud-c-main-nav-btn--toggled={toggled}
   >{icon}</span>
-{:else} -->
+{:else}
   <a
     href="#"
     tabindex="0"
@@ -28,4 +28,4 @@ function dispatchMoveToSection() {
     class:aud-c-main-nav-btn--toggled={toggled}
     on:click={dispatchMoveToSection}
   >{icon}</a>
-<!-- {/if} -->
+{/if}

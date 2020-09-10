@@ -11,19 +11,17 @@ const defaultDeckId = 1;
 
 let loadingDecks = true;
 let decks = [{
-  id: defaultDeckId,
-  name: 'Loading Decks...'
+  id: 0,
+  name: ''
 }];
 let deck = decks[0].id;
-let hasDeckChanged = false;
 
 let loadingTemplates = true;
 let templates = [{
   id: 0,
-  name: 'Loading Templates...'
+  name: ''
 }];
 let template = templates[0].id;
-let hasTemplateChanged = false;
 
 (async function loadDecks () {
   const res = await ankiConnect('deckNamesAndIds', 6);
@@ -59,33 +57,33 @@ const unsubFromLng = lng.subscribe(l => {
   setDeckToLngDefault();
   setTemplateToLngDefault();
 });
-
 onDestroy(unsubFromLng);
 
 function setDeckToLngDefault () {
   // if pref exists and can be found, otherwise use true default
-  deck = $prefs[$lng]?.deck && decks.includes(d => d.id === $prefs[$lng].deck) || decks.find(d => d.id === defaultDeckId).id
+  deck = $prefs[$lng]?.deck && decks.find(d => d.id === $prefs[$lng].deck)?.id
+    || decks.find(d => d.id === defaultDeckId)?.id
+    || decks.map(d => d.id).sort()[0]
+    || 0
 }
 function setTemplateToLngDefault () {
   // if pref exists and can be found, otherwise use true default
-  template = $prefs[$lng]?.template && templates.includes(t => t.id === $prefs[$lng].template) || templates[0].id
+  template = $prefs[$lng]?.template && templates.find(t => t.id === $prefs[$lng].template)?.id
+    || templates.map(t => t.id).sort()[0]
+    || 0
 }
 
 function onBlurDecks () {
-  if (!hasDeckChanged) return;
-  $prefs[$lng] ??= {}
+  if (!$prefs[$lng]) $prefs[$lng] = {}
   $prefs[$lng].deck = deck;
-  hasDeckChanged = false;
 }
 function onBlurTemplates () {
-  if (!hasTemplateChanged) return;
-  $prefs[$lng] ??= {}
+  if (!$prefs[$lng]) $prefs[$lng] = {}
   $prefs[$lng].template = template;
-  hasTemplateChanged = false;
 }
 </script>
 
-{#if loadingDecks}
+{#if loadingDecks || loadingTemplates}
   <div class="aud-u-ta-c">
     <Spinner />
   </div>
@@ -94,37 +92,37 @@ function onBlurTemplates () {
   <select
     id="deck-selector"
     bind:value={deck}
-    on:change={hasDeckChanged = true}
     on:blur={onBlurDecks}
-    disabled={$loadingStore || loadingDecks}
+    disabled={$loadingStore || loadingDecks || decks.length === 0}
   >
-    {#each decks as d}
-      <option
-        value={d.id}
-        checked={d.id === deck}
-      >{d.name}</option>
-    {/each}
+    {#if deck === 0}
+      <option checked>No decks found</option>
+    {:else}
+      {#each decks as d}
+        <option
+          value={d.id}
+          checked={d.id === deck}
+        >{d.name}</option>
+      {/each}
+    {/if}
   </select>
-{/if}
 
-{#if loadingTemplates}
-  <div class="aud-u-ta-c">
-    <Spinner />
-  </div>
-{:else}
   <label for="deck-selector">Use template</label>
   <select
     id="deck-selector"
     bind:value={template}
-    on:change={hasTemplateChanged = true}
     on:blur={onBlurTemplates}
-    disabled={$loadingStore || loadingTemplates}
+    disabled={$loadingStore || loadingTemplates || templates.length === 0}
   >
-    {#each templates as t}
-      <option
-        value={t.id}
-        checked={t.id === template}
-      >{t.name}</option>
-    {/each}
+    {#if template === 0}
+      <option checked>No templates found</option>
+    {:else}
+      {#each templates as t}
+        <option
+          value={t.id}
+          checked={t.id === template}
+        >{t.name}</option>
+      {/each}
+    {/if}
   </select>
 {/if}
