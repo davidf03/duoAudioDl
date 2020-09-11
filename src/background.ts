@@ -37,6 +37,8 @@ async function addEntriesToQueue (): Promise<any> {
   }
   // exit if no lng urls
   if (!lng) return;
+  // add lng if not already added
+  lngs.indexOf(lng) === -1 && lngs.push(lng), lngs.sort() && browser.storage.local.set({ lngs });
 
   // find index of list
   let list:number = queue.findIndex(l => l.lng === lng);
@@ -77,8 +79,6 @@ async function addEntriesToQueue (): Promise<any> {
     if (isNewGroup || !queue[list].groups[group].cards.includes(c => c.audioUrl === audioUrl)) {
       // add card to (potentially new) group of (potentially new) lng
       queue[list].groups[group].cards.unshift({audioUrl, pending:true, fields:[]} as iCard);
-      // add lng if not already added
-      lngs.indexOf(lng) === -1 && lngs.push(lng), lngs.sort() && browser.storage.local.set({ lngs });
       return;
     }
     // if card already exists bump priority
