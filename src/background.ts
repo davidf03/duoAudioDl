@@ -19,43 +19,52 @@ function collectNewQueueEntries(req) {
 async function addEntriesToQueue() {
   const { history = {}, ignored = {}, queue = {}, lngs = [] } = await browser.storage.local.get(['history','ignored','queue','lngs']);
 
+  let lng, originUrl;
+  for (const req of reqs) {
+    originUrl = await browser.tabs.get(req.tabId).then(res => res.url.split('/').reverse());
+    lng = originUrl[2];
+    if (lng) break;
+  }
+  // exit if no lng urls
+  if (!lng) return;
+  // add lng if not already added
+  lngs.indexOf(lng) === -1 && lngs.push(lng), lngs.sort() && browser.storage.local.set({ lngs });
+
+  queue[lng] ??= [];
+  const groupname = originUrl[1];
+  //find index of group
+  let isNewGroup = false;
+  let groupIndex = queue[lng].findIndex(g => g.name === groupname);
+  if (groupIndex === -1) {
+    isNewGroup = true;
+    // if absent, add new group
+    groupIndex = queue[lng].length;
+    queue[lng].unshift({
+      name: groupname,
+      cards: []
+    });
+  }
+
   let hasModifiedQueue = false;
-  let hasAddedLng = false;
 
   for (const req of reqs) {
     const url = req.url;
 
-    const originUrl = await browser.tabs.get(req.tabId).then(res => res.url.split('/').reverse());
-    const lng = originUrl[2];
-
     // ignore lng if invalid or ignore url if already dealt with
-    if (!lng || ignored[lng]?.includes(url) || history[lng]?.includes(url)) {
+    if (ignored[lng]?.includes(url) || history[lng]?.includes(url)) {
       continue;
     }
-
-    // if lang absent from queue, create group array
-    queue[lng] ??= [];
-    // if lng absent from lngs, add it
-    lngs.indexOf(lng) === -1 && lngs.push(lng), hasAddedLng = true;
-
-    const groupname = originUrl[1]
-    //find index of group
-    let groupIndex = queue[lng].findIndex(g => g.name === groupname);
-    if (groupIndex === -1) {
-      // if absent, add new group
-      groupIndex = queue[lng].length;
-      queue[lng].unshift({
-        name: groupname,
-        cards: []
-      });
-    } else if (queue[lng][groupIndex].cards.includes(c => c.url === url)) {
-      // if present, reprioritize card and its group
-      const card = queue[lng][groupIndex].cards.splice(
-        queue[lng][groupIndex].cards.findIndex(c => c.url === url), 1
+    // if not new group and card already exists
+    if (!isNewGroup && queue[lng][groupIndex].cards.includes(c => c.url === url)) {
+      // reprioritize card and its group
+      queue[lng][groupIndex].cards.unshift(
+        queue[lng][groupIndex].cards.splice(
+          queue[lng][groupIndex].cards.findIndex(c => c.url === url), 1
+        )
       );
-      queue[lng][groupIndex].cards.unshift(card);
-      const group = queue[lng].splice(groupIndex, 1);
-      queue[lng].unshift(group);
+      queue[lng].unshift(
+        queue[lng].splice(groupIndex, 1)
+      );
       hasModifiedQueue = true;
       continue;
     }
@@ -65,7 +74,6 @@ async function addEntriesToQueue() {
   }
 
   // update storage.local accordingly
-  hasAddedLng && lngs.sort() && browser.storage.local.set({ lngs });
   hasModifiedQueue && browser.storage.local.set({ queue });
   reqs = [];
 }
