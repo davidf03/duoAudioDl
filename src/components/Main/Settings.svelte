@@ -1,8 +1,7 @@
-<!-- <script lang="ts">
+<script lang="ts">
 import { onDestroy } from 'svelte'
 import { prefs, lng, loadingStore } from '../../store'
 import ankiConnect from '../../contentScripts/ankiConnect'
-import ISO6391 from 'iso-639-1'
 import Spinner from '../Icons/Spinner.svelte'
 
 prefs.useLocalStorage()
@@ -158,4 +157,4 @@ function onBlurTemplates (): void {
       {/each}
     {/if}
   </select>
-{/if} -->
+{/if}

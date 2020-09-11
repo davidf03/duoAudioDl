@@ -11,10 +11,11 @@
 //     template [with default]
 //     [template fields]
 //     tags
+//     [group: editable]
 //   save
 
 import { onDestroy } from 'svelte';
-import { iCard } from '../../interfaces/Card';
+import type { iCard } from '../../interfaces/Cards';
 import { lng } from '../../store';
 import MediaPlayer from '../MediaPlayer.svelte';
 
@@ -31,8 +32,8 @@ onDestroy(unsubFromLng);
 </script>
 
 <div class="aud-c-card">
-  {card.url}
+  {card.audioUrl}
   {#if open}
-    <MediaPlayer url={card.url} />
+    <MediaPlayer audioUrl={card.audioUrl} />
   {/if}
 </div>

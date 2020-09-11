@@ -1,12 +1,19 @@
 <script lang="ts">
 import { onDestroy } from 'svelte';
-import { iCardList } from '../../interfaces/Cards';
-import { queue, lng } from '../../store';
+import { assign } from 'svelte/internal';
+import type { iCardList } from '../../interfaces/Cards';
+import { queue, lng, loadingStore } from '../../store';
 import CardList from '../Cards/CardList.svelte';
 
-const cardList:iCardList = $queue.find(l => l.lng === $lng);
+let cardList:iCardList;
+function assignCardList () { // TODO come back to this re: needing assignment for reactivity
+  cardList = $queue.find(l => l.lng === $lng);
+};
 
+const unsubFromLoadingStore = queue.subscribe(val => !val && assignCardList());
+onDestroy(unsubFromLoadingStore);
 const unsubFromLng = lng.subscribe(val => { // TODO type
+  assignCardList();
   // scroll to top
 });
 onDestroy(unsubFromLng);

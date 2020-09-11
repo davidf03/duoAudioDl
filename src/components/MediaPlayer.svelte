@@ -1,5 +1,5 @@
 <script lang="ts">
-// export let url = ''
+export let audioUrl = '';
 const testUrl:string = 'https://freesound.org/data/previews/534/534313_11861866-lq.mp3';
 </script>
 

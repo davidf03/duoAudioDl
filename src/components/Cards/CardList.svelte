@@ -1,5 +1,5 @@
 <script lang="ts">
-import { iCardList } from '../../interfaces/Cards';
+import type { iCardList } from '../../interfaces/Cards';
 import CardGroup from './CardGroup.svelte';
 
 export let cardList:iCardList;

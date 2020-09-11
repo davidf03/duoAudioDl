@@ -1,4 +1,4 @@
-import { ttsNameMap } from './nameMap';
+import { ttsNameMap } from './ttsNameMap';
 import { iCard, iCardGroup, iCardList } from './interfaces/Cards';
 
 const pattern:string = 'https://*.cloudfront.net/*/*';
@@ -37,25 +37,23 @@ async function addEntriesToQueue (): Promise<any> {
   }
   // exit if no lng urls
   if (!lng) return;
-  // add lng if not already added
-  lngs.indexOf(lng) === -1 && lngs.push(lng), lngs.sort() && browser.storage.local.set({ lngs });
 
-  // add CardList for lng if not present
+  // find index of list
   let list:number = queue.findIndex(l => l.lng === lng);
   if (list === -1) {
     list = queue.length;
     queue.push({lng, groups:[]} as iCardList);
   }
 
-  const name:string = originUrl[1];
-  let isNewGroup:boolean = false;
   //find index of group
+  const name:string = originUrl[1];
   let group:number = queue[list].groups.findIndex(g => g.name === name);
-  // if absent, add new
+  // adding new list and/or group as needed
+  let isNewGroup:boolean = false;
   if (group === -1) {
     isNewGroup = true;
     group = 0;
-    queue[list].groups.unshift({name, cards:[]} as iCardGroup);
+    queue[list].groups.push({name, cards:[]} as iCardGroup);
   }
 
   let hasModifiedQueue:boolean = false;
@@ -79,6 +77,8 @@ async function addEntriesToQueue (): Promise<any> {
     if (isNewGroup || !queue[list].groups[group].cards.includes(c => c.audioUrl === audioUrl)) {
       // add card to (potentially new) group of (potentially new) lng
       queue[list].groups[group].cards.unshift({audioUrl, pending:true, fields:[]} as iCard);
+      // add lng if not already added
+      lngs.indexOf(lng) === -1 && lngs.push(lng), lngs.sort() && browser.storage.local.set({ lngs });
       return;
     }
     // if card already exists bump priority

@@ -1,6 +1,6 @@
 <script lang="ts">
 import { lngs, lng, loadingStore } from './store';
-import { iNavItem } from './interfaces/Nav';
+import type { iNavItem } from './interfaces/Nav';
 import Spinner from './components/Icons/Spinner.svelte';
 import Nav from './components/Nav/Nav.svelte';
 import LanguageSelector from './components/LanguageSelector.svelte';
@@ -9,7 +9,7 @@ import History from './components/Main/History.svelte';
 import Settings from './components/Main/Settings.svelte';
 import Debug from './components/Main/Debug.svelte';
 
-const mainContentId:string = 'main-content'
+const mainContentId:string = 'main-content';
 const navItems:iNavItem[] = [
   {
     alias: 'queue',
@@ -40,7 +40,7 @@ const navItems:iNavItem[] = [
     disabled: false //!$lng
   }
 ]
-let currentSection:NavItem = navItems[0]
+let currentSection:iNavItem = navItems[0]
 
 function moveToSection (e): void {
   const { alias } = e.detail;
@@ -53,9 +53,9 @@ function moveToSection (e): void {
 </script>
 
 <div class="aud-c-main">
-  <!-- <Nav
+  <Nav
     skipId={mainContentId}
-    navItems={navItems.map(({ component, ...i }) => i)}
+    {navItems}
     {currentSection}
     on:move-to-section={moveToSection}
   />
@@ -68,5 +68,5 @@ function moveToSection (e): void {
     {:else}
       <svelte:component this={currentSection.component}/>
     {/if}
-  </div> -->
+  </div>
 </div>

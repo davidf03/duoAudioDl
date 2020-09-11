@@ -1,6 +1,6 @@
 <script lang="ts">
 import { onDestroy } from 'svelte';
-import { iCardGroup } from '../../interfaces/Cards';
+import type { iCardGroup } from '../../interfaces/Cards';
 import { lng } from '../../store';
 import Card from './Card.svelte';
 

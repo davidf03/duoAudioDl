@@ -1,6 +1,6 @@
 <script lang="ts">
 import { createEventDispatcher } from 'svelte';
-import { iNavItem } from '../../interfaces/Nav';
+import type { iNavItem } from '../../interfaces/Nav';
 
 export let navItem:iNavItem;
 export let toggled:boolean = false;
