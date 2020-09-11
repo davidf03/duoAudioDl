@@ -1,7 +1,10 @@
-const pattern = 'https://*.cloudfront.net/astrid/*';
-let reqs = [], timeout;
+import { ttsNameMap } from './nameMap';
+import { Card, CardGroup, CardList } from './interfaces/Cards';
 
-(function init() {
+const pattern:string = 'https://*.cloudfront.net/*/*';
+let reqs = [], timeout; // TODO types
+
+(async function init(): Promise<any> { // TODO return type
   browser.webRequest.onBeforeRequest.addListener(
     collectNewQueueEntries,
     { urls: [pattern] },
@@ -11,17 +14,22 @@ let reqs = [], timeout;
   });
 })();
 
-function collectNewQueueEntries(req) {
+function collectNewQueueEntries (req): void {
   timeout = setTimeout(addEntriesToQueue, 1000);
   reqs.push(req);
 }
 
-async function addEntriesToQueue() {
-  const { history = {}, ignored = {}, queue = {}, lngs = [] } = await browser.storage.local.get(['history','ignored','queue','lngs']);
+async function addEntriesToQueue (): Promise<any> {
+  const {
+    history = [] as CardList[],
+    ignored = [] as CardList[],
+    queue = [] as CardList[],
+    lngs = [] as string[]
+  } = await browser.storage.local.get(['history','ignored','queue','lngs']);
 
-  let lng, originUrl;
-  const lngRegex = new RegExp('^[a-z]{2}$','i');
-  // look for lng in urls (there should only be one unique one)
+  let lng:string, originUrl:string;
+  // get lng (there should be only one, unique one)
+  const lngRegex:RegExp = new RegExp('^[a-z]{2}$','i');
   for (const req of reqs) {
     originUrl = await browser.tabs.get(req.tabId).then(res => res.url.split('/').reverse());
     lng = originUrl[2];
@@ -31,45 +39,56 @@ async function addEntriesToQueue() {
   if (!lng) return;
   // add lng if not already added
   lngs.indexOf(lng) === -1 && lngs.push(lng), lngs.sort() && browser.storage.local.set({ lngs });
-  queue[lng] ??= [];
 
-  const groupname = originUrl[1];
-  let isNewGroup = false;
-  //find index of group
-  let groupIndex = queue[lng].findIndex(g => g.name === groupname);
-  // if absent, add new
-  if (groupIndex === -1) {
-    isNewGroup = true;
-    groupIndex = queue[lng].length;
-    queue[lng].unshift({
-      name: groupname,
-      cards: []
-    });
+  // add CardList for lng if not present
+  let list:number = queue.findIndex(l => l.lng === lng);
+  if (list === -1) {
+    list = queue.length;
+    queue.push({lng, groups:[]} as CardList);
   }
 
-  let hasModifiedQueue = false;
+  const name:string = originUrl[1];
+  let isNewGroup:boolean = false;
+  //find index of group
+  let group:number = queue[list].findIndex(g => g.name === name);
+  // if absent, add new
+  if (group === -1) {
+    isNewGroup = true;
+    group = 0;
+    queue[list].unshift({name, cards:[]} as CardGroup);
+  }
+
+  let hasModifiedQueue:boolean = false;
 
   reqs.forEach(req => {
-    const url = req.url;
+    const audioUrl:string = req.url;
+    // pass over if audioUrl TTS name not valid
+    const ttsName:string = audioUrl.split('/').reverse()[1];
+    if (!ttsNameMap.find(l => l.lng === lng)?.names?.includes(ttsName)) {
+      return;
+    }
     // pass over if already dealt with
-    if (ignored[lng]?.includes(url) || history[lng]?.includes(url)) {
+    if (
+      ignored.find(l => l.lng === lng)?.groups?.find(g => g.name === name).some(c => c.audioUrl === audioUrl) ||
+      history.find(l => l.lng === lng)?.groups?.find(g => g.name === name).some(c => c.audioUrl === audioUrl)
+    ) {
       return;
     }
     hasModifiedQueue = true; // (everything after this will have modified the queue)
     // if new group or card not present
-    if (isNewGroup || !queue[lng][groupIndex].cards.includes(c => c.url === url)) {
+    if (isNewGroup || !queue[list][group].cards.includes(c => c.audioUrl === audioUrl)) {
       // add card to (potentially new) group of (potentially new) lng
-      queue[lng][groupIndex].cards.unshift({ url, pending: true, fields: [] });
+      queue[list][group].cards.unshift({audioUrl, pending:true, fields:[]} as Card);
       return;
     }
     // if card already exists bump priority
-    queue[lng][groupIndex].cards.unshift(
-      queue[lng][groupIndex].cards.splice(
-        queue[lng][groupIndex].cards.findIndex(c => c.url === url), 1
+    queue[list][group].cards.unshift(
+      queue[list][group].cards.splice(
+        queue[list][group].cards.findIndex(c => c.audioUrl === audioUrl), 1
       )
     );
-    queue[lng].unshift(
-      queue[lng].splice(groupIndex, 1)
+    queue[list].unshift(
+      queue[list].splice(group, 1)
     );
   });
 
@@ -78,6 +97,6 @@ async function addEntriesToQueue() {
   reqs = [];
 }
 
-async function setIconToPending() {
+async function setIconToPending (): Promise<any> {
   browser.browserAction.setIcon({ path: './icons/48-pending.png' });
 }
