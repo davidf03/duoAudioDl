@@ -1,11 +1,12 @@
 <script>
-import { lngs, lng, loadingStore } from './store'
+import { lngs, lng, loadingStore, queue } from './store'
 import Spinner from './components/Icons/Spinner.svelte'
 import Nav from './components/Nav/Nav.svelte'
 import LanguageSelector from './components/LanguageSelector.svelte'
 import Queue from './components/Main/Queue.svelte'
 import History from './components/Main/History.svelte'
 import Settings from './components/Main/Settings.svelte'
+import Debug from './components/Main/Debug.svelte'
 
 const mainContentId = 'main-content'
 const navItems = [
@@ -28,6 +29,13 @@ const navItems = [
     component: Settings,
     name: 'Settings',
     icon: 'S',
+    disabled: false //!$lng
+  },
+  {
+    alias: 'debug',
+    component: Debug,
+    name: 'Debug',
+    icon: 'D',
     disabled: false //!$lng
   }
 ]
