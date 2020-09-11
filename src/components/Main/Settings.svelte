@@ -1,4 +1,4 @@
-<script>
+<!-- <script lang="ts">
 import { onDestroy } from 'svelte'
 import { prefs, lng, loadingStore } from '../../store'
 import ankiConnect from '../../contentScripts/ankiConnect'
@@ -7,32 +7,41 @@ import Spinner from '../Icons/Spinner.svelte'
 
 prefs.useLocalStorage()
 
-const defaultDeckId = 1;
+const defaultDeckId:number = 1;
 
-let loadingDecks = true;
-let decks = [{
+interface iDeck {
+  id:number;
+  name:string;
+}
+interface iTemplate {
+  id:number;
+  name:string;
+}
+
+let loadingDecks:boolean = true;
+let decks:iDeck[] = [{
   id: 0,
   name: ''
 }];
-let deck = decks[0].id;
+let deck:number = decks[0].id;
 
-let loadingTemplates = true;
-let templates = [{
+let loadingTemplates:boolean = true;
+let templates:iTemplate[] = [{
   id: 0,
   name: ''
 }];
-let template = templates[0].id;
+let template:number = templates[0].id;
 
-let isConnecting = true;
-let isConnected = false;
-let errMsg = '';
+let isConnecting:boolean = true;
+let isConnected:boolean = false;
+let errMsg:string = '';
 
-(async function load () {
+(async function load (): Promise<any>  { // TODO type
   console.log('loading');
   isConnecting = true;
   isConnected = false;
-  const loadDecksPromise = getDecks();
-  const loadTemplatesPromise = getTemplates();
+  const loadDecksPromise:Promise<any> = getDecks(); // TODO type
+  const loadTemplatesPromise:Promise<any> = getTemplates(); // TODO type
   Promise.all([loadDecksPromise,loadTemplatesPromise])
     .then(values => {
       manageDeckData(values[0]);
@@ -46,60 +55,60 @@ let errMsg = '';
     });
 })();
 
-async function getDecks () {
+async function getDecks (): Promise<any> {
   return ankiConnect('deckNamesAndIds', 6);
 }
-async function getTemplates () {
+async function getTemplates (): Promise<any> {
   return ankiConnect('modelNamesAndIds', 6);
 }
-function manageDeckData (res) {
+function manageDeckData (res): void {
   decks = Object.keys(res).map(d => ({ name: d, id: res[d] }));
   // update input to reflect previously set default deck for newly created cards (per lng)
   if ($loadingStore) {
-    const unsubLoadingStore = loadingStore.subscribe(val => { if (!val) setDeckToLngDefault() });
+    const unsubLoadingStore = loadingStore.subscribe(val => { if (!val) setDeckToLngDefault() }); // TODO type
     onDestroy(unsubLoadingStore);
   } else {
     setDeckToLngDefault();
   }
 }
-function manageTemplateData (res) {
+function manageTemplateData (res): void {
   templates = Object.keys(res).map(t => ({ name: t, id: res[t] }));
   // update input to reflect previously set default template for newly created cards (per lng)
   if ($loadingStore) {
-    const unsubLoadingStore = loadingStore.subscribe(val => { if (!val) setTemplateToLngDefault() });
+    const unsubLoadingStore = loadingStore.subscribe(val => { if (!val) setTemplateToLngDefault() }); // TODO type
     onDestroy(unsubLoadingStore);
   } else {
     setTemplateToLngDefault();
   }
 }
 
-const unsubFromLng = lng.subscribe(l => {
+const unsubFromLng = lng.subscribe(l => { // TODO type
   if (isConnecting || !isConnected) return;
   setDeckToLngDefault();
   setTemplateToLngDefault();
 });
 onDestroy(unsubFromLng);
 
-function setDeckToLngDefault () {
+function setDeckToLngDefault (): void {
   // if pref exists and can be found, otherwise use true default
   deck = $prefs[$lng]?.deck && decks.find(d => d.id === $prefs[$lng].deck)?.id
     || decks.find(d => d.id === defaultDeckId)?.id
     || decks.map(d => d.id).sort()[0]
     || 0
 }
-function setTemplateToLngDefault () {
+function setTemplateToLngDefault (): void {
   // if pref exists and can be found, otherwise use true default
   template = $prefs[$lng]?.template && templates.find(t => t.id === $prefs[$lng].template)?.id
     || templates.map(t => t.id).sort()[0]
     || 0
 }
 
-function onBlurDecks () {
+function onBlurDecks (): void {
   if (!$prefs[$lng]) $prefs[$lng] = {}
   $prefs[$lng].deck = deck;
 }
-function onBlurTemplates () {
-  if (!$prefs[$lng]) $prefs[$lng] = {}
+function onBlurTemplates (): void {
+  if (!$prefs?.lngs?.some(l => l.lng === $lng)) $prefs[$lng] = {}
   $prefs[$lng].template = template;
 }
 </script>
@@ -149,4 +158,4 @@ function onBlurTemplates () {
       {/each}
     {/if}
   </select>
-{/if}
+{/if} -->

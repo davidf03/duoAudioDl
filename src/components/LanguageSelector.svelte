@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
 import { lngs, lng, loadingStore } from '../store'
 import ISO6391 from 'iso-639-1'
 
 lng.useLocalStorage()
 
-const id = 'aud-language-selector-label'
+const id:string = 'aud-language-selector-label'
 </script>
 
 <label

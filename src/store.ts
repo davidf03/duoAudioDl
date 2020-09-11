@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
-import { CardList } from './interfaces/Cards';
-import { Prefs } from './interfaces/Prefs';
+import { iCardList } from './interfaces/Cards';
+import { iPrefs } from './interfaces/Prefs';
 
 const createWritableStore = (key:string, startValue:any) => {
   const { subscribe, set } = writable(startValue);
@@ -23,12 +23,12 @@ const createWritableStore = (key:string, startValue:any) => {
 
 export const lngs = createWritableStore('lngs', [] as string[]);
 export const lng = createWritableStore('lng', '' as string);
-export const queue = createWritableStore('queue', [] as CardList[]);
-export const history = createWritableStore('history', [] as CardList[]);
-export const ignored = createWritableStore('ignored', [] as CardList[]);
-export const prefs = createWritableStore('prefs', {} as Prefs);
+export const queue = createWritableStore('queue', [] as iCardList[]);
+export const history = createWritableStore('history', [] as iCardList[]);
+export const ignored = createWritableStore('ignored', [] as iCardList[]);
+export const prefs = createWritableStore('prefs', {} as iPrefs);
 
-export const loadingStore = createWritableStore('loadingStore', true);
+export const loadingStore = createWritableStore('loadingStore', true as boolean);
 
 browser.storage.local.get([
   'lngs',
@@ -46,12 +46,12 @@ browser.storage.local.get([
     ignored: ignoredLocal,
     prefs: prefsLocal
   } = res;
-  lngs.set(lngsLocal || [] as CardList[]);
+  lngs.set(lngsLocal || [] as iCardList[]);
   lng.set(lngLocal || lngsLocal && lngsLocal[0] || '' as string);
-  queue.set(queueLocal || [] as CardList[]);
-  history.set(historyLocal || [] as CardList[]);
-  ignored.set(ignoredLocal || [] as CardList[]);
-  prefs.set(prefsLocal || {} as Prefs);
+  queue.set(queueLocal || [] as iCardList[]);
+  history.set(historyLocal || [] as iCardList[]);
+  ignored.set(ignoredLocal || [] as iCardList[]);
+  prefs.set(prefsLocal || {} as iPrefs);
 
-  loadingStore.set(false);
+  loadingStore.set(false as boolean);
 });

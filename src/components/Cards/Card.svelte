@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 // on save, move right, list from bottom closes overtop (not visible beneath list unless last item)
 // on ignore, move left, "
 
@@ -13,16 +13,17 @@
 //     tags
 //   save
 
-export let card = {}
-export let pending = false
+import { onDestroy } from 'svelte';
+import { iCard } from '../../interfaces/Card';
+import { lng } from '../../store';
+import MediaPlayer from '../MediaPlayer.svelte';
 
-import { onDestroy } from 'svelte'
-import { lng } from '../../store'
-import MediaPlayer from '../MediaPlayer.svelte'
+export let card:iCard;
+export let pending:boolean = false;
 
-let open = false
+let open:boolean = false
 
-const unsubFromLng = lng.subscribe(val => {
+const unsubFromLng = lng.subscribe(val => { // TODO type
   open = false;
 });
 onDestroy(unsubFromLng);

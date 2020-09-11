@@ -1,18 +1,18 @@
-<script>
-// export let classlist = '';
-export let cardgroup = {};
-export let pending = false;
-
+<script lang="ts">
 import { onDestroy } from 'svelte';
+import { iCardGroup } from '../../interfaces/Cards';
 import { lng } from '../../store';
 import Card from './Card.svelte';
 
-let isShowingCards = false;
-function showCards() {
+export let cardGroup:iCardGroup;
+export let pending:boolean = false;
+
+let isShowingCards:boolean = false;
+function showCards (): void {
   isShowingCards = !isShowingCards;
 }
 
-const unsubFromLng = lng.subscribe(val => {
+const unsubFromLng = lng.subscribe(val => { // TODO type
   isShowingCards = false;
 });
 onDestroy(unsubFromLng);
@@ -22,10 +22,10 @@ onDestroy(unsubFromLng);
   <button
     on:click={showCards}
     class="aud-c-card-set__toggle"
-  >{cardgroup.name}</button>
+  >{cardGroup.name}</button>
   {#if isShowingCards}
     <ol class="aud-c-card-set__list aud-o-semantic-list">
-      {#each cardgroup.cards as card}
+      {#each cardGroup.cards as card}
         <li>
           <Card {card} {pending} />
         </li>

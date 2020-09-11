@@ -1,18 +1,21 @@
-<script>
-import { onDestroy } from 'svelte'
-import { queue, lng } from '../../store'
-import CardList from '../Cards/CardList.svelte'
+<script lang="ts">
+import { onDestroy } from 'svelte';
+import { iCardList } from '../../interfaces/Cards';
+import { queue, lng } from '../../store';
+import CardList from '../Cards/CardList.svelte';
 
-const unsubFromLng = lng.subscribe(val => {
+const cardList:iCardList = $queue.find(l => l.lng === $lng);
+
+const unsubFromLng = lng.subscribe(val => { // TODO type
   // scroll to top
 });
 onDestroy(unsubFromLng);
 </script>
 
 <div class="aud-c-home aud-o-block">
-  {#if $lng}
-    {#if $queue[$lng].length > 0}
-      <CardList cardlist={$queue[$lng]} pending/>
+  {#if $lng && cardList}
+    {#if cardList.groups.length > 0}
+      <CardList {cardList} pending/>
     {:else}
       <p>No cards in queue</p>
     {/if}

@@ -1,9 +1,10 @@
-<script>
-export let skipId = ''
-export let currentSection = {}
-export let navItems = []
+<script lang="ts">
+import { iNavItem } from '../../interfaces/Nav';
+import NavItem from './NavItem.svelte';
 
-import NavItem from './NavItem.svelte'
+export let skipId:string = '';
+export let currentSection:iNavItem;
+export let navItems:iNavItem[];
 </script>
 
 <a
@@ -16,14 +17,14 @@ import NavItem from './NavItem.svelte'
   <nav class="aud-c-main-nav">
     <span class="aud-c-main-nav__brand">Duo-Anki Generator</span>
     <ul class="aud-c-main-nav__list aud-o-semantic-list">
-      {#each navItems as item}
+      {#each navItems as navItem}
         <li
-          aria-hidden={item.disabled}
+          aria-hidden={navItem.disabled}
           class="aud-c-main-nav__item"
         >
           <NavItem
-            {...item}
-            toggled={currentSection.alias === item.alias}
+            {navItem}
+            toggled={currentSection.alias === navItem.alias}
             on:move-to-section
           />
         </li>

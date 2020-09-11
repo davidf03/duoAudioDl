@@ -1,15 +1,15 @@
-export interface Card {
+export interface iCard {
   readonly audioUrl:string;
   pending:boolean;
   fields:string[];
 }
 
-export interface CardGroup {
+export interface iCardGroup {
   name:string;
-  cards:Card[];
+  cards:iCard[];
 }
 
-export interface CardList {
+export interface iCardList {
   lng:string;
-  groups:CardGroup[];
+  groups:iCardGroup[];
 }

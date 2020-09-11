@@ -1,5 +1,5 @@
 import { ttsNameMap } from './nameMap';
-import { Card, CardGroup, CardList } from './interfaces/Cards';
+import { iCard, iCardGroup, iCardList } from './interfaces/Cards';
 
 const pattern:string = 'https://*.cloudfront.net/*/*';
 let reqs = [], timeout; // TODO types
@@ -21,9 +21,9 @@ function collectNewQueueEntries (req): void {
 
 async function addEntriesToQueue (): Promise<any> {
   const {
-    history = [] as CardList[],
-    ignored = [] as CardList[],
-    queue = [] as CardList[],
+    history = [] as iCardList[],
+    ignored = [] as iCardList[],
+    queue = [] as iCardList[],
     lngs = [] as string[]
   } = await browser.storage.local.get(['history','ignored','queue','lngs']);
 
@@ -44,18 +44,18 @@ async function addEntriesToQueue (): Promise<any> {
   let list:number = queue.findIndex(l => l.lng === lng);
   if (list === -1) {
     list = queue.length;
-    queue.push({lng, groups:[]} as CardList);
+    queue.push({lng, groups:[]} as iCardList);
   }
 
   const name:string = originUrl[1];
   let isNewGroup:boolean = false;
   //find index of group
-  let group:number = queue[list].findIndex(g => g.name === name);
+  let group:number = queue[list].groups.findIndex(g => g.name === name);
   // if absent, add new
   if (group === -1) {
     isNewGroup = true;
     group = 0;
-    queue[list].unshift({name, cards:[]} as CardGroup);
+    queue[list].groups.unshift({name, cards:[]} as iCardGroup);
   }
 
   let hasModifiedQueue:boolean = false;
@@ -76,19 +76,19 @@ async function addEntriesToQueue (): Promise<any> {
     }
     hasModifiedQueue = true; // (everything after this will have modified the queue)
     // if new group or card not present
-    if (isNewGroup || !queue[list][group].cards.includes(c => c.audioUrl === audioUrl)) {
+    if (isNewGroup || !queue[list].groups[group].cards.includes(c => c.audioUrl === audioUrl)) {
       // add card to (potentially new) group of (potentially new) lng
-      queue[list][group].cards.unshift({audioUrl, pending:true, fields:[]} as Card);
+      queue[list].groups[group].cards.unshift({audioUrl, pending:true, fields:[]} as iCard);
       return;
     }
     // if card already exists bump priority
-    queue[list][group].cards.unshift(
-      queue[list][group].cards.splice(
-        queue[list][group].cards.findIndex(c => c.audioUrl === audioUrl), 1
+    queue[list].groups[group].cards.unshift(
+      queue[list].groups[group].cards.splice(
+        queue[list].groups[group].cards.findIndex(c => c.audioUrl === audioUrl), 1
       )
     );
-    queue[list].unshift(
-      queue[list].splice(group, 1)
+    queue[list].groups.unshift(
+      queue[list].groups.splice(group, 1)
     );
   });
 

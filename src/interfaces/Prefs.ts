@@ -1,9 +1,9 @@
-export interface LngPrefs {
+export interface iLngPrefs {
   lng:string;
   deck?:number;
   template?:number;
 }
 
-export interface Prefs {
-  lngs?:LngPrefs[]
+export interface iPrefs {
+  lngs?:iLngPrefs[]
 }

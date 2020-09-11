@@ -1,11 +1,11 @@
-<script>
+<script lang="ts">
 import { queue, history, ignored } from '../../store'
 
 queue.useLocalStorage();
 history.useLocalStorage();
 ignored.useLocalStorage();
 
-function clearData () {
+function clearData (): void {
   $queue = {};
   $history = {};
   $ignored = {};

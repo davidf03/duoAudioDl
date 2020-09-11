@@ -1,31 +1,29 @@
-<script>
-export let alias = '';
-export let name = '';
-export let icon = '';
-export let toggled = false;
-export let disabled = false;
+<script lang="ts">
+import { createEventDispatcher } from 'svelte';
+import { iNavItem } from '../../interfaces/Nav';
 
-import { createEventDispatcher } from 'svelte'
+export let navItem:iNavItem;
+export let toggled:boolean = false;
 
-const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher(); // TODO type
 
-function dispatchMoveToSection() {
-  dispatch('move-to-section', { alias });
+function dispatchMoveToSection (): void {
+  dispatch('move-to-section', { alias: navItem.alias });
 }
 </script>
 
-{#if disabled}
+{#if navItem.disabled}
   <span
     class="aud-c-main-nav-btn aud-u-c-p"
     class:aud-c-main-nav-btn--toggled={toggled}
-  >{icon}</span>
+  >{navItem.icon}</span>
 {:else}
   <a
     href="#"
     tabindex="0"
-    title={name}
+    title={navItem.name}
     class="aud-c-main-nav-btn aud-u-c-p"
     class:aud-c-main-nav-btn--toggled={toggled}
     on:click={dispatchMoveToSection}
-  >{icon}</a>
+  >{navItem.icon}</a>
 {/if}

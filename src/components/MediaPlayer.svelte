@@ -1,6 +1,6 @@
-<script>
+<script lang="ts">
 // export let url = ''
-const testUrl = 'https://freesound.org/data/previews/534/534313_11861866-lq.mp3'
+const testUrl:string = 'https://freesound.org/data/previews/534/534313_11861866-lq.mp3';
 </script>
 
 <audio id="test" controls="controls">

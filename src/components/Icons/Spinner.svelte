@@ -1,12 +1,12 @@
-<script>
-export let classlist = ""
-let percentage = .16
+<script type="ts">
+export let classlist:string = "";
+let percentage = .16;
 
-const totalR = 1
-const w = 0.24*totalR
-const r = totalR - w/2
+const totalR:number = 1;
+const w:number = 0.24*totalR;
+const r:number = totalR - w/2;
 
-let rotation = 0;
+let rotation:number = 0;
 // incRotation();
 // function incRotation() {
 //   setTimeout(() => {
@@ -16,22 +16,27 @@ let rotation = 0;
 //   },10);
 // }
 
+interface iCoord {
+  x:number;
+  y:number;
+}
+
 // https://stackoverflow.com/questions/5736398/how-to-calculate-the-svg-path-for-an-arc-of-a-circle
-function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
-  const angleInRadians = (angleInDegrees-90) * Math.PI / 180.0;
+function polarToCartesian(centerX:number, centerY:number, radius:number, angleInDegrees:number): iCoord {
+  const angleInRadians:number = (angleInDegrees-90) * Math.PI / 180.0;
 
   return {
     x: centerX + (radius * Math.cos(angleInRadians)),
     y: centerY + (radius * Math.sin(angleInRadians))
   };
 }
-function describeArc(x, y, radius, startAngle, endAngle){
-  const start = polarToCartesian(x, y, radius, endAngle);
-  const end = polarToCartesian(x, y, radius, startAngle);
+function describeArc(x:number, y:number, radius:number, startAngle:number, endAngle:number): string {
+  const start:iCoord = polarToCartesian(x, y, radius, endAngle);
+  const end:iCoord = polarToCartesian(x, y, radius, startAngle);
 
-  const largeArcFlag = (endAngle - startAngle)%360 <= 180 ? "0" : "1";
+  const largeArcFlag:string = (endAngle - startAngle)%360 <= 180 ? "0" : "1";
 
-  const d = [
+  const d:string = [
     "M", start.x, start.y, 
     "A", radius, radius, 0, largeArcFlag, 0, end.x, end.y
   ].join(' ');
