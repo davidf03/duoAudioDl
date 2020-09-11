@@ -23,10 +23,37 @@ let templates = [{
 }];
 let template = templates[0].id;
 
-(async function loadDecks () {
-  const res = await ankiConnect('deckNamesAndIds', 6);
-  decks = Object.keys(res).map(d => ({ name: d, id: res[d] }));
+let isConnecting = true;
+let isConnected = false;
+let errMsg = '';
 
+(async function load () {
+  console.log('loading');
+  isConnecting = true;
+  isConnected = false;
+  const loadDecksPromise = getDecks();
+  const loadTemplatesPromise = getTemplates();
+  Promise.all([loadDecksPromise,loadTemplatesPromise])
+    .then(values => {
+      manageDeckData(values[0]);
+      manageTemplateData(values[1]);
+      isConnecting = false;
+      isConnected = true;
+    }).catch(err => {
+      console.log('failed promises');
+      errMsg = err;
+      isConnecting = false;
+    });
+})();
+
+async function getDecks () {
+  return ankiConnect('deckNamesAndIds', 6);
+}
+async function getTemplates () {
+  return ankiConnect('modelNamesAndIds', 6);
+}
+async function manageDeckData (res) {
+  decks = Object.keys(res).map(d => ({ name: d, id: res[d] }));
   // update input to reflect previously set default deck for newly created cards (per lng)
   if ($loadingStore) {
     const unsubLoadingStore = loadingStore.subscribe(val => { if (!val) setDeckToLngDefault() });
@@ -34,14 +61,9 @@ let template = templates[0].id;
   } else {
     setDeckToLngDefault();
   }
-
-  loadingDecks = false;
-})();
-
-(async function loadTemplates () {
-  const res = await ankiConnect('modelNamesAndIds', 6);
+}
+async function manageTemplateData (res) {
   templates = Object.keys(res).map(t => ({ name: t, id: res[t] }));
-
   // update input to reflect previously set default template for newly created cards (per lng)
   if ($loadingStore) {
     const unsubLoadingStore = loadingStore.subscribe(val => { if (!val) setTemplateToLngDefault() });
@@ -49,11 +71,10 @@ let template = templates[0].id;
   } else {
     setTemplateToLngDefault();
   }
-
-  loadingTemplates = false;
-})();
+}
 
 const unsubFromLng = lng.subscribe(l => {
+  if (isConnecting || !isConnected) return;
   setDeckToLngDefault();
   setTemplateToLngDefault();
 });
@@ -83,10 +104,13 @@ function onBlurTemplates () {
 }
 </script>
 
-{#if loadingDecks || loadingTemplates}
+{#if isConnecting}
   <div class="aud-u-ta-c">
     <Spinner />
   </div>
+{:else if !isConnected}
+  <p>Could not connect to your local Anki installation</p>
+  <p>{errMsg}</p>
 {:else}
   <label for="deck-selector">Create cards in deck</label>
   <select
