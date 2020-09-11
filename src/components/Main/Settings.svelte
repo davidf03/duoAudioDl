@@ -52,7 +52,7 @@ async function getDecks () {
 async function getTemplates () {
   return ankiConnect('modelNamesAndIds', 6);
 }
-async function manageDeckData (res) {
+function manageDeckData (res) {
   decks = Object.keys(res).map(d => ({ name: d, id: res[d] }));
   // update input to reflect previously set default deck for newly created cards (per lng)
   if ($loadingStore) {
@@ -62,7 +62,7 @@ async function manageDeckData (res) {
     setDeckToLngDefault();
   }
 }
-async function manageTemplateData (res) {
+function manageTemplateData (res) {
   templates = Object.keys(res).map(t => ({ name: t, id: res[t] }));
   // update input to reflect previously set default template for newly created cards (per lng)
   if ($loadingStore) {
