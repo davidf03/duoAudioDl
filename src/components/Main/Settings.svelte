@@ -3,6 +3,7 @@ import { onDestroy } from 'svelte'
 import { prefs, lng, loadingStore } from '../../store'
 import ankiConnect from '../../contentScripts/ankiConnect'
 import Spinner from '../Icons/Spinner.svelte'
+import { iLngPrefs } from 'src/interfaces/Prefs';
 
 prefs.useLocalStorage()
 
@@ -17,14 +18,14 @@ interface iTemplate {
   name:string;
 }
 
-let loadingDecks:boolean = true;
+let loadingDecks:boolean = false;
 let decks:iDeck[] = [{
   id: 0,
   name: ''
 }];
 let deck:number = decks[0].id;
 
-let loadingTemplates:boolean = true;
+let loadingTemplates:boolean = false;
 let templates:iTemplate[] = [{
   id: 0,
   name: ''
@@ -36,7 +37,6 @@ let isConnected:boolean = false;
 let errMsg:string = '';
 
 (async function load (): Promise<any>  { // TODO type
-  console.log('loading');
   isConnecting = true;
   isConnected = false;
   const loadDecksPromise:Promise<any> = getDecks(); // TODO type
@@ -48,7 +48,6 @@ let errMsg:string = '';
       isConnecting = false;
       isConnected = true;
     }).catch(err => {
-      console.log('failed promises');
       errMsg = err;
       isConnecting = false;
     });
@@ -103,12 +102,26 @@ function setTemplateToLngDefault (): void {
 }
 
 function onBlurDecks (): void {
-  if (!$prefs[$lng]) $prefs[$lng] = {}
-  $prefs[$lng].deck = deck;
+  let lngPrefs = $prefs?.lngPrefs?.find(lp => lp.lng === $lng);
+  if (!lngPrefs) {
+    lngPrefs = {lng: $lng, deck} as iLngPrefs;
+    $prefs.lngPrefs
+      ? ($prefs.lngPrefs.push(lngPrefs), $prefs.lngPrefs = $prefs.lngPrefs) // TODO study need for assignment for reactivity
+      : $prefs.lngPrefs = [lngPrefs] as iLngPrefs[];
+    return;
+  }
+  lngPrefs.deck = deck;
 }
 function onBlurTemplates (): void {
-  if (!$prefs?.lngs?.some(l => l.lng === $lng)) $prefs[$lng] = {}
-  $prefs[$lng].template = template;
+  let lngPrefs = $prefs?.lngPrefs?.find(lp => lp.lng === $lng);
+  if (!lngPrefs) {
+    lngPrefs = {lng: $lng, template} as iLngPrefs;
+    $prefs.lngPrefs
+      ? ($prefs.lngPrefs.push(lngPrefs), $prefs.lngPrefs = $prefs.lngPrefs) // TODO study need for assignment for reactivity
+      : $prefs.lngPrefs = [lngPrefs] as iLngPrefs[];
+    return;
+  }
+  lngPrefs.template = template;
 }
 </script>
 
@@ -118,7 +131,6 @@ function onBlurTemplates (): void {
   </div>
 {:else if !isConnected}
   <p>Could not connect to your local Anki installation</p>
-  <p>{errMsg}</p>
 {:else}
   <label for="deck-selector">Create cards in deck</label>
   <select
