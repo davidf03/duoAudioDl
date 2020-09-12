@@ -1,47 +1,27 @@
 # Todo
 
 ## General
-[X] implement {:else}
-
 [ ] develop styles
 
-## Store
-~~[X] get rid of lngs and lng stores; replace with prefs.lngs and .lng~~
+## Background
+[ ] generalise implementation of lng adding to avoid false positives for target language in case translation audio is provided too
 
-~~[X] make prefs.lngs object with keys for each lng, rather than array, to store e.g. deck and template preferences~~
+## Store
 
 ## Nav
-[X] rename mainnav to nav
-
-[X] make hardcoded nav data props from parent
-
-[X] rework navitems so that component is included there, and filtered out before being passed into nav (navItems={navItems.map(({ component, ...p }) => p)}), for easier dynamic assignment of components based on nav
-
-[X] rename currentPage to currentSection
-
-[X] simplify section-change function (currentSection = navItems.find(s => s.alias === e.detail.alias))
-
-[X] rename mainContentId prop to skipId
-
-[X] implement language selector as &lt;select&gt;
-
 [ ] figure out correct html for language selector, given potential for nice transitions here vs interoperability of generic parts with other contexts, e.g. deck selection on History and defaults selections on Settings
 - consider making language selector a wrapper containing special toggle, around a collapsed select-like radio set
 
 ## Queue
-[ ] card ignore
-
 [ ] card fields dynamically after template
+
+[ ] card ignore
 
 [ ] card create
 
 [ ] make default template pref each language prefer last template used before template at first index
 
 ## Settings
-[X] set default deck
-
-[ ] set default template
-
 [ ] clear history
 
 [ ] clear ignored
