@@ -1,0 +1,21 @@
+.aud-c-play-icon {
+
+  &__main {
+    $aud-play-w: 20px;
+    max-width: $aud-play-w;
+  }
+
+  &__circle {
+    fill: var(--aud-btn-main);
+    stroke: var(--aud-btn-type);
+  }
+
+  &__triangle {
+    fill: var(--aud-btn-type);
+  }
+
+  &__line {
+    stroke: var(--aud-btn-type);
+    stroke-linecap: round;
+  }
+}
