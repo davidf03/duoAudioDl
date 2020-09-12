@@ -1,25 +1,33 @@
 <script lang="ts">
 const testUrl:string = 'https://freesound.org/data/previews/534/534313_11861866-lq.mp3';
-import Play from './Icons/PlayPause.svelte';
-export let audioUrl = '';
-export let id:string = 'test';
 
+import { onMount } from 'svelte';
+import Play from './Icons/PlayPause.svelte';
+export let audioUrl:string = '';
+export let id:string = audioUrl.split('/').reverse()[0];
+
+let audioElm;
 let isPlaying:boolean = false;
 
+onMount(async () => {
+  audioElm = document.getElementById(id);
+  audioElm.addEventListener('ended', (e) => {
+    isPlaying = false;
+  });
+});
+
 function onClickPlay (e): void {
-  const audio = document.getElementById(id);
-  if (audio.paused) {
-    audio.play();
+  if (audioElm.paused) {
+    audioElm.play();
     isPlaying = true;
     return;
   }
-  audio.pause();
+  audioElm.pause();
   isPlaying = false;
 }
 </script>
 
-<audio id="test" preload="none">
-  <!-- <source src={url} /> -->
+<audio {id} preload="none">
   <source src={testUrl} />
   <track kind="captions" />
 </audio>
