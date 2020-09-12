@@ -3,7 +3,7 @@ import { onDestroy } from 'svelte'
 import { prefs, lng, loadingStore } from '../../store'
 import ankiConnect from '../../contentScripts/ankiConnect'
 import Spinner from '../Icons/Spinner.svelte'
-import { iLngPrefs } from 'src/interfaces/Prefs';
+import type { iLngPrefs } from 'src/interfaces/Prefs';
 
 prefs.useLocalStorage()
 
@@ -89,39 +89,41 @@ onDestroy(unsubFromLng);
 
 function setDeckToLngDefault (): void {
   // if pref exists and can be found, otherwise use true default
-  deck = $prefs[$lng]?.deck && decks.find(d => d.id === $prefs[$lng].deck)?.id
+  const lngDeckPref = $prefs?.lngPrefs?.find(lp => lp.lng === $lng)?.deck;
+  deck = lngDeckPref && decks.find(d => d.id === lngDeckPref)?.id
     || decks.find(d => d.id === defaultDeckId)?.id
     || decks.map(d => d.id).sort()[0]
     || 0
 }
 function setTemplateToLngDefault (): void {
   // if pref exists and can be found, otherwise use true default
-  template = $prefs[$lng]?.template && templates.find(t => t.id === $prefs[$lng].template)?.id
+  const lngTemplatePref = $prefs?.lngPrefs?.find(lp => lp.lng === $lng)?.template;
+  template = lngTemplatePref && templates.find(t => t.id === lngTemplatePref)?.id
     || templates.map(t => t.id).sort()[0]
     || 0
 }
 
 function onBlurDecks (): void {
   let lngPrefs = $prefs?.lngPrefs?.find(lp => lp.lng === $lng);
-  if (!lngPrefs) {
-    lngPrefs = {lng: $lng, deck} as iLngPrefs;
-    $prefs.lngPrefs
-      ? ($prefs.lngPrefs.push(lngPrefs), $prefs.lngPrefs = $prefs.lngPrefs) // TODO study need for assignment for reactivity
-      : $prefs.lngPrefs = [lngPrefs] as iLngPrefs[];
+  if (lngPrefs) {
+    lngPrefs.deck = deck;
     return;
   }
-  lngPrefs.deck = deck;
+  lngPrefs = {lng: $lng, deck} as iLngPrefs;
+  $prefs.lngPrefs
+    ? ($prefs.lngPrefs.push(lngPrefs), $prefs.lngPrefs = $prefs.lngPrefs) // TODO study need for assignment for reactivity
+    : $prefs.lngPrefs = [lngPrefs] as iLngPrefs[];
 }
 function onBlurTemplates (): void {
   let lngPrefs = $prefs?.lngPrefs?.find(lp => lp.lng === $lng);
-  if (!lngPrefs) {
-    lngPrefs = {lng: $lng, template} as iLngPrefs;
-    $prefs.lngPrefs
-      ? ($prefs.lngPrefs.push(lngPrefs), $prefs.lngPrefs = $prefs.lngPrefs) // TODO study need for assignment for reactivity
-      : $prefs.lngPrefs = [lngPrefs] as iLngPrefs[];
+  if (lngPrefs) {
+    lngPrefs.template = template;
     return;
   }
-  lngPrefs.template = template;
+  lngPrefs = {lng: $lng, template} as iLngPrefs;
+  $prefs.lngPrefs
+    ? ($prefs.lngPrefs.push(lngPrefs), $prefs.lngPrefs = $prefs.lngPrefs) // TODO study need for assignment for reactivity
+    : $prefs.lngPrefs = [lngPrefs] as iLngPrefs[];
 }
 </script>
 
