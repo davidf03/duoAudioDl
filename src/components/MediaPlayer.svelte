@@ -39,11 +39,7 @@ function play (): void {
 }
 
 function onClickPlay (e): void {
-  if (returnIsPaused()) {
-    play();
-    return;
-  }
-  pause();
+  returnIsPaused() ? play() : pause();
 }
 </script>
 

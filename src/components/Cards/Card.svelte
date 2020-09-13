@@ -46,11 +46,7 @@ function close (): void {
 }
 
 function onClick (e): void {
-  if (!isOpen) {
-    open();
-    return;
-  }
-  close();
+  isOpen ? close() : open();
 }
 </script>
 
