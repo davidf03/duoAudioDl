@@ -22,7 +22,7 @@ onMount(async () => {
   });
 });
 
-const unsubFromPlayingAudioId = playingAudioId.subscribe(val => val && val !== id && pause());
+const unsubFromPlayingAudioId = playingAudioId.subscribe(val => val && val !== id && !returnIsPaused() && pause());
 onDestroy(unsubFromPlayingAudioId);
 
 function returnIsPaused (): boolean {
