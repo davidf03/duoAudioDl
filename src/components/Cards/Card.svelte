@@ -14,14 +14,18 @@
 //     [group: editable]
 //   save
 
-import { onDestroy } from 'svelte';
-import type { iCard } from '../../interfaces/Cards';
-import { lng } from '../../store';
+import { createEventDispatcher, onDestroy } from 'svelte';
+import type { iCard } from '../../interfaces/iCards';
+import { lng, expandedCardId } from '../../store';
 import MediaPlayer from '../MediaPlayer.svelte';
+import audioUrlParser from '../../util/audioUrlParser';
 
 export let card:iCard;
 export let pending:boolean = false;
 
+const dispatch = createEventDispatcher();
+
+const id:string = audioUrlParser.getId(card.audioUrl);
 let isOpen:boolean = false;
 let isPlayBtnPressed:boolean = false;
 
@@ -30,16 +34,31 @@ const unsubFromLng = lng.subscribe(val => { // TODO type
 });
 onDestroy(unsubFromLng);
 
-function onClick (e): void {
-  isOpen = !isOpen;
+const unsubFromExpandedCardId = expandedCardId.subscribe(val => val && val !== id && close());
+onDestroy(unsubFromExpandedCardId);
+
+function open (): void {
+  expandedCardId.set(id);
+  isOpen = true;
+}
+function close (): void {
+  isOpen = false;
 }
 
+function onClick (e): void {
+  if (!isOpen) {
+    open();
+    return;
+  }
+  close();
+}
 </script>
 
-<div class="aud-c-card aud-o-bg-btn-set">
+<div
+  class="aud-c-card aud-o-bg-btn-set"
+>
   <MediaPlayer
     audioUrl={card.audioUrl}
-    {isPlayBtnPressed}
     classlist="aud-o-bg-btn-set__sibling aud-u-d-b"
   />
   <!-- <span>{card.audioUrl}</span> -->
@@ -50,6 +69,6 @@ function onClick (e): void {
 </div>
 {#if isOpen}
   <div>
-    
+    card content
   </div>
 {/if}

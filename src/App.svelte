@@ -1,6 +1,6 @@
 <script lang="ts">
 import { lngs, lng, loadingStore } from './store';
-import type { iNavItem } from './interfaces/Nav';
+import type { iNavItem } from './interfaces/iNav';
 import Spinner from './components/Icons/Spinner.svelte';
 import Nav from './components/Nav/Nav.svelte';
 import LanguageSelector from './components/LanguageSelector.svelte';

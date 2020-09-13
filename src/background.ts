@@ -1,5 +1,7 @@
 import { ttsNameMap } from './ttsNameMap';
-import { iCard, iCardGroup, iCardList } from './interfaces/Cards';
+import { iCard, iCardGroup, iCardList } from './interfaces/iCardss';
+import httpReqUrlParser from './util/httpReqUrlParser';
+import audioUrlParser from './util/audioUrlParser';
 
 const pattern:string = 'https://*.cloudfront.net/*/*';
 let reqs = [], timeout; // TODO types
@@ -31,8 +33,8 @@ async function addEntriesToQueue (): Promise<any> {
   // get lng (there should be only one, unique one)
   const lngRegex:RegExp = new RegExp('^[a-z]{2}$','i');
   for (const req of reqs) {
-    originUrl = await browser.tabs.get(req.tabId).then(res => res.url.split('/').reverse());
-    lng = originUrl[2];
+    originUrl = await browser.tabs.get(req.tabId).then(res => res.url);
+    lng = httpReqUrlParser.getLng(originUrl);
     if (lng && lngRegex.test(lng)) break;
   }
   // exit if no lng urls
@@ -48,7 +50,7 @@ async function addEntriesToQueue (): Promise<any> {
   }
 
   //find index of group
-  const name:string = originUrl[1];
+  const name:string = httpReqUrlParser.getGroup(originUrl);
   let group:number = queue[list].groups.findIndex(g => g.name === name);
   // adding new list and/or group as needed
   let isNewGroup:boolean = false;
@@ -63,7 +65,7 @@ async function addEntriesToQueue (): Promise<any> {
   reqs.forEach(req => {
     const audioUrl:string = req.url;
     // pass over if audioUrl TTS name not valid
-    const ttsName:string = audioUrl.split('/').reverse()[1];
+    const ttsName:string = audioUrlParser.getTTSName(audioUrl);
     if (!ttsNameMap.find(l => l.lng === lng)?.names?.includes(ttsName)) {
       return;
     }

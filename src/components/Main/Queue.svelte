@@ -1,7 +1,7 @@
 <script lang="ts">
 import { onDestroy } from 'svelte';
 import { assign } from 'svelte/internal';
-import type { iCardList } from '../../interfaces/Cards';
+import type { iCardList } from '../../interfaces/iCards';
 import { queue, lng, loadingStore } from '../../store';
 import CardList from '../Cards/CardList.svelte';
 
@@ -19,7 +19,7 @@ const unsubFromLng = lng.subscribe(val => { // TODO type
 onDestroy(unsubFromLng);
 </script>
 
-<div class="aud-c-home aud-o-block">
+<div class="aud-c-home">
   {#if $lng && cardList}
     {#if cardList.groups.length > 0}
       <CardList {cardList} pending/>

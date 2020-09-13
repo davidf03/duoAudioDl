@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
-import { iCardList } from './interfaces/Cards';
-import { iPrefs } from './interfaces/Prefs';
+import { iCardList } from './interfaces/iCardss';
+import { iPrefs } from './interfaces/iPrefss';
 
 const createWritableStore = (key:string, startValue:any) => {
   const { subscribe, set } = writable(startValue);
@@ -21,6 +21,7 @@ const createWritableStore = (key:string, startValue:any) => {
   };
 }
 
+// permanent stores
 export const lngs = createWritableStore('lngs', [] as string[]);
 export const lng = createWritableStore('lng', '' as string);
 export const queue = createWritableStore('queue', [] as iCardList[]);
@@ -28,7 +29,10 @@ export const history = createWritableStore('history', [] as iCardList[]);
 export const ignored = createWritableStore('ignored', [] as iCardList[]);
 export const prefs = createWritableStore('prefs', {} as iPrefs);
 
-export const loadingStore = createWritableStore('loadingStore', true as boolean);
+// temporary stores
+export const loadingStore = writable(true as boolean);
+export const playingAudioId = writable();
+export const expandedCardId = writable();
 
 browser.storage.local.get([
   'lngs',

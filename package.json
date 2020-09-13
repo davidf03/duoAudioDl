@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "iso-639-1": "^2.1.4",
+    "src": "^1.1.2",
     "svelte": "^3.20.1"
   },
   "browserslist": [

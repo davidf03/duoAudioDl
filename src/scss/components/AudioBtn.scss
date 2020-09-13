@@ -1,4 +1,5 @@
 .aud-c-audio-btn {
   width: $aud-audio-btn-w;
-  border-radius: $aud-audio-btn-w/2;
+  border-radius: $aud-audio-btn-w/2 - 2;
+  overflow: hidden;
 }

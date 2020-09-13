@@ -1,6 +1,6 @@
 <script lang="ts">
 import { onDestroy } from 'svelte'
-import type { iTemplate, iDeck, iLngPrefs } from 'src/interfaces/Prefs';
+import type { iTemplate, iDeck, iLngPrefs } from 'src/interfaces/iPrefs';
 import { prefs, lng, loadingStore } from '../../store'
 import ankiConnect from '../../contentScripts/ankiConnect'
 import Spinner from '../Icons/Spinner.svelte'

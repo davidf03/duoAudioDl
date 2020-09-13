@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { iNavItem } from '../../interfaces/Nav';
+import type { iNavItem } from '../../interfaces/iNav';
 import NavItem from './NavItem.svelte';
 
 export let skipId:string = '';
