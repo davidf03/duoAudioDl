@@ -1,13 +1,16 @@
 .aud-c-play-icon {
+  display: block;
 
-  &__main {
-    $aud-play-w: 20px;
-    max-width: $aud-play-w;
+  &__interior {
+    pointer-events: none;
   }
 
   &__circle {
     fill: var(--aud-btn-main);
-    stroke: var(--aud-btn-type);
+  }
+
+  &__height {
+    fill: var(--aud-btn-sides);
   }
 
   &__triangle {

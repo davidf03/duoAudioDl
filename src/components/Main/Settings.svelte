@@ -1,22 +1,13 @@
 <script lang="ts">
 import { onDestroy } from 'svelte'
+import type { iTemplate, iDeck, iLngPrefs } from 'src/interfaces/Prefs';
 import { prefs, lng, loadingStore } from '../../store'
 import ankiConnect from '../../contentScripts/ankiConnect'
 import Spinner from '../Icons/Spinner.svelte'
-import type { iLngPrefs } from 'src/interfaces/Prefs';
 
 prefs.useLocalStorage()
 
 const defaultDeckId:number = 1;
-
-interface iDeck {
-  id:number;
-  name:string;
-}
-interface iTemplate {
-  id:number;
-  name:string;
-}
 
 let loadingDecks:boolean = false;
 let decks:iDeck[] = [{
@@ -132,7 +123,7 @@ function onBlurTemplates (): void {
     <Spinner />
   </div>
 {:else if !isConnected}
-  <p>Could not connect to your local Anki installation</p>
+  <p>Could not connect to Anki</p>
 {:else}
   <label for="deck-selector">Create cards in deck</label>
   <select

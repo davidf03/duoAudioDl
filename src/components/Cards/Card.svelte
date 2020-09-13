@@ -22,7 +22,8 @@ import MediaPlayer from '../MediaPlayer.svelte';
 export let card:iCard;
 export let pending:boolean = false;
 
-let isOpen:boolean = false
+let isOpen:boolean = false;
+let isPlayBtnPressed:boolean = false;
 
 const unsubFromLng = lng.subscribe(val => { // TODO type
   isOpen = false;
@@ -35,11 +36,16 @@ function onClick (e): void {
 
 </script>
 
-<MediaPlayer audioUrl={card.audioUrl} />
-<span>{card.audioUrl}</span>
-<button
-  on:click={onClick}
-><span class="aud-u-accessible-hidden">{isOpen ? 'Collapse' : 'Expand'} card</span></button>
+<div class="aud-c-card">
+  <MediaPlayer
+    audioUrl={card.audioUrl}
+    {isPlayBtnPressed}
+  />
+  <!-- <span>{card.audioUrl}</span> -->
+  <button
+    on:click={onClick}
+  ><span class="aud-u-accessible-hidden">{isOpen ? 'Collapse' : 'Expand'} card</span></button>
+</div>
 {#if isOpen}
   <div>
     
