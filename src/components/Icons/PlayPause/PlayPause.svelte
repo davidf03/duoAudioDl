@@ -20,7 +20,7 @@ const barW:number = 2;
 const barGap:number = 2;
 
 // TODO move this somewhere else to make it less expensive
-// allows button to press is cursor enters with mousebutton down
+// allows button to press if cursor enters with mousebutton down
 const primaryMouseBtnCode = 2;
 const primaryMouseButtonValues = getMouseButtonValues(primaryMouseBtnCode);
 const secondaryMouseBtnCode = 1;
