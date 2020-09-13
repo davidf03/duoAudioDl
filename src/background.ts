@@ -1,6 +1,6 @@
 import { ttsNameMap } from './ttsNameMap';
 import { iCard, iCardGroup, iCardList } from './interfaces/iCardss';
-import httpReqUrlParser from './util/httpReqUrlParser';
+import httpOriginUrlParser from './util/httpOriginUrlParser';
 import audioUrlParser from './util/audioUrlParser';
 
 const pattern:string = 'https://*.cloudfront.net/*/*';
@@ -34,7 +34,7 @@ async function addEntriesToQueue (): Promise<any> {
   const lngRegex:RegExp = new RegExp('^[a-z]{2}$','i');
   for (const req of reqs) {
     originUrl = await browser.tabs.get(req.tabId).then(res => res.url);
-    lng = httpReqUrlParser.getLng(originUrl);
+    lng = httpOriginUrlParser.getLng(originUrl);
     if (lng && lngRegex.test(lng)) break;
   }
   // exit if no lng urls
@@ -50,7 +50,7 @@ async function addEntriesToQueue (): Promise<any> {
   }
 
   //find index of group
-  const name:string = httpReqUrlParser.getGroup(originUrl);
+  const name:string = httpOriginUrlParser.getGroup(originUrl);
   let group:number = queue[list].groups.findIndex(g => g.name === name);
   // adding new list and/or group as needed
   let isNewGroup:boolean = false;

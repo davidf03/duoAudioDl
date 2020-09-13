@@ -19,7 +19,25 @@ const barH:number = 7;
 const barW:number = 2;
 const barGap:number = 2;
 
+// TODO move this somewhere else to make it less expensive
+// allows button to press is cursor enters with mousebutton down
+const primaryMouseBtnCode = 2;
+const primaryMouseButtonValues = getMouseButtonValues(primaryMouseBtnCode);
+const secondaryMouseBtnCode = 1;
+const secondaryMouseButtonValues = getMouseButtonValues(secondaryMouseBtnCode);
+function getMouseButtonValues(value) {
+  const values = [value];
+  const log2 = Math.log2(value);
+  for (let i=0; i<=4; i++) {
+    if (i === log2) continue;
+    const power = Math.pow(2,i);
+    values.forEach(v => values.push(v + power));  
+  }
+  return values;
+}
+
 function onMouseOver (e): void {
+  if (primaryMouseButtonValues.includes(e.buttons) || secondaryMouseButtonValues.includes(e.buttons)) isPressed = true;
   isHovered = true;
 }
 function onMouseDown (e): void {
