@@ -7,6 +7,7 @@ import PlayPause from './Icons/PlayPause/PlayPause.svelte';
 export let audioUrl:string = '';
 export let id:string = audioUrl.split('/').reverse()[0];
 export let isPlayBtnPressed:boolean = false;
+export let classlist:string = '';
 
 let audioElm;
 let isPlaying:boolean = false;
@@ -35,7 +36,7 @@ function onClickPlay (e): void {
 </audio>
 <button
   on:click={onClickPlay}
-  class="aud-c-audio-btn aud-o-unbutton"
+  class={`aud-c-audio-btn aud-o-unbutton ${classlist}`}
 >
   <PlayPause
     {isPlaying}

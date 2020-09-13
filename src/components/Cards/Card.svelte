@@ -36,14 +36,16 @@ function onClick (e): void {
 
 </script>
 
-<div class="aud-c-card">
+<div class="aud-c-card aud-o-bg-btn-set">
   <MediaPlayer
     audioUrl={card.audioUrl}
     {isPlayBtnPressed}
+    classlist="aud-o-bg-btn-set__sibling aud-u-d-b"
   />
   <!-- <span>{card.audioUrl}</span> -->
   <button
     on:click={onClick}
+    class="aud-o-bg-btn-set__btn aud-o-unbutton"
   ><span class="aud-u-accessible-hidden">{isOpen ? 'Collapse' : 'Expand'} card</span></button>
 </div>
 {#if isOpen}

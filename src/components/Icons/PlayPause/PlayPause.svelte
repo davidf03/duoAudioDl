@@ -4,6 +4,7 @@ import PlayPauseInterior from './PlayPauseInterior.svelte';
 export let isPlaying:boolean = true;
 
 let isPressed:boolean = false;
+let isHovered:boolean = false;
 
 const r:number = 12;
 const circleStrokeWRatio:number = 0.16;
@@ -18,21 +19,30 @@ const barH:number = 7;
 const barW:number = 2;
 const barGap:number = 2;
 
-function onPress (e): void {
+function onMouseOver (e): void {
+  isHovered = true;
+}
+function onMouseDown (e): void {
   isPressed = true;
 }
-function onRelease (e): void {
+function onMouseUp (e): void {
   isPressed = false;
+}
+function onMouseOut (e): void {
+  isPressed = false;
+  isHovered = false;
 }
 </script>
 
-<!-- on:click|stopPropagation={onClick} -->
 <svg
   viewBox={`0 0 ${2*r} ${2*r + btnHFull}`}
-  on:mousedown={onPress}
-  on:mouseup={onRelease}
-  on:mouseout={onRelease}
+  on:mouseover={onMouseOver}
+  on:mousedown={onMouseDown}
+  on:mouseup={onMouseUp}
+  on:mouseout={onMouseOut}
   class="aud-c-play-icon"
+  class:aud-c-play-icon--hover={isHovered}
+  class:aud-c-play-icon--pressed={isPressed}
 >
   {#if isPressed}
     <PlayPauseInterior

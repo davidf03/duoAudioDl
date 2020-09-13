@@ -5,7 +5,11 @@
     pointer-events: none;
   }
 
-  &__circle {
+  &--hover &__circle {
+    fill: var(--aud-btn-main-hover)
+  }
+  &__circle,
+  &--pressed &__circle {
     fill: var(--aud-btn-main);
   }
 

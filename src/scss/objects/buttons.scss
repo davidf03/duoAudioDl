@@ -4,6 +4,25 @@
   background: none;
 }
 
+.aud-o-bg-btn-set {
+  position: relative;
+
+  &__btn {
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+  }
+
+  &__sibling {
+    z-index: 2;
+    position: relative;
+  }
+}
+
 .aud-o-btn {
   padding-inline: $aud-gap-l;
   padding-block: $aud-gap-m;
