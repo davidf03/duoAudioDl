@@ -23,11 +23,11 @@ function collectNewQueueEntries (req): void {
 
 async function addEntriesToQueue (): Promise<any> {
   const {
-    history = [] as iCardList[],
-    ignored = [] as iCardList[],
-    queue = [] as iCardList[],
+    history = [] as iCardList,
+    ignored = [] as iCardList,
+    queue = [] as iCardList,
     lngs = [] as string[]
-  } = await browser.storage.local.get(['history','ignored','queue','lngs']);
+  } = await browser.storage.local.get(['lngs','queue','history','ignored']);
 
   let lng:string, originUrl:string;
   // get lng (there should be only one, unique one)
@@ -40,24 +40,26 @@ async function addEntriesToQueue (): Promise<any> {
   // exit if no lng urls
   if (!lng) return;
   // add lng if not already added
-  lngs.indexOf(lng) === -1 && lngs.push(lng), lngs.sort() && browser.storage.local.set({ lngs });
+  if (lngs.indexOf(lng) === -1) {
+    lngs.push(lng);
+    lngs.sort();
+    browser.storage.local.set({ lngs });
+  }
 
-  // find index of list
-  let list:number = queue.findIndex(l => l.lng === lng);
-  if (list === -1) {
-    list = queue.length;
-    queue.push({lng, groups:[]} as iCardList);
+  // ensure key exists
+  if (!Object.keys(queue).includes(lng)) {
+    queue.push({[lng]: []} as iCardList);
   }
 
   //find index of group
-  const name:string = httpOriginUrlParser.getGroup(originUrl);
-  let group:number = queue[list].groups.findIndex(g => g.name === name);
+  const groupName:string = httpOriginUrlParser.getGroup(originUrl);
+  let group:number = queue[lng].findIndex(g => g.name === name);
   // adding new list and/or group as needed
   let isNewGroup:boolean = false;
   if (group === -1) {
     isNewGroup = true;
     group = 0;
-    queue[list].groups.push({name, cards:[]} as iCardGroup);
+    queue[lng].push({name: groupName, cards: []} as iCardGroup);
   }
 
   let hasModifiedQueue:boolean = false;
@@ -66,31 +68,31 @@ async function addEntriesToQueue (): Promise<any> {
     const audioUrl:string = req.url;
     // pass over if audioUrl TTS name not valid
     const ttsName:string = audioUrlParser.getTTSName(audioUrl);
-    if (!ttsNameMap.find(l => l.lng === lng)?.names?.includes(ttsName)) {
+    if (!ttsNameMap[lng]?.includes(ttsName)) {
       return;
     }
     // pass over if already dealt with
     if (
-      ignored.find(l => l.lng === lng)?.groups?.find(g => g.name === name).some(c => c.audioUrl === audioUrl) ||
-      history.find(l => l.lng === lng)?.groups?.find(g => g.name === name).some(c => c.audioUrl === audioUrl)
+      ignored[lng]?.find(g => g.name === name)?.some(c => c.audioUrl === audioUrl) ||
+      history[lng]?.find(g => g.name === name)?.some(c => c.audioUrl === audioUrl)
     ) {
       return;
     }
     hasModifiedQueue = true; // (everything after this will have modified the queue)
     // if new group or card not present
-    if (isNewGroup || !queue[list].groups[group].cards.includes(c => c.audioUrl === audioUrl)) {
+    if (isNewGroup || !queue[lng][group].cards.includes(c => c.audioUrl === audioUrl)) {
       // add card to (potentially new) group of (potentially new) lng
-      queue[list].groups[group].cards.unshift({audioUrl, pending:true, fields:[]} as iCard);
+      queue[lng][group].cards.unshift({audioUrl, pending:true, fields:[]} as iCard);
       return;
     }
     // if card already exists bump priority
-    queue[list].groups[group].cards.unshift(
-      queue[list].groups[group].cards.splice(
-        queue[list].groups[group].cards.findIndex(c => c.audioUrl === audioUrl), 1
+    queue[lng][group].cards.unshift(
+      queue[lng][group].cards.splice(
+        queue[lng][group].cards.findIndex(c => c.audioUrl === audioUrl), 1
       )
     );
-    queue[list].groups.unshift(
-      queue[list].groups.splice(group, 1)
+    queue[lng].unshift(
+      queue[lng].splice(group, 1)
     );
   });
 

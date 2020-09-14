@@ -15,10 +15,10 @@
 //   save
 
 import { createEventDispatcher, onDestroy } from 'svelte';
-import type { iCard } from '../../interfaces/iCards';
-import { lng, expandedCardId } from '../../store';
-import MediaPlayer from '../MediaPlayer.svelte';
 import audioUrlParser from '../../util/audioUrlParser';
+import { lng, expandedCardId } from '../../store';
+import type { iCard } from '../../interfaces/iCards';
+import MediaPlayer from '../MediaPlayer.svelte';
 
 export let card:iCard;
 export let pending:boolean = false;
@@ -28,13 +28,15 @@ const dispatch = createEventDispatcher();
 const id:string = audioUrlParser.getId(card.audioUrl);
 let isOpen:boolean = false;
 let isPlayBtnPressed:boolean = false;
+let deck:number
+
 
 const unsubFromLng = lng.subscribe(val => { // TODO type
   isOpen = false;
 });
 onDestroy(unsubFromLng);
 
-const unsubFromExpandedCardId = expandedCardId.subscribe(val => val && val !== id && close());
+const unsubFromExpandedCardId = expandedCardId.subscribe(val => val && val !== id && isOpen && close());
 onDestroy(unsubFromExpandedCardId);
 
 function open (): void {

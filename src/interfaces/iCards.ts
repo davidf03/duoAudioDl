@@ -10,6 +10,5 @@ export interface iCardGroup {
 }
 
 export interface iCardList {
-  lng:string;
-  groups:iCardGroup[];
+  [key:string]:iCardGroup[];
 }

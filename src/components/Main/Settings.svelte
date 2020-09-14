@@ -1,163 +1,116 @@
 <script lang="ts">
-import { onDestroy } from 'svelte'
-import type { iTemplate, iDeck, iLngPrefs } from 'src/interfaces/iPrefs';
-import { prefs, lng, loadingStore } from '../../store'
-import ankiConnect from '../../contentScripts/ankiConnect'
-import Spinner from '../Icons/Spinner.svelte'
+import { FALLBACK_DECK_ID } from '../../consts';
+import { onDestroy } from 'svelte';
+import {
+  prefs,
+  lng,
+  deckNamesAndIds,
+  templateNamesAndIds,
+  loadingStore,
+  loadingAnkiDeckNamesAndIds,
+  loadingAnkiTemplateNamesAndIds
+} from '../../store';
+import type { iLngPrefs } from '../../interfaces/iLngPrefs';
+import { iNameAndId } from '../../interfaces/iNameAndId';
+import Spinner from '../Icons/Spinner.svelte';
 
 prefs.useLocalStorage()
 
-const defaultDeckId:number = 1;
+let deckId:number;
+let deckOptions:iNameAndId[];
+let templateId:number;
+let templateOptions:iNameAndId[];
 
-let loadingDecks:boolean = false;
-let decks:iDeck[] = [{
-  id: 0,
-  name: ''
-}];
-let deck:number = decks[0].id;
-
-let loadingTemplates:boolean = false;
-let templates:iTemplate[] = [{
-  id: 0,
-  name: ''
-}];
-let template:number = templates[0].id;
-
-let isConnecting:boolean = true;
-let isConnected:boolean = false;
-let errMsg:string = '';
-
-(async function load (): Promise<any>  { // TODO type
-  isConnecting = true;
-  isConnected = false;
-  const loadDecksPromise:Promise<any> = getDecks(); // TODO type
-  const loadTemplatesPromise:Promise<any> = getTemplates(); // TODO type
-  Promise.all([loadDecksPromise,loadTemplatesPromise])
-    .then(values => {
-      manageDeckData(values[0]);
-      manageTemplateData(values[1]);
-      isConnecting = false;
-      isConnected = true;
-    }).catch(err => {
-      errMsg = err;
-      isConnecting = false;
-    });
-})();
-
-async function getDecks (): Promise<any> {
-  return ankiConnect('deckNamesAndIds', 6);
-}
-async function getTemplates (): Promise<any> {
-  return ankiConnect('modelNamesAndIds', 6);
-}
-function manageDeckData (res): void {
-  decks = Object.keys(res).map(d => ({ name: d, id: res[d] }));
-  // update input to reflect previously set default deck for newly created cards (per lng)
-  if ($loadingStore) {
-    const unsubLoadingStore = loadingStore.subscribe(val => { if (!val) setDeckToLngDefault() }); // TODO type
-    onDestroy(unsubLoadingStore);
-  } else {
-    setDeckToLngDefault();
-  }
-}
-function manageTemplateData (res): void {
-  templates = Object.keys(res).map(t => ({ name: t, id: res[t] }));
-  // update input to reflect previously set default template for newly created cards (per lng)
-  if ($loadingStore) {
-    const unsubLoadingStore = loadingStore.subscribe(val => { if (!val) setTemplateToLngDefault() }); // TODO type
-    onDestroy(unsubLoadingStore);
-  } else {
-    setTemplateToLngDefault();
-  }
-}
+const unsubFromLoadingStore = loadingStore.subscribe(val => {
+  setDeckToLngDefault();
+  setTemplateToLngDefault();
+});
+onDestroy(unsubFromLoadingStore);
 
 const unsubFromLng = lng.subscribe(l => { // TODO type
-  if (isConnecting || !isConnected) return;
   setDeckToLngDefault();
   setTemplateToLngDefault();
 });
 onDestroy(unsubFromLng);
 
 function setDeckToLngDefault (): void {
-  // if pref exists and can be found, otherwise use true default
-  const lngDeckPref = $prefs?.lngPrefs?.find(lp => lp.lng === $lng)?.deck;
-  deck = lngDeckPref && decks.find(d => d.id === lngDeckPref)?.id
-    || decks.find(d => d.id === defaultDeckId)?.id
-    || decks.map(d => d.id).sort()[0]
-    || 0
+  // if pref exists and can be found, otherwise use fallbacks
+  const lngPref = $prefs?.lngs?.[$lng]?.deckNameAndId;
+  deckId = lngPref && $deckNamesAndIds.find(d => d.id === lngPref.id)?.id
+    || FALLBACK_DECK_ID && $deckNamesAndIds.find(d => d.id === FALLBACK_DECK_ID)?.id
+    || $deckNamesAndIds.sort((a, b) => a.id > b.id)?.[0]?.id
 }
+
 function setTemplateToLngDefault (): void {
-  // if pref exists and can be found, otherwise use true default
-  const lngTemplatePref = $prefs?.lngPrefs?.find(lp => lp.lng === $lng)?.template;
-  template = lngTemplatePref && templates.find(t => t.id === lngTemplatePref)?.id
-    || templates.map(t => t.id).sort()[0]
-    || 0
+  // if pref exists and can be found, otherwise use fallbacks
+  const lngPref = $prefs?.lngs?.[$lng]?.templateNameAndId;
+  templateId = lngPref && $templateNamesAndIds.find(t => t.id === lngPref)?.id
+    || $templateNamesAndIds.sort((a, b) => a.id > b.id)?.[0]?.id
 }
 
 function onBlurDecks (): void {
-  let lngPrefs = $prefs?.lngPrefs?.find(lp => lp.lng === $lng);
+  const deckNameAndId = $deckNamesAndIds.find(d => d.id === deckId);
+  const lngPrefs = $prefs?.lngs?.[$lng];
   if (lngPrefs) {
-    lngPrefs.deck = deck;
+    lngPrefs.deckNameAndId = deckNameAndId;
     return;
   }
-  lngPrefs = {lng: $lng, deck} as iLngPrefs;
-  $prefs.lngPrefs
-    ? ($prefs.lngPrefs.push(lngPrefs), $prefs.lngPrefs = $prefs.lngPrefs) // TODO study need for assignment for reactivity
-    : $prefs.lngPrefs = [lngPrefs] as iLngPrefs[];
+  $prefs.lngs ??= {};
+  $prefs.lngs[$lng] ??= {};
+  $prefs.lngs[$lng].deckNameAndId = deckNameAndId;
 }
+
 function onBlurTemplates (): void {
-  let lngPrefs = $prefs?.lngPrefs?.find(lp => lp.lng === $lng);
+  const templateNameAndId = $templateNamesAndIds.find(t => t.id === templateId);
+  const lngPrefs = $prefs?.lngs?.[$lng];
   if (lngPrefs) {
-    lngPrefs.template = template;
+    lngPrefs.templateNameAndId = templateNameAndId;
     return;
   }
-  lngPrefs = {lng: $lng, template} as iLngPrefs;
-  $prefs.lngPrefs
-    ? ($prefs.lngPrefs.push(lngPrefs), $prefs.lngPrefs = $prefs.lngPrefs) // TODO study need for assignment for reactivity
-    : $prefs.lngPrefs = [lngPrefs] as iLngPrefs[];
+  $prefs.lngs ??= {};
+  $prefs.lngs[$lng] ??= {};
+  $prefs.lngs[$lng].templateNameAndId = templateNameAndId;
 }
 </script>
 
-{#if isConnecting}
+{#if $loadingStore}
   <div class="aud-u-ta-c">
     <Spinner />
   </div>
-{:else if !isConnected}
-  <p>Could not connect to Anki</p>
 {:else}
-  <label for="deck-selector">Create cards in deck</label>
+  <label for="settings-deck-selector">Create cards in deck</label>
   <select
-    id="deck-selector"
-    bind:value={deck}
+    id="settings-deck-selector"
+    bind:value={deckId}
     on:blur={onBlurDecks}
-    disabled={$loadingStore || loadingDecks || decks.length === 0}
+    disabled={deckOptions.length === 0}
   >
-    {#if deck === 0}
+    {#if deckOptions.length === 0}
       <option checked>No decks found</option>
     {:else}
-      {#each decks as d}
+      {#each deckOptions as d}
         <option
           value={d.id}
-          checked={d.id === deck}
+          checked={d.id === deckId}
         >{d.name}</option>
       {/each}
     {/if}
   </select>
 
-  <label for="deck-selector">Use template</label>
+  <label for="settings-template-selector">Use template</label>
   <select
-    id="deck-selector"
-    bind:value={template}
+    id="settings-template-selector"
+    bind:value={templateId}
     on:blur={onBlurTemplates}
-    disabled={$loadingStore || loadingTemplates || templates.length === 0}
+    disabled={templateOptions.length === 0}
   >
-    {#if template === 0}
+    {#if templateOptions.length === 0}
       <option checked>No templates found</option>
     {:else}
-      {#each templates as t}
+      {#each templateOptions as t}
         <option
           value={t.id}
-          checked={t.id === template}
+          checked={t.id === templateId}
         >{t.name}</option>
       {/each}
     {/if}
