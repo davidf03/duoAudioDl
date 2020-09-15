@@ -16,6 +16,8 @@ import Spinner from '../Icons/Spinner.svelte';
 
 prefs.useLocalStorage()
 
+const fallbackDeckId = FALLBACK_DECK_ID;
+
 let deckId:number;
 let deckOptions:iNameAndId[] = $deckNamesAndIds.sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0);
 let templateId:number;
@@ -40,7 +42,7 @@ function setDeckToLngDefault (): void {
   // if pref exists and can be found, otherwise use fallbacks
   const lngPref = $prefs?.lngs?.[$lng]?.deckNameAndId;
   deckId = lngPref && $deckNamesAndIds.find(d => d.id === lngPref.id)?.id
-    || $deckNamesAndIds.some(d => d.id === FALLBACK_DECK_ID) && FALLBACK_DECK_ID
+    || $deckNamesAndIds.some(d => d.id === fallbackDeckId) && fallbackDeckId
     || $deckNamesAndIds.sort((a, b) => a.id > b.id ? 1 : a.id < b.id ? -1 : 0)?.[0]?.id
 }
 
