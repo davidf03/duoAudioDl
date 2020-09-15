@@ -24,7 +24,6 @@ let templateId:number;
 let templateOptions:iNameAndId[] = $templateNamesAndIds.sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0);
 
 const unsubFromLoadingStore = loadingStore.subscribe(val => {
-  console.log($prefs);
   if (val) return;
   setDeckToLngDefault();
   setTemplateToLngDefault();
