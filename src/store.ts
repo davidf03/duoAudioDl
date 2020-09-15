@@ -15,7 +15,7 @@ const createWritableStore = (key:string, startValue:any) => {
   return {
     subscribe,
     set,
-    useLocalStorage: () => {
+    useLocalStorage: (): void => {
       const json:string = localStorage.getItem(key);
       if (json) {
         set(JSON.parse(json));
@@ -94,21 +94,45 @@ browser.storage.local.get([
 
 // getting updates
 // getAnkiUpdates('findCards', 6, updateLocalHistory);
-getAnkiUpdates('deckNamesAndIds', 6, updateLocalDeckNamesAndIds);
-getAnkiUpdates('modelNamesAndIds', 6, updateLocalTemplateNamesAndIds);
+getAnkiUpdates(
+  'deckNamesAndIds', 6,
+  ankiParser.namesAndIds.from,
+  deckNamesAndIds, loadingAnkiDeckNamesAndIds
+);
+// getAnkiUpdates('modelNamesAndIds', 6, updateLocalTemplateNamesAndIds);
 // getAnkiUpdates('findModels', 6, updateLocalTemplates);
 
-interface iFunction<T> {
-  (data: T): void;
+interface iStore<T, U> {
+  useLocalStorage: ()=>T;
+  set: (val:U)=>T;
 }
-async function getAnkiUpdates <T>(action:string, version:number, callback:iFunction<T>): Promise<any> {
+interface iParserMethod<T, U> {
+  (data:T): U;
+}
+interface iUpdatesCallback<T, U, V, W> {
+  (data:T, parserMethod:iParserMethod<T, V>, store:iStore<U, W>, storeLoading:iStore<U, W>): void;
+}
+async function getAnkiUpdates
+  <T, U, V, W>(
+    action:string,
+    version:number,
+    parserMethod:iParserMethod<T, V>,
+    store:iStore<U,W>,
+    storeLoading:iStore<U,W>,
+    callback:iUpdatesCallback<T, U, V, W> = getAnkiUpdatesCallback
+  ): Promise<any> {
   ankiconnect.invoke(action, version).then(res => {
     if (loadingStore) {
-      loadingStore.subscribe(val => !val && callback(res as T))
+      // loadingStore.subscribe(val => !val && getAnkiUpdatesCallback(res as T, store as store<U>, storeLoading as store<U>))
       return;
     }
-    callback(res as T);
+    callback(res as T, parserMethod, store, storeLoading);
   });
+}
+function getAnkiUpdatesCallback <T, U, V, W>(data:T, parserMethod:iParserMethod<T, V>, store:iStore<U, W>, storeLoading:iStore<U, W>): void {
+  store.useLocalStorage();
+  store.set(parserMethod(data));
+  storeLoading.set(false);
 }
 // function updateLocalHistory (data:iCardAnki[]): void {
 //   // const ankiCards = ankiParser.cards.from(data);
@@ -123,11 +147,11 @@ function updateLocalDeckNamesAndIds (data:iNamesAndIdsAnki): void {
   deckNamesAndIds.set(ankiParser.namesAndIds.from(data));
   loadingAnkiDeckNamesAndIds.set(false);
 }
-function updateLocalTemplateNamesAndIds (data:iNamesAndIdsAnki): void {
-  templateNamesAndIds.useLocalStorage();
-  templateNamesAndIds.set(ankiParser.namesAndIds.from(data));
-  loadingAnkiTemplateNamesAndIds.set(false);
-}
+// function updateLocalTemplateNamesAndIds (data:iNamesAndIdsAnki): void {
+//   templateNamesAndIds.useLocalStorage();
+//   templateNamesAndIds.set(ankiParser.namesAndIds.from(data));
+//   loadingAnkiTemplateNamesAndIds.set(false);
+// }
 // function updateLocalTemplates (data:iTemplateAnki[]): void {
 //   templates.useLocalStorage();
 //   templates.set(ankiParser.templates.from(data));
