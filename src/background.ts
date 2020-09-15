@@ -46,10 +46,7 @@ async function addEntriesToQueue (): Promise<any> {
     browser.storage.local.set({ lngs });
   }
 
-  // ensure key exists
-  if (!Object.keys(queue).includes(lng)) {
-    queue.push({[lng]: []} as iCardList);
-  }
+  queue[lng] ??= [] as iCardGroup[];
 
   //find index of group
   const groupName:string = httpOriginUrlParser.getGroup(originUrl);
@@ -59,7 +56,6 @@ async function addEntriesToQueue (): Promise<any> {
   if (typeof(group) !== 'number' || group === -1) {
     isNewGroup = true;
     group = 0;
-    queue[lng] ??= [];
     queue[lng].push({name: groupName, cards: []} as iCardGroup);
   }
 
