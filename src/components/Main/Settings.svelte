@@ -17,11 +17,12 @@ import Spinner from '../Icons/Spinner.svelte';
 prefs.useLocalStorage()
 
 let deckId:number;
-let deckOptions:iNameAndId[] = $deckNamesAndIds;
+let deckOptions:iNameAndId[] = $deckNamesAndIds.sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0);
 let templateId:number;
-let templateOptions:iNameAndId[] = $templateNamesAndIds;
+let templateOptions:iNameAndId[] = $templateNamesAndIds.sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0);
 
 const unsubFromLoadingStore = loadingStore.subscribe(val => {
+  console.log($prefs);
   if (val) return;
   setDeckToLngDefault();
   setTemplateToLngDefault();
@@ -40,38 +41,26 @@ function setDeckToLngDefault (): void {
   const lngPref = $prefs?.lngs?.[$lng]?.deckNameAndId;
   deckId = lngPref && $deckNamesAndIds.find(d => d.id === lngPref.id)?.id
     || $deckNamesAndIds.some(d => d.id === FALLBACK_DECK_ID) && FALLBACK_DECK_ID
-    || $deckNamesAndIds.sort((a, b) => a.id > b.id)?.[0]?.id
+    || $deckNamesAndIds.sort((a, b) => a.id > b.id ? 1 : a.id < b.id ? -1 : 0)?.[0]?.id
 }
 
 function setTemplateToLngDefault (): void {
   // if pref exists and can be found, otherwise use fallbacks
   const lngPref = $prefs?.lngs?.[$lng]?.templateNameAndId;
-  templateId = lngPref && $templateNamesAndIds.find(t => t.id === lngPref)?.id
-    || $templateNamesAndIds.sort((a, b) => a.id > b.id)?.[0]?.id
+  templateId = lngPref && $templateNamesAndIds.find(t => t.id === lngPref.id)?.id
+    || $templateNamesAndIds.sort((a, b) => a.id > b.id ? 1 : a.id < b.id ? -1 : 0)?.[0]?.id
 }
 
 function onBlurDecks (): void {
-  const deckNameAndId = $deckNamesAndIds.find(d => d.id === deckId);
-  const lngPrefs = $prefs?.lngs?.[$lng];
-  if (lngPrefs) {
-    lngPrefs.deckNameAndId = deckNameAndId;
-    return;
-  }
   $prefs.lngs ??= {};
   $prefs.lngs[$lng] ??= {};
-  $prefs.lngs[$lng].deckNameAndId = deckNameAndId;
+  $prefs.lngs[$lng].deckNameAndId = $deckNamesAndIds.find(d => d.id === deckId);
 }
 
 function onBlurTemplates (): void {
-  const templateNameAndId = $templateNamesAndIds.find(t => t.id === templateId);
-  const lngPrefs = $prefs?.lngs?.[$lng];
-  if (lngPrefs) {
-    lngPrefs.templateNameAndId = templateNameAndId;
-    return;
-  }
   $prefs.lngs ??= {};
   $prefs.lngs[$lng] ??= {};
-  $prefs.lngs[$lng].templateNameAndId = templateNameAndId;
+  $prefs.lngs[$lng].templateNameAndId = $templateNamesAndIds.find(t => t.id === templateId);
 }
 </script>
 
@@ -88,12 +77,12 @@ function onBlurTemplates (): void {
     disabled={deckOptions.length === 0}
   >
     {#if deckOptions.length === 0}
-      <option checked>No decks found</option>
+      <option selected>No decks found</option>
     {:else}
       {#each deckOptions as d}
         <option
           value={d.id}
-          checked={d.id === deckId}
+          selected={d.id === deckId}
         >{d.name}</option>
       {/each}
     {/if}
@@ -107,12 +96,12 @@ function onBlurTemplates (): void {
     disabled={templateOptions.length === 0}
   >
     {#if templateOptions.length === 0}
-      <option checked>No templates found</option>
+      <option selected>No templates found</option>
     {:else}
       {#each templateOptions as t}
         <option
           value={t.id}
-          checked={t.id === templateId}
+          selected={t.id === templateId}
         >{t.name}</option>
       {/each}
     {/if}
