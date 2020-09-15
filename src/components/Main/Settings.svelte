@@ -37,7 +37,7 @@ function setDeckToLngDefault (): void {
   // if pref exists and can be found, otherwise use fallbacks
   const lngPref = $prefs?.lngs?.[$lng]?.deckNameAndId;
   deckId = lngPref && $deckNamesAndIds.find(d => d.id === lngPref.id)?.id
-    || FALLBACK_DECK_ID && $deckNamesAndIds.find(d => d.id === FALLBACK_DECK_ID)?.id
+    || $deckNamesAndIds.find(d => d.id === FALLBACK_DECK_ID)?.id
     || $deckNamesAndIds.sort((a, b) => a.id > b.id)?.[0]?.id
 }
 
