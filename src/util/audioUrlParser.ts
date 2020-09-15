@@ -1,4 +1,4 @@
 export default {
-  getId: (url) => url.split('/').reverse()[0],
-  getTTSName: (url) => url.split('/').reverse()[1]
+  getId: url => url.split('/').reverse()[0],
+  getTTSName: url => url.split('/').reverse()[1]
 };

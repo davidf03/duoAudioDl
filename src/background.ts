@@ -53,12 +53,13 @@ async function addEntriesToQueue (): Promise<any> {
 
   //find index of group
   const groupName:string = httpOriginUrlParser.getGroup(originUrl);
-  let group:number = queue[lng].findIndex(g => g.name === name);
+  let group:number = queue[lng]?.findIndex(g => g.name === name);
   // adding new list and/or group as needed
   let isNewGroup:boolean = false;
-  if (group === -1) {
+  if (typeof(group) !== 'number' || group === -1) {
     isNewGroup = true;
     group = 0;
+    queue[lng] ??= [];
     queue[lng].push({name: groupName, cards: []} as iCardGroup);
   }
 

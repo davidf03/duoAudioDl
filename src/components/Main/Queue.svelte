@@ -1,13 +1,13 @@
 <script lang="ts">
 import { onDestroy } from 'svelte';
 import { assign } from 'svelte/internal';
-import type { iCardList } from '../../interfaces/iCards';
+import type { iCardGroup } from '../../interfaces/iCards';
 import { queue, lng, loadingStore } from '../../store';
 import CardList from '../Cards/CardList.svelte';
 
-let cardList:iCardList;
-function assignCardList () { // TODO come back to this re: needing assignment for reactivity
-  cardList = $queue.find(l => l.lng === $lng);
+let cardGroups:iCardGroup[];
+function assignCardList (): void {
+  cardGroups = $queue?.[$lng];
 };
 
 const unsubFromLoadingStore = queue.subscribe(val => !val && assignCardList());
@@ -20,9 +20,9 @@ onDestroy(unsubFromLng);
 </script>
 
 <div class="aud-c-home">
-  {#if $lng && cardList}
-    {#if cardList.groups.length > 0}
-      <CardList {cardList} pending/>
+  {#if $lng}
+    {#if cardGroups.length > 0}
+      <CardList {cardGroups} pending/>
     {:else}
       <p>No cards in queue</p>
     {/if}

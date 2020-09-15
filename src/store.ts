@@ -93,10 +93,10 @@ browser.storage.local.get([
 });
 
 // getting updates
-getAnkiUpdates('findCards', 6, updateLocalHistory);
+// getAnkiUpdates('findCards', 6, updateLocalHistory);
 getAnkiUpdates('deckNamesAndIds', 6, updateLocalDeckNamesAndIds);
-getAnkiUpdates('templateNamesAndIds', 6, updateLocalTemplateNamesAndIds);
-getAnkiUpdates('templates', 6, updateLocalTemplates);
+getAnkiUpdates('modelNamesAndIds', 6, updateLocalTemplateNamesAndIds);
+// getAnkiUpdates('findModels', 6, updateLocalTemplates);
 
 interface iFunction<T> {
   (data: T): void;
@@ -110,14 +110,14 @@ async function getAnkiUpdates <T>(action:string, version:number, callback:iFunct
     callback(res as T);
   });
 }
-function updateLocalHistory (data:iCardAnki[]): void {
-  // const ankiCards = ankiParser.cards.from(data);
-  // const historyLocal = history;
-  // cards.forEach(); // by some id, update information in matching cards in history
-  history.useLocalStorage();
-  // history.set(historyLocal);
-  loadingAnkiCards.set(false);
-}
+// function updateLocalHistory (data:iCardAnki[]): void {
+//   // const ankiCards = ankiParser.cards.from(data);
+//   // const historyLocal = history;
+//   // cards.forEach(); // by some id, update information in matching cards in history
+//   history.useLocalStorage();
+//   // history.set(historyLocal);
+//   loadingAnkiCards.set(false);
+// }
 function updateLocalDeckNamesAndIds (data:iNamesAndIdsAnki): void {
   deckNamesAndIds.useLocalStorage();
   deckNamesAndIds.set(ankiParser.namesAndIds.from(data));
@@ -128,8 +128,8 @@ function updateLocalTemplateNamesAndIds (data:iNamesAndIdsAnki): void {
   templateNamesAndIds.set(ankiParser.namesAndIds.from(data));
   loadingAnkiTemplateNamesAndIds.set(false);
 }
-function updateLocalTemplates (data:iTemplateAnki[]): void {
-  templates.useLocalStorage();
-  templates.set(ankiParser.templates.from(data));
-  loadingAnkiTemplates.set(false);
-}
+// function updateLocalTemplates (data:iTemplateAnki[]): void {
+//   templates.useLocalStorage();
+//   templates.set(ankiParser.templates.from(data));
+//   loadingAnkiTemplates.set(false);
+// }

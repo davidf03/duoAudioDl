@@ -17,17 +17,19 @@ import Spinner from '../Icons/Spinner.svelte';
 prefs.useLocalStorage()
 
 let deckId:number;
-let deckOptions:iNameAndId[];
+let deckOptions:iNameAndId[] = $deckNamesAndIds;
 let templateId:number;
-let templateOptions:iNameAndId[];
+let templateOptions:iNameAndId[] = $templateNamesAndIds;
 
 const unsubFromLoadingStore = loadingStore.subscribe(val => {
+  if (val) return;
   setDeckToLngDefault();
   setTemplateToLngDefault();
 });
 onDestroy(unsubFromLoadingStore);
 
 const unsubFromLng = lng.subscribe(l => { // TODO type
+  if (!$lng) return;
   setDeckToLngDefault();
   setTemplateToLngDefault();
 });
@@ -37,7 +39,7 @@ function setDeckToLngDefault (): void {
   // if pref exists and can be found, otherwise use fallbacks
   const lngPref = $prefs?.lngs?.[$lng]?.deckNameAndId;
   deckId = lngPref && $deckNamesAndIds.find(d => d.id === lngPref.id)?.id
-    || $deckNamesAndIds.find(d => d.id === FALLBACK_DECK_ID)?.id
+    || $deckNamesAndIds.some(d => d.id === FALLBACK_DECK_ID) && FALLBACK_DECK_ID
     || $deckNamesAndIds.sort((a, b) => a.id > b.id)?.[0]?.id
 }
 

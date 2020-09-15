@@ -17,13 +17,14 @@ let isPlaying:boolean = false;
 
 onMount(async () => {
   audioElm = document.getElementById(id);
-  audioElm.addEventListener('ended', (e) => {
-    isPlaying = false;
-  });
+  audioElm.addEventListener('ended', endedEventHandler);
 });
+const endedEventHandler = e => isPlaying = false;
+onDestroy(() => audioElm.removeEventListener('ended', endedEventHandler));
 
 const unsubFromPlayingAudioId = playingAudioId.subscribe(val => val && val !== id && !returnIsPaused() && pause());
 onDestroy(unsubFromPlayingAudioId);
+onDestroy(() => $playingAudioId === id && playingAudioId.set(null));
 
 function returnIsPaused (): boolean {
   return audioElm.paused;
