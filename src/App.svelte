@@ -1,5 +1,5 @@
 <script lang="ts">
-import { lngs, lng, loadingStore } from './store';
+import { lngs, lng, loadingStore, templateNamesAndIds, loadingAnkiTemplateNamesAndIds, deckNamesAndIds, loadingAnkiDeckNamesAndIds } from './store';
 import type { iNavItem } from './interfaces/iNav';
 import Spinner from './components/Icons/Spinner.svelte';
 import Nav from './components/Nav/Nav.svelte';
@@ -8,6 +8,12 @@ import Queue from './components/Main/Queue.svelte';
 import History from './components/Main/History.svelte';
 import Settings from './components/Main/Settings.svelte';
 import Debug from './components/Main/Debug.svelte';
+import { onDestroy } from 'svelte';
+
+const unsubdecks = loadingAnkiDeckNamesAndIds.subscribe(val => !val && console.log($deckNamesAndIds));
+onDestroy(unsubdecks);
+const unsubtemplates = loadingAnkiTemplateNamesAndIds.subscribe(val => !val && console.log($templateNamesAndIds));
+onDestroy(unsubtemplates);
 
 const mainContentId:string = 'main-content';
 const navItems:iNavItem[] = [

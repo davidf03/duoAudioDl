@@ -99,37 +99,47 @@ getAnkiUpdates(
   ankiParser.namesAndIds.from,
   deckNamesAndIds, loadingAnkiDeckNamesAndIds
 );
-// getAnkiUpdates('modelNamesAndIds', 6, updateLocalTemplateNamesAndIds);
+getAnkiUpdates(
+  'modelNamesAndIds', 6,
+  ankiParser.templates.from,
+  templateNamesAndIds, loadingAnkiTemplateNamesAndIds
+);
 // getAnkiUpdates('findModels', 6, updateLocalTemplates);
 
 interface iStore<T, U> {
-  useLocalStorage: ()=>T;
-  set: (val:U)=>T;
+  useLocalStorage: ()=>U;
+  set: (val:T)=>U;
 }
 interface iParserMethod<T, U> {
   (data:T): U;
 }
-interface iUpdatesCallback<T, U, V, W> {
-  (data:T, parserMethod:iParserMethod<T, V>, store:iStore<U, W>, storeLoading:iStore<U, W>): void;
+interface iUpdatesCallback<T, U, V> {
+  (data:T, parserMethod:iParserMethod<T, U>, store:iStore<U, V>, storeLoading:iStore<boolean, V>): void;
 }
 async function getAnkiUpdates
-  <T, U, V, W>(
+  <T, U, V>(
     action:string,
     version:number,
-    parserMethod:iParserMethod<T, V>,
-    store:iStore<U,W>,
-    storeLoading:iStore<U,W>,
-    callback:iUpdatesCallback<T, U, V, W> = getAnkiUpdatesCallback
+    parserMethod:iParserMethod<T, U>,
+    store:iStore<U,V>,
+    storeLoading:iStore<boolean,V>,
+    callback:iUpdatesCallback<T, U, V> = getAnkiUpdatesCallback
   ): Promise<any> {
   ankiconnect.invoke(action, version).then(res => {
     if (loadingStore) {
-      // loadingStore.subscribe(val => !val && getAnkiUpdatesCallback(res as T, store as store<U>, storeLoading as store<U>))
+      loadingStore.subscribe(val => !val && callback(res as T, parserMethod, store, storeLoading))
       return;
     }
-    callback(res as T, parserMethod, store, storeLoading);
+    return callback(res as T, parserMethod, store, storeLoading);
   });
 }
-function getAnkiUpdatesCallback <T, U, V, W>(data:T, parserMethod:iParserMethod<T, V>, store:iStore<U, W>, storeLoading:iStore<U, W>): void {
+function getAnkiUpdatesCallback
+  <T, U, V>(
+    data:T,
+    parserMethod:iParserMethod<T, U>,
+    store:iStore<U, V>,
+    storeLoading:iStore<boolean, V>
+  ): void {
   store.useLocalStorage();
   store.set(parserMethod(data));
   storeLoading.set(false);
