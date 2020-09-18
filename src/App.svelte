@@ -58,9 +58,7 @@ let currentSection:iNavItem = navItems[0]
 
 const unsubFromConnectedToAnki = connectedToAnki.subscribe(val => {
   if (val) return;
-  console.log('received updated re: rejection');
   if ($notifications.find(n => n.code === 0)) return;
-  console.log('notification exists already')
   const ns = $notifications;
   ns.push({
     id: uuid(),

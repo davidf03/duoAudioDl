@@ -7,7 +7,6 @@ import type { iNameAndId } from './interfaces/iNameAndId';
 import type { iTemplate } from './interfaces/iTemplate';
 import type { iCardAnki } from './interfaces/iCardAnki';
 import type { iTemplateAnki } from './interfaces/iTemplateAnki';
-import { iNamesAndIdsAnki } from './interfaces/iNamesAndIdsAnki';
 import { iNotification } from './interfaces/iNotification';
 
 const createWritableStore = (key:string, startValue:any) => {
@@ -153,7 +152,6 @@ async function initJointStore
   Promise.allSettled([localPromise, ankiPromise]).then(res => {
     let data:U;
     if (res[1].status === 'rejected') {
-      console.log('rejected');
       connectedToAnki.set(false);
       data = res[0].value as U;
     } else {
