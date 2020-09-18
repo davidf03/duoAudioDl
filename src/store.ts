@@ -34,6 +34,7 @@ export const lng = createWritableStore('lng', '' as string);
 export const queue = createWritableStore('queue', {} as iCardList);
 export const ignored = createWritableStore('ignored', {} as iCardList);
 export const prefs = createWritableStore('prefs', {} as iPrefs);
+export const templateHistory = createWritableStore('templateHistory', [] as iTemplate[])
 
 // joint stores (need sync)
 export const history = createWritableStore('cards', {} as iCardList);
@@ -48,9 +49,14 @@ export const expandedCardId = writable();
 // stores to represent the state of getting stores (lol)
 export const loadingStore = writable(true);
 export const loadingAnkiCards = writable(true);
+export const loadedAnkiCards = writable(false);
 export const loadingAnkiDeckNamesAndIds = writable(true);
+export const loadedAnkiDeckNamesAndIds = writable(false);
 export const loadingAnkiTemplateNamesAndIds = writable(true);
+export const loadedAnkiTemplateNamesAndIds = writable(false);
 export const loadingAnkiTemplates = writable(true);
+export const loadedAnkiTemplates = writable(false);
+export const connectedToAnki = writable(true);
 
 // init permanent stores
 browser.storage.local.get([
@@ -58,14 +64,16 @@ browser.storage.local.get([
   'lng',
   'queue',
   'ignored',
-  'prefs'
+  'prefs',
+  'templateHistory'
 ]).then(res => {
   const {
     lngs: lngsLocal,
     lng: lngLocal,
     queue: queueLocal,
     ignored: ignoredLocal,
-    prefs: prefsLocal
+    prefs: prefsLocal,
+    templateHistory: templateHistoryLocal
   } = res;
 
   lngsLocal && lngs.set(lngsLocal);
@@ -73,6 +81,7 @@ browser.storage.local.get([
   queueLocal && queue.set(queueLocal);
   ignoredLocal && ignored.set(ignoredLocal);
   prefsLocal && prefs.set(prefsLocal);
+  templateHistoryLocal && templateHistory.set(templateHistoryLocal);
 
   loadingStore.set(false);
 });
@@ -81,13 +90,13 @@ browser.storage.local.get([
 initJointStore(
   'deckNamesAndIds',
   'deckNamesAndIds', 6,
-  deckNamesAndIds, loadingAnkiDeckNamesAndIds,
+  deckNamesAndIds, loadingAnkiDeckNamesAndIds, loadedAnkiDeckNamesAndIds,
   ankiParser.namesAndIds.from
 );
 initJointStore(
   'templateNamesAndIds',
   'modelNamesAndIds', 6,
-  templateNamesAndIds, loadingAnkiTemplateNamesAndIds,
+  templateNamesAndIds, loadingAnkiTemplateNamesAndIds, loadedAnkiTemplateNamesAndIds,
   ankiParser.templates.from
 );
 // initJointStore(
@@ -98,7 +107,6 @@ initJointStore(
 // );
 // getAnkiUpdates(
 //   'templates',
-//   [],
 //   'findModels', 6,
 //   templates, loadingAnkiTemplates,
 //   integrateTemplateUpdates
@@ -120,6 +128,7 @@ async function initJointStore
     version:number,
     store:iStore<U, V>,
     storeLoader:iStore<boolean, V>,
+    storeLoaderDone:iStore<boolean, V>,
     callback:iUpdatesCallback<T, U>
   ): Promise<any> {
   // load anki and local simultaneously; last to load calls callback; if local loads first set store while updates from anki load
@@ -128,12 +137,16 @@ async function initJointStore
   Promise.allSettled([localPromise, ankiPromise]).then(res => {
     let data:U;
     if (res[1].status === 'rejected') {
+      connectedToAnki.set(false);
       data = res[0].value;
     } else {
       data = callback(res[1].value as T, res[0].value as U); // TODO is potentially overloading ankiParser illegal in ts?
     }
-    store.useLocalStorage();
-    data && store.set(data);
+    if (data) {
+      store.useLocalStorage();
+      store.set(data);
+    }
+    res[1].status !== 'rejected' && storeLoaderDone.set(true);
     storeLoader.set(false);
   });
 }
