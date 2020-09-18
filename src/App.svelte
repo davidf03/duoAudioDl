@@ -10,11 +10,6 @@ import Settings from './components/Main/Settings.svelte';
 import Debug from './components/Main/Debug.svelte';
 import { onDestroy } from 'svelte';
 
-const unsubdecks = loadingAnkiDeckNamesAndIds.subscribe(val => !val && console.log($deckNamesAndIds));
-onDestroy(unsubdecks);
-const unsubtemplates = loadingAnkiTemplateNamesAndIds.subscribe(val => !val && console.log($templateNamesAndIds));
-onDestroy(unsubtemplates);
-
 const mainContentId:string = 'main-content';
 const navItems:iNavItem[] = [
   {
@@ -58,7 +53,7 @@ function moveToSection (e): void {
 }
 </script>
 
-<div class="aud-c-main">
+<div class="dag-c-main">
   <Nav
     skipId={mainContentId}
     {navItems}
