@@ -1,16 +1,25 @@
 <script lang="ts">
 // appear from bottom, unfold, give info/options like undo last action
-
-import { iNotification } from '../../interfaces/iNotification';
+import { notifications } from '../../store';
+import type { iNotification } from '../../interfaces/iNotification';
 import Notification from './Notification.svelte';
+import { onDestroy } from 'svelte';
 
-export const notifications:iNotification[] = [];
+let notificationList:iNotification[];
+
+const unsub = notifications.subscribe(val => notificationList = val);
+onDestroy(unsub);
 </script>
 
 <div class="dag-c-notifier">
-  <ul>
-    {#each notifications as notification}
-      <Notification {notification} classlist="dag-c-notifier__item" />
+  <ul class="dag-o-semantic-list">
+    {#each notificationList as notification}
+      <li>
+        <Notification
+          {notification}
+          classlist="dag-c-notifier__item"
+        />
+      </li>
     {/each}
   </ul>
 </div>

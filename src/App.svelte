@@ -1,9 +1,22 @@
 <script lang="ts">
-import { lngs, lng, loadingStore, templateNamesAndIds, loadingAnkiTemplateNamesAndIds, deckNamesAndIds, loadingAnkiDeckNamesAndIds } from './store';
+import { v4 as uuid } from 'uuid';
+import {
+  lngs,
+  lng,
+  loadingStore,
+  templateNamesAndIds,
+  loadingAnkiTemplateNamesAndIds,
+  deckNamesAndIds,
+  loadingAnkiDeckNamesAndIds,
+  connectedToAnki,
+  notifications
+} from './store';
 import type { iNavItem } from './interfaces/iNav';
+import type { iNotification } from './interfaces/iNotification';
 import Spinner from './components/Icons/Spinner.svelte';
 import Nav from './components/Nav/Nav.svelte';
 import LanguageSelector from './components/LanguageSelector.svelte';
+import Notifier from './components/Notifier/Notifier.svelte';
 import Queue from './components/Main/Queue.svelte';
 import History from './components/Main/History.svelte';
 import Settings from './components/Main/Settings.svelte';
@@ -43,6 +56,23 @@ const navItems:iNavItem[] = [
 ]
 let currentSection:iNavItem = navItems[0]
 
+const unsubFromConnectedToAnki = connectedToAnki.subscribe(val => {
+  if (val) return;
+  console.log('received updated re: rejection');
+  if ($notifications.find(n => n.code === 0)) return;
+  console.log('notification exists already')
+  const ns = $notifications;
+  ns.push({
+    id: uuid(),
+    code: 0,
+    priority: 0,
+    message: 'No connection to Anki',
+    duration: 0
+  } as iNotification);
+  $notifications = ns;
+});
+onDestroy(unsubFromConnectedToAnki);
+
 function moveToSection (e): void {
   const { alias } = e.detail;
   if (alias === currentSection.alias) {
@@ -70,4 +100,5 @@ function moveToSection (e): void {
       <svelte:component this={currentSection.component}/>
     {/if}
   </div>
+  <Notifier />
 </div>

@@ -1,5 +1,7 @@
 export interface iNotification {
+  id:string;
+  code:number;
   priority:number;
-  text:string;
+  message:string;
   duration:number;
 }

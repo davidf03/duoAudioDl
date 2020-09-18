@@ -1,6 +1,7 @@
 <script lang="ts">
 // appear from bottom, unfold, give info/options like undo last action
-import { iNotification } from "src/interfaces/iNotification";
+import { notifications } from '../../store';
+import type { iNotification } from "src/interfaces/iNotification";
 
 export let classlist:string;
 export let notification:iNotification;
@@ -13,6 +14,13 @@ switch (notification.priority) {
 }
 let modifier:string = 'dag-c-notification--' + modifierFragment;
 
+function onClick (e): void {
+  notifications.clearById(notification.id);
+}
+
 </script>
 
-<div class={`${classlist} dag-c-notification ${modifier}`}>{notification.text}</div>
+<div
+  on:click={onClick}
+  class={`${classlist} dag-c-notification ${modifier}`}
+>{notification.message}</div>

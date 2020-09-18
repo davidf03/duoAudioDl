@@ -8,6 +8,7 @@ import type { iTemplate } from './interfaces/iTemplate';
 import type { iCardAnki } from './interfaces/iCardAnki';
 import type { iTemplateAnki } from './interfaces/iTemplateAnki';
 import { iNamesAndIdsAnki } from './interfaces/iNamesAndIdsAnki';
+import { iNotification } from './interfaces/iNotification';
 
 const createWritableStore = (key:string, startValue:any) => {
   const { subscribe, set } = writable(startValue);
@@ -43,6 +44,21 @@ export const templateNamesAndIds = createWritableStore('templateNamesAndIds', []
 export const templates = createWritableStore('templates', [] as iTemplate[])
 
 // temporary stores
+function createNotifications () {
+  const { subscribe, set, update } = writable([] as iNotification[]);
+
+  return {
+    subscribe,
+    set,
+    clearById: (id:string) => update(ns => {
+      const index = ns.findIndex(n => n.id === id);
+      if (index !== -1) ns.splice(index, 1);
+      return ns;
+    }),
+    clearAll: () => set([] as iNotification[])
+  };
+}
+export const notifications = createNotifications();
 export const playingAudioId = writable();
 export const expandedCardId = writable();
 
@@ -137,6 +153,7 @@ async function initJointStore
   Promise.allSettled([localPromise, ankiPromise]).then(res => {
     let data:U;
     if (res[1].status === 'rejected') {
+      console.log('rejected');
       connectedToAnki.set(false);
       data = res[0].value as U;
     } else {
