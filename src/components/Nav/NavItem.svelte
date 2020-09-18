@@ -14,16 +14,16 @@ function dispatchMoveToSection (): void {
 
 {#if navItem.disabled}
   <span
-    class="aud-c-main-nav-btn aud-u-c-p"
-    class:aud-c-main-nav-btn--toggled={toggled}
+    class="dag-c-main-nav-btn dag-u-c-p"
+    class:dag-c-main-nav-btn--toggled={toggled}
   >{navItem.icon}</span>
 {:else}
   <a
     href="#"
     tabindex="0"
     title={navItem.name}
-    class="aud-c-main-nav-btn aud-u-c-p"
-    class:aud-c-main-nav-btn--toggled={toggled}
+    class="dag-c-main-nav-btn dag-u-c-p"
+    class:dag-c-main-nav-btn--toggled={toggled}
     on:click={dispatchMoveToSection}
   >{navItem.icon}</a>
 {/if}

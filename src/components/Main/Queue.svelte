@@ -19,7 +19,7 @@ const unsubFromLng = lng.subscribe(val => { // TODO type
 onDestroy(unsubFromLng);
 </script>
 
-<div class="aud-c-home">
+<div class="dag-c-home">
   {#if $lng}
     {#if cardGroups.length > 0}
       <CardList {cardGroups} pending/>

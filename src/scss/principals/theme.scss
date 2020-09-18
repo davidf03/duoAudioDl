@@ -1,89 +1,89 @@
-$aud-type-font: "Arial, sans-serif";
+$dag-type-font: "Arial, sans-serif";
 
 :root {
   // brand
-  --aud-brand-main-0: #628300;
-  --aud-brand-main-1: #78C800;
-  --aud-brand-main-2: #99e820;
-  --aud-brand-main-3:  #aeed4d;
+  --dag-brand-main-0: #628300;
+  --dag-brand-main-1: #78C800;
+  --dag-brand-main-2: #99e820;
+  --dag-brand-main-3:  #aeed4d;
 
-  --aud-grey-0: #1b1b1b;
-  --aud-grey-1: #333;
-  --aud-grey-2: #565656;
-  --aud-grey-3: #797979;
-  --aud-grey-4: #a2a2a2;
-  --aud-grey-5: #c8c8c8;
-  --aud-grey-6: #f3f3f3;
+  --dag-grey-0: #1b1b1b;
+  --dag-grey-1: #333;
+  --dag-grey-2: #565656;
+  --dag-grey-3: #797979;
+  --dag-grey-4: #a2a2a2;
+  --dag-grey-5: #c8c8c8;
+  --dag-grey-6: #f3f3f3;
 
   // backgrounds
-  --aud-bg: var(--aud-grey-6);
-  --aud-bg-hover: var(--aud-grey-5);
+  --dag-bg: var(--dag-grey-6);
+  --dag-bg-hover: var(--dag-grey-5);
 
   // type
-  --aud-type: var(--aud-grey-2);
-  --aud-type-hover: var(--aud-grey-3);
-  --aud-type-h-xl: var(--aud-brand-main-1);
-  --aud-type-h-l: var(--aud-grey-1);
-  --aud-type-h-m: var(--aud-grey-2);
-  --aud-type-subtle: var(--aud-grey-4);
+  --dag-type: var(--dag-grey-2);
+  --dag-type-hover: var(--dag-grey-3);
+  --dag-type-h-xl: var(--dag-brand-main-1);
+  --dag-type-h-l: var(--dag-grey-1);
+  --dag-type-h-m: var(--dag-grey-2);
+  --dag-type-subtle: var(--dag-grey-4);
 
   // borders
-  --aud-border: var(--aud-grey-4);
-  --aud-border-light: var(--aud-grey-5);
+  --dag-border: var(--dag-grey-4);
+  --dag-border-light: var(--dag-grey-5);
 
   // border radius
-  --aud-border-radius-m: 5px;
-  --aud-border-radius-s: 2px;
+  --dag-border-radius-m: 5px;
+  --dag-border-radius-s: 2px;
   
   // buttons
-  --aud-btn-type: var(--aud-grey-6);
-  --aud-btn-main: var(--aud-brand-main-1);
-  --aud-btn-sides: var(--aud-brand-main-0);
-  --aud-btn-main-hover: var(--aud-brand-main-2);
-  --aud-btn-main-active: var(--aud-brand-main-0);
-  --aud-btn-main-disabled: var(--aud-brand-main-3);
+  --dag-btn-type: var(--dag-grey-6);
+  --dag-btn-main: var(--dag-brand-main-1);
+  --dag-btn-sides: var(--dag-brand-main-0);
+  --dag-btn-main-hover: var(--dag-brand-main-2);
+  --dag-btn-main-active: var(--dag-brand-main-0);
+  --dag-btn-main-disabled: var(--dag-brand-main-3);
 
-  --aud-clear-btn: var(--aud-grey-2);
-  --aud-clear-btn-hover: var(--aud-grey-3);
-  --aud-clear-btn-active: var(--aud-grey-1);
-  --aud-clear-btn-disabled: var(--aud-grey-4);
+  --dag-clear-btn: var(--dag-grey-2);
+  --dag-clear-btn-hover: var(--dag-grey-3);
+  --dag-clear-btn-active: var(--dag-grey-1);
+  --dag-clear-btn-disabled: var(--dag-grey-4);
 
   // icons
-  --aud-spinner-track: #ddd;
-  --aud-spinner-progress: var(--aud-brand-main-1);
+  --dag-spinner-track: #ddd;
+  --dag-spinner-progress: var(--dag-brand-main-1);
 
   // lists
-  --aud-list-separator: var(--aud-border-light);
-  --aud-list-stop: var(--aud-list-separator);
-  --aud-list-collapse-chevron: var(--aud-list-separator);
+  --dag-list-separator: var(--dag-border-light);
+  --dag-list-stop: var(--dag-list-separator);
+  --dag-list-collapse-chevron: var(--dag-list-separator);
 }
 
 // @media (prefers-color-scheme: dark) {
 //   :root {
 //     // backgrounds
-//     --aud-bg: var(--aud-grey-0);
-//     --aud-bg-hover: var(--aud-grey-1);
+//     --dag-bg: var(--dag-grey-0);
+//     --dag-bg-hover: var(--dag-grey-1);
 
 //     // type
-//     --aud-type: var(--aud-grey-4);
-//     --aud-type-hover: var(--aud-grey-3);
-//     --aud-type-h-l: var(--aud-grey-5);
-//     --aud-type-h-m: var(--aud-grey-4);
-//     --aud-type-subtle: var(--aud-grey-2);
+//     --dag-type: var(--dag-grey-4);
+//     --dag-type-hover: var(--dag-grey-3);
+//     --dag-type-h-l: var(--dag-grey-5);
+//     --dag-type-h-m: var(--dag-grey-4);
+//     --dag-type-subtle: var(--dag-grey-2);
 
 //     // borders
-//     --aud-border: var(--aud-grey-2);
-//     --aud-border-light: var(--aud-grey-1);
+//     --dag-border: var(--dag-grey-2);
+//     --dag-border-light: var(--dag-grey-1);
 
 //     //buttons
-//     --aud-clear-btn: var(--aud-grey-4);
-//     --aud-clear-btn-hover: var(--aud-grey-3);
-//     --aud-clear-btn-active: var(--aud-grey-5);
-//     --aud-clear-btn-disabled: var(--aud-grey-2);
+//     --dag-clear-btn: var(--dag-grey-4);
+//     --dag-clear-btn-hover: var(--dag-grey-3);
+//     --dag-clear-btn-active: var(--dag-grey-5);
+//     --dag-clear-btn-disabled: var(--dag-grey-2);
 
 //     // spinner
-//     --aud-spinner-track: var(--aud-grey-1);
+//     --dag-spinner-track: var(--dag-grey-1);
 
-//     --aud-list-collapse-chevron: var(--aud-grey-2);
+//     --dag-list-collapse-chevron: var(--dag-grey-2);
 //   }
 // }

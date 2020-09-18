@@ -1,4 +1,4 @@
-.aud-c-play-icon {
+.dag-c-play-icon {
   display: block;
 
   &__interior {
@@ -6,23 +6,23 @@
   }
 
   &--hover &__circle {
-    fill: var(--aud-btn-main-hover)
+    fill: var(--dag-btn-main-hover)
   }
   &__circle,
   &--pressed &__circle {
-    fill: var(--aud-btn-main);
+    fill: var(--dag-btn-main);
   }
 
   &__height {
-    fill: var(--aud-btn-sides);
+    fill: var(--dag-btn-sides);
   }
 
   &__triangle {
-    fill: var(--aud-btn-type);
+    fill: var(--dag-btn-type);
   }
 
   &__line {
-    stroke: var(--aud-btn-type);
+    stroke: var(--dag-btn-type);
     stroke-linecap: round;
   }
 }

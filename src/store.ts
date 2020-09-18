@@ -97,7 +97,7 @@ initJointStore(
   'templateNamesAndIds',
   'modelNamesAndIds', 6,
   templateNamesAndIds, loadingAnkiTemplateNamesAndIds, loadedAnkiTemplateNamesAndIds,
-  ankiParser.templates.from
+  ankiParser.namesAndIds.from
 );
 // initJointStore(
 //   'history',
@@ -138,7 +138,7 @@ async function initJointStore
     let data:U;
     if (res[1].status === 'rejected') {
       connectedToAnki.set(false);
-      data = res[0].value;
+      data = res[0].value as U;
     } else {
       data = callback(res[1].value as T, res[0].value as U); // TODO is potentially overloading ankiParser illegal in ts?
     }

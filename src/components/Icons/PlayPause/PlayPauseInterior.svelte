@@ -14,10 +14,10 @@ export let barW:number;
 export let barGap:number;
 </script>
 
-<g class="aud-c-play-icon__interior">
+<g class="dag-c-play-icon__interior">
   <circle
     cx={r} cy={r + btnHFull} r={r}
-    class="aud-c-play-icon__height"
+    class="dag-c-play-icon__height"
   />
   <path
     d={`
@@ -26,14 +26,14 @@ export let barGap:number;
       l ${2*r},${0}
       l ${0},${+ btnH}
     `}
-    class="aud-c-play-icon__height"
+    class="dag-c-play-icon__height"
   />
   <circle
     cx={r} cy={r + (btnHFull - btnH)} r={r}
-    class="aud-c-play-icon__circle"
+    class="dag-c-play-icon__circle"
   />
   {#if isPlaying}
-    <path class="aud-c-play-icon__line"
+    <path class="dag-c-play-icon__line"
       d={`
         M ${r - (barGap + barW)/2},${r - barH/2 + (btnHFull - btnH)}
         l 0,${barH}
@@ -43,7 +43,7 @@ export let barGap:number;
       stroke-width={barW}
     />
   {:else}
-    <path class="aud-c-play-icon__triangle"
+    <path class="dag-c-play-icon__triangle"
       d={`
         M ${r - triangleSideL/2*Math.tan(30*Math.PI/180)},${r - triangleSideL/2 + (btnHFull - btnH)}
         l ${triangleSideL/2*Math.tan(60*Math.PI/180)},${triangleSideL/2}
@@ -57,16 +57,16 @@ export let barGap:number;
         l ${triangleSideL/2*Math.tan(60*Math.PI/180)},${triangleSideL/2}
       `}
       stroke-width={triangleStrokeW}
-      class="aud-c-play-icon__line"
+      class="dag-c-play-icon__line"
     />
-    <path class="aud-c-play-icon__line"
+    <path class="dag-c-play-icon__line"
       d={`
         M ${r - triangleSideL/2*Math.tan(30*Math.PI/180)},${r - triangleSideL/2 + (btnHFull - btnH)}
         l 0,${triangleSideL}
       `}
       stroke-width={triangleStrokeW}
     />
-    <path class="aud-c-play-icon__line"
+    <path class="dag-c-play-icon__line"
       d={`
         M ${r - triangleSideL/2*Math.tan(30*Math.PI/180)},${r + triangleSideL/2 + (btnHFull - btnH)}
         l ${triangleSideL/2*Math.tan(60*Math.PI/180)},${- triangleSideL/2}

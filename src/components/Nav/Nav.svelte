@@ -10,17 +10,17 @@ export let navItems:iNavItem[];
 <a
   href={`#${skipId}`}
   tabindex="0"
-  class="aud-c-skip-nav"
+  class="dag-c-skip-nav"
 >Skip Navigation</a>
 
-<div class="aud-c-main-nav">
-  <nav class="aud-c-main-nav">
-    <span class="aud-c-main-nav__brand">Duo-Anki Generator</span>
-    <ul class="aud-c-main-nav__list aud-o-semantic-list">
+<div class="dag-c-main-nav">
+  <nav class="dag-c-main-nav">
+    <span class="dag-c-main-nav__brand">Duo-Anki Generator</span>
+    <ul class="dag-c-main-nav__list dag-o-semantic-list">
       {#each navItems as navItem}
         <li
           aria-hidden={navItem.disabled}
-          class="aud-c-main-nav__item"
+          class="dag-c-main-nav__item"
         >
           <NavItem
             {navItem}

@@ -48,18 +48,18 @@ function describeArc(x:number, y:number, radius:number, startAngle:number, endAn
 <svg
   version="1.1" xmlns="http://www.w3.org/2000/svg"
   viewBox={`0 0 ${2*totalR} ${2*totalR}`}
-  class={`aud-c-spinner ${classlist}`}
+  class={`dag-c-spinner ${classlist}`}
 >
   <g>
     <circle
       cx={totalR} cy={totalR} r={r}
       stroke-width={w}
-      class="aud-c-spinner__track"
+      class="dag-c-spinner__track"
     />
     <path
       d={describeArc(totalR, totalR, r, rotation, rotation + 360*percentage)}
       stroke-width={w}
-      class="aud-c-spinner__progress"
+      class="dag-c-spinner__progress"
     />
   </g>
 </svg>

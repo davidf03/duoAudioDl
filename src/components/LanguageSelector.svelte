@@ -4,12 +4,12 @@ import ISO6391 from 'iso-639-1'
 
 lng.useLocalStorage()
 
-const id:string = 'aud-language-selector-label'
+const id:string = 'dag-language-selector-label'
 </script>
 
 <label
   for={id}
-  class="aud-u-accessible-hidden"
+  class="dag-u-accessible-hidden"
 >Choose Language</label>
 <select
   {id}

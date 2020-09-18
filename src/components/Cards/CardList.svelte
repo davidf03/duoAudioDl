@@ -6,9 +6,9 @@ export let cardGroups:iCardGroup[];
 export let pending:boolean = false;
 </script>
 
-<ol class="aud-c-card-list aud-o-semantic-list">
+<ol class="dag-c-card-list dag-o-semantic-list">
   {#each cardGroups as cardGroup}
-    <li class="aud-c-card-list__group">
+    <li class="dag-c-card-list__group">
       <CardGroup
         {cardGroup}
         {pending}

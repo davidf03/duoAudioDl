@@ -53,17 +53,17 @@ function onClick (e): void {
 </script>
 
 <div
-  class="aud-c-card aud-o-bg-btn-set"
+  class="dag-c-card dag-o-bg-btn-set"
 >
   <MediaPlayer
     audioUrl={card.audioUrl}
-    classlist="aud-o-bg-btn-set__sibling aud-u-d-b"
+    classlist="dag-o-bg-btn-set__sibling dag-u-d-b"
   />
   <!-- <span>{card.audioUrl}</span> -->
   <button
     on:click={onClick}
-    class="aud-o-bg-btn-set__btn aud-o-unbutton"
-  ><span class="aud-u-accessible-hidden">{isOpen ? 'Collapse' : 'Expand'} card</span></button>
+    class="dag-o-bg-btn-set__btn dag-o-unbutton"
+  ><span class="dag-u-accessible-hidden">{isOpen ? 'Collapse' : 'Expand'} card</span></button>
 </div>
 {#if isOpen}
   <div>

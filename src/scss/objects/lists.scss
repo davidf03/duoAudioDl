@@ -1,42 +1,42 @@
-.aud-o-semantic-list {
+.dag-o-semantic-list {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.aud-o-list {
+.dag-o-list {
   
   &__item {
-    padding-block: $aud-gap-m;
-    padding-inline: $aud-gap-l;
+    padding-block: $dag-gap-m;
+    padding-inline: $dag-gap-l;
 
-    border-top: $aud-border-s solid var(--aud-border-light);
-    background-color: var(--aud-bg);
-    color: var(--aud-type);
+    border-top: $dag-border-s solid var(--dag-border-light);
+    background-color: var(--dag-bg);
+    color: var(--dag-type);
   }
-  &__item.aud-is-hovered {
-    background-color: var(--aud-bg-hover);
-    color: var(--aud-brand-main-2);
+  &__item.dag-is-hovered {
+    background-color: var(--dag-bg-hover);
+    color: var(--dag-brand-main-2);
   }
-  &__item.aud-is-active {
-    background-color: var(--aud-bg);
-    color: var(--aud-brand-main-0);
+  &__item.dag-is-active {
+    background-color: var(--dag-bg);
+    color: var(--dag-brand-main-0);
   }
   &__item:last-child {
-    border-bottom: $aud-border-s solid var(--aud-border-light);
+    border-bottom: $dag-border-s solid var(--dag-border-light);
   }
 
   &:after {
     content: "";
     display: block;
     margin-inline: auto;
-    margin-block: $aud-gap-m;
+    margin-block: $dag-gap-m;
 
-    width: $aud-list-stop-w;
-    height: $aud-list-stop-w;
+    width: $dag-list-stop-w;
+    height: $dag-list-stop-w;
 
     border-radius: 50%;
-    background-color: var(--aud-list-stop);
+    background-color: var(--dag-list-stop);
   }
 
 }

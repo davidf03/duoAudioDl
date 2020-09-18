@@ -66,7 +66,7 @@ function onBlurTemplates (): void {
 </script>
 
 {#if $loadingStore}
-  <div class="aud-u-ta-c">
+  <div class="dag-u-ta-c">
     <Spinner />
   </div>
 {:else}

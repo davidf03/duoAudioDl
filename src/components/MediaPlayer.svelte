@@ -50,7 +50,7 @@ function onClickPlay (e): void {
 </audio>
 <button
   on:click={onClickPlay}
-  class={`aud-c-audio-btn aud-o-unbutton ${classlist}`}
+  class={`dag-c-audio-btn dag-o-unbutton ${classlist}`}
 >
   <PlayPause
     {isPlaying}

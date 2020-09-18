@@ -58,9 +58,9 @@ function onMouseOut (e): void {
   on:mousedown={onMouseDown}
   on:mouseup={onMouseUp}
   on:mouseout={onMouseOut}
-  class="aud-c-play-icon"
-  class:aud-c-play-icon--hover={isHovered}
-  class:aud-c-play-icon--pressed={isPressed}
+  class="dag-c-play-icon"
+  class:dag-c-play-icon--hover={isHovered}
+  class:dag-c-play-icon--pressed={isPressed}
 >
   {#if isPressed}
     <PlayPauseInterior

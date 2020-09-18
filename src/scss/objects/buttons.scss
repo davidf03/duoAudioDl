@@ -1,10 +1,10 @@
-.aud-o-unbutton {
+.dag-o-unbutton {
   border: 0;
   padding: 0;
   background: none;
 }
 
-.aud-o-bg-btn-set {
+.dag-o-bg-btn-set {
   position: relative;
 
   &__btn {
@@ -23,50 +23,50 @@
   }
 }
 
-.aud-o-btn {
-  padding-inline: $aud-gap-l;
-  padding-block: $aud-gap-m;
-  font-size: $aud-font-size-m;
+.dag-o-btn {
+  padding-inline: $dag-gap-l;
+  padding-block: $dag-gap-m;
+  font-size: $dag-font-size-m;
 
   &--t-main {
-    border-radius: var(--aud-border-radius-m);
-    background-color: var(--aud-btn);
-    color: var(--aud-btn-type);
+    border-radius: var(--dag-border-radius-m);
+    background-color: var(--dag-btn);
+    color: var(--dag-btn-type);
   }
   &--t-main:hover,
-  &--t-main.aud-is-hover {
-    background-color: var(--aud-btn-hover);
+  &--t-main.dag-is-hover {
+    background-color: var(--dag-btn-hover);
   }
   &--t-main:active,
-  &--t-main.aud-is-active {
-    background-color: var(--aud-btn-active);
+  &--t-main.dag-is-active {
+    background-color: var(--dag-btn-active);
   }
   &--t-main:disabled,
-  &--t-main.aud-is-disabled {
-    cursor: $aud-cursor-disabled;
-    background-color: var(--aud-btn-disabled);
+  &--t-main.dag-is-disabled {
+    cursor: $dag-cursor-disabled;
+    background-color: var(--dag-btn-disabled);
   }
 }
 
-.aud-o-clear-btn {
-  padding-inline: $aud-gap-l;
-  padding-block: $aud-gap-m;
-  font-size: $aud-font-size-m;
+.dag-o-clear-btn {
+  padding-inline: $dag-gap-l;
+  padding-block: $dag-gap-m;
+  font-size: $dag-font-size-m;
 
   &--t-main {
-    color: var(--aud-clear-btn);
+    color: var(--dag-clear-btn);
   }
   &--t-main:hover,
-  &--t-main.aud-is-hover {
-    color: var(--aud-clear-btn-hover);
+  &--t-main.dag-is-hover {
+    color: var(--dag-clear-btn-hover);
   }
   &--t-main:active,
-  &--t-main.aud-is-active {
-    color: var(--aud-clear-btn-active);
+  &--t-main.dag-is-active {
+    color: var(--dag-clear-btn-active);
   }
   &--t-main:disabled,
-  &--t-main.aud-is-disabled {
-    cursor: $aud-cursor-disabled;
-    color: var(--aud-clear-btn-disabled);
+  &--t-main.dag-is-disabled {
+    cursor: $dag-cursor-disabled;
+    color: var(--dag-clear-btn-disabled);
   }
 }
