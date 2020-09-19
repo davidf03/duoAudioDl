@@ -9,19 +9,22 @@ import type { iCardAnki } from './interfaces/iCardAnki';
 import type { iTemplateAnki } from './interfaces/iTemplateAnki';
 import { iNotification } from './interfaces/iNotification';
 
-const createWritableStore = (key:string, startValue:any) => {
-  const { subscribe, set } = writable(startValue);
+const createLocalStore = <T>(key:string, startValue:T): any => {
+  const { subscribe, set: svelteSet } = writable(startValue);
   
   return {
     subscribe,
-    set,
+    set: (val:T): void => svelteSet(val),
+    unset: (): void => svelteSet(startValue),
     useLocalStorage: (): void => {
       const json:string = localStorage.getItem(key);
       if (json) {
-        set(JSON.parse(json));
+        svelteSet(JSON.parse(json));
       }
+      console.log(json);
       
-      subscribe((current:any) => {
+      subscribe(current => {
+        console.log(current);
         localStorage.setItem(key, JSON.stringify(current));
       });
     }
@@ -29,53 +32,71 @@ const createWritableStore = (key:string, startValue:any) => {
 }
 
 // permanent stores
-export const lngs = createWritableStore('lngs', [] as string[]);
-export const lng = createWritableStore('lng', '' as string);
-export const queue = createWritableStore('queue', {} as iCardList);
-export const ignored = createWritableStore('ignored', {} as iCardList);
-export const prefs = createWritableStore('prefs', {} as iPrefs);
-export const templateHistory = createWritableStore('templateHistory', [] as iTemplate[])
+export const lngs = createLocalStore('lngs', [] as string[]);
+export const lng = createLocalStore('lng', '' as string);
+export const queue = createLocalStore('queue', {} as iCardList);
+export const ignored = createLocalStore('ignored', {} as iCardList);
+export const prefs = createLocalStore('prefs', {} as iPrefs);
+export const templateHistory = createLocalStore('templateHistory', [] as iTemplate[])
 
 // joint stores (need sync)
-export const history = createWritableStore('cards', {} as iCardList);
-export const deckNamesAndIds = createWritableStore('deckNamesAndIds', [] as iNameAndId[]);
-export const templateNamesAndIds = createWritableStore('templateNamesAndIds', [] as iNameAndId[]);
-export const templates = createWritableStore('templates', [] as iTemplate[])
+export const history = createLocalStore('cards', {} as iCardList);
+export const deckNamesAndIds = createLocalStore('deckNamesAndIds', [] as iNameAndId[]);
+export const templateNamesAndIds = createLocalStore('templateNamesAndIds', [] as iNameAndId[]);
+export const templates = createLocalStore('templates', [] as iTemplate[])
 
 // temporary stores
-function createNotifications () {
-  const { subscribe, set, update } = writable([] as iNotification[]);
-
+const createNotificationsStore = (): any => {
+  const startValue:iNotification[] = [];
+  const { subscribe, set, update } = writable(startValue);
   return {
     subscribe,
     set,
-    add: (n:iNotification) => update(ns => {
+    add: (n:iNotification): void => update(ns => {
       ns.push(n);
       return ns;
-    });
-    clearById: (id:string) => update(ns => {
+    }),
+    clearById: (id:string): void => update(ns => {
       const index = ns.findIndex(n => n.id === id);
       if (index !== -1) ns.splice(index, 1);
       return ns;
     }),
-    clearAll: () => set([] as iNotification[])
+    clearAll: (): void => set(startValue)
   };
 }
-export const notifications = createNotifications();
-export const playingAudioId = writable();
-export const expandedCardId = writable();
+export const notifications = createNotificationsStore();
+
+const createIdTrackerStore = (): any => {
+  const { subscribe, svelteSet } = writable(null);
+  return {
+    subscribe,
+    set: (id:string): void => svelteSet(id),
+    unset: (): void => svelteSet(null)
+  };
+}
+export const playingAudioId = createIdTrackerStore();
+export const expandedCardId = createIdTrackerStore();
 
 // stores to represent the state of getting stores (lol)
-export const loadingStore = writable(true);
-export const loadingAnkiCards = writable(true);
-export const loadedAnkiCards = writable(false);
-export const loadingAnkiDeckNamesAndIds = writable(true);
-export const loadedAnkiDeckNamesAndIds = writable(false);
-export const loadingAnkiTemplateNamesAndIds = writable(true);
-export const loadedAnkiTemplateNamesAndIds = writable(false);
-export const loadingAnkiTemplates = writable(true);
-export const loadedAnkiTemplates = writable(false);
-export const connectedToAnki = writable(true);
+const createSwitchStore = (initialState:boolean): any => {
+  const { subscribe, set, update } = writable(initialState);
+  return {
+    subscribe,
+    toggle: (): void => update(s => !s),
+    on: (): void => set(true),
+    off: (): void => set(false)
+  };
+}
+export const loadingStore = createSwitchStore(true);
+export const loadingAnkiCards = createSwitchStore(true);
+export const loadedAnkiCards = createSwitchStore(false);
+export const loadingAnkiDeckNamesAndIds = createSwitchStore(true);
+export const loadedAnkiDeckNamesAndIds = createSwitchStore(false);
+export const loadingAnkiTemplateNamesAndIds = createSwitchStore(true);
+export const loadedAnkiTemplateNamesAndIds = createSwitchStore(false);
+export const loadingAnkiTemplates = createSwitchStore(true);
+export const loadedAnkiTemplates = createSwitchStore(false);
+export const connectedToAnki = createSwitchStore(true);
 
 // init permanent stores
 browser.storage.local.get([
@@ -102,7 +123,7 @@ browser.storage.local.get([
   prefsLocal && prefs.set(prefsLocal);
   templateHistoryLocal && templateHistory.set(templateHistoryLocal);
 
-  loadingStore.set(false);
+  loadingStore.off();
 });
 
 
@@ -132,41 +153,48 @@ initJointStore(
 // );
 
 
-interface iStore<T, U> {
+interface iLocalStore<T, U> {
   useLocalStorage: ()=>U;
-  set: (val:T)=>U
+  set: (val:T)=>U;
+}
+interface iSwitchStore<T> {
+  toggle: ()=>T;
+  on: ()=>T;
+  off: ()=>T;
 }
 interface iUpdatesCallback<T, U> {
   (data:T, localData?:U): U;
 }
 
-async function initJointStore
+function initJointStore
   <T, U, V>(
     localKey:string,
     action:string,
     version:number,
-    store:iStore<U, V>,
-    storeLoader:iStore<boolean, V>,
-    storeLoaderDone:iStore<boolean, V>,
+    store:iLocalStore<U, V>,
+    storeLoader:iSwitchStore<V>,
+    storeLoaderDone:iSwitchStore<V>,
     callback:iUpdatesCallback<T, U>
-  ): Promise<any> {
+  ): void {
   // load anki and local simultaneously; last to load calls callback; if local loads first set store while updates from anki load
-  const localPromise = browser.storage.local.get(localKey);
-  const ankiPromise = ankiconnect.invoke(action, version);
+  const ankiPromise:Promise<T> = ankiconnect.invoke(action, version);
+  const localPromise:Promise<U> = browser.storage.local.get(localKey);
   Promise.allSettled([localPromise, ankiPromise]).then(res => {
     let data:U;
     if (res[1].status === 'rejected') {
-      connectedToAnki.set(false);
-      data = res[0].value as U;
+      connectedToAnki.off();
+      data = res[0].value;
     } else {
-      data = callback(res[1].value as T, res[0].value as U); // TODO is potentially overloading ankiParser illegal in ts?
+      data = callback(res[1].value as T, res[0].value); // TODO is potentially overloading ankiParser illegal in ts?
     }
-    if (data) {
+    console.log(data);
+    if (data && Object.keys(data).length !== 0) { // TODO not sure this would always work
+      console.log('has data to set');
       store.useLocalStorage();
       store.set(data);
     }
-    res[1].status !== 'rejected' && storeLoaderDone.set(true);
-    storeLoader.set(false);
+    res[1].status !== 'rejected' && storeLoaderDone.on();
+    storeLoader.off();
   });
 }
 

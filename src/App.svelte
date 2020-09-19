@@ -59,6 +59,9 @@ function buildNavItems (): iNavItem[] {
 };
 let currentSection:iNavItem = navItems[0];
 
+const unsubFromDecks = deckNamesAndIds.subscribe(val => console.log(val));
+onDestroy(unsubFromDecks);
+
 const unsubFromLng = lng.subscribe(l => navItems = buildNavItems());
 onDestroy(unsubFromLng);
 

@@ -1,5 +1,6 @@
+import { v4 as uuid } from 'uuid'; // TODO false error, module not found; seems safe to ignore
 import { ttsNameMap } from './ttsNameMap';
-import { iCard, iCardGroup, iCardList } from './interfaces/iCardss';
+import { iCard, iCardGroup, iCardList } from './interfaces/iCards';
 import httpOriginUrlParser from './util/httpOriginUrlParser';
 import audioUrlParser from './util/audioUrlParser';
 
@@ -23,9 +24,9 @@ function collectNewQueueEntries (req): void {
 
 async function addEntriesToQueue (): Promise<any> {
   const {
-    history = [] as iCardList,
-    ignored = [] as iCardList,
-    queue = [] as iCardList,
+    queue = {} as iCardList,
+    history = {} as iCardList,
+    ignored = {} as iCardList,
     lngs = [] as string[]
   } = await browser.storage.local.get(['lngs','queue','history','ignored']);
 
@@ -56,7 +57,11 @@ async function addEntriesToQueue (): Promise<any> {
   if (typeof(group) !== 'number' || group === -1) {
     isNewGroup = true;
     group = 0;
-    queue[lng].push({name: groupName, cards: []} as iCardGroup);
+    queue[lng].unshift({
+      id: uuid(),
+      name: groupName,
+      cards: []
+    } as iCardGroup);
   }
 
   let hasModifiedQueue:boolean = false;
@@ -79,7 +84,12 @@ async function addEntriesToQueue (): Promise<any> {
     // if new group or card not present
     if (isNewGroup || !queue[lng][group].cards.includes(c => c.audioUrl === audioUrl)) {
       // add card to (potentially new) group of (potentially new) lng
-      queue[lng][group].cards.unshift({audioUrl, pending:true, fields:[]} as iCard);
+      queue[lng][group].cards.unshift({
+        id: uuid(),
+        audioUrl,
+        pending:true,
+        fields:[]
+      } as iCard);
       return;
     }
     // if card already exists bump priority

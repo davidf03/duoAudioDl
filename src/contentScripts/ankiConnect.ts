@@ -1,7 +1,7 @@
 // https://github.com/FooSoft/anki-connect
 export default {
   invoke: (action, version, params={}) => {
-    return new Promise((resolve, reject) => {
+    return new Promise<any>((resolve, reject) => { // TODO understand better how typescript should work here
       const xhr = new XMLHttpRequest();
       xhr.addEventListener('error', () => reject('failed to issue request'));
       xhr.addEventListener('load', () => {
