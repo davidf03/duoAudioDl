@@ -82,7 +82,7 @@ function moveToSection (e): void {
     // reload section ?
     return;
   }
-  currentSection = navItems.find(s => s.alias === e.detail.alias)
+  currentSection = navItems.find(s => s.alias === alias)
 }
 </script>
 
