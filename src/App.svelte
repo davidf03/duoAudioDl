@@ -64,15 +64,13 @@ onDestroy(unsubFromLng);
 
 const unsubFromConnectedToAnki = connectedToAnki.subscribe(val => {
   if (val || $notifications.find(n => n.code === 0)) return;
-  const ns = $notifications;
-  ns.push({
+  notifications.add({
     id: uuid(),
     code: 0,
     priority: 0,
     message: 'No connection to Anki',
     duration: 0
   } as iNotification);
-  $notifications = ns;
 });
 onDestroy(unsubFromConnectedToAnki);
 

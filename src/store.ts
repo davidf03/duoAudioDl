@@ -49,6 +49,10 @@ function createNotifications () {
   return {
     subscribe,
     set,
+    add: (n:iNotification) => update(ns => {
+      ns.push(n);
+      return ns;
+    });
     clearById: (id:string) => update(ns => {
       const index = ns.findIndex(n => n.id === id);
       if (index !== -1) ns.splice(index, 1);
