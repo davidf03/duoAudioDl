@@ -63,8 +63,7 @@ const unsubFromLng = lng.subscribe(l => navItems = buildNavItems());
 onDestroy(unsubFromLng);
 
 const unsubFromConnectedToAnki = connectedToAnki.subscribe(val => {
-  if (val) return;
-  if ($notifications.find(n => n.code === 0)) return;
+  if (val || $notifications.find(n => n.code === 0)) return;
   const ns = $notifications;
   ns.push({
     id: uuid(),
