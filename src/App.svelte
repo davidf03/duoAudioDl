@@ -24,37 +24,43 @@ import Debug from './components/Main/Debug.svelte';
 import { onDestroy } from 'svelte';
 
 const mainContentId:string = 'main-content';
-const navItems:iNavItem[] = [
-  {
-    alias: 'queue',
-    component: Queue,
-    name: 'Queue',
-    icon: 'Q',
-    disabled: false //!$lng
-  },
-  {
-    alias: 'history',
-    component: History,
-    name: 'History',
-    icon: 'H',
-    disabled: false //!$lng
-  },
-  {
-    alias: 'settings',
-    component: Settings,
-    name: 'Settings',
-    icon: 'S',
-    disabled: false //!$lng
-  },
-  {
-    alias: 'debug',
-    component: Debug,
-    name: 'Debug',
-    icon: 'D',
-    disabled: false //!$lng
-  }
-]
-let currentSection:iNavItem = navItems[0]
+let navItems:iNavItem[] = buildNavItems();
+function buildNavItems (): iNavItem[] {
+  return [
+    {
+      alias: 'queue',
+      component: Queue,
+      name: 'Queue',
+      icon: 'Q',
+      disabled: !$lng
+    },
+    {
+      alias: 'history',
+      component: History,
+      name: 'History',
+      icon: 'H',
+      disabled: !$lng
+    },
+    {
+      alias: 'settings',
+      component: Settings,
+      name: 'Settings',
+      icon: 'S',
+      disabled: !$lng
+    },
+    {
+      alias: 'debug',
+      component: Debug,
+      name: 'Debug',
+      icon: 'D',
+      disabled: !$lng
+    }
+  ];
+};
+let currentSection:iNavItem = navItems[0];
+
+const unsubFromLng = lng.subscribe(l => navItems = buildNavItems());
+onDestroy(unsubFromLng);
 
 const unsubFromConnectedToAnki = connectedToAnki.subscribe(val => {
   if (val) return;
