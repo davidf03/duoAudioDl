@@ -13,7 +13,7 @@ let reqs = [], timeout; // TODO types
     { urls: [pattern] },
   );
   browser.storage.onChanged.addListener(() => {
-    browser.storage.local.get('queue').then(res => res?.queue?.length > 0 && setIconToPending());
+    browser.storage.local.get('queue').then(res => setIcon(Object.keys(res?.queue)?.length));
   });
 })();
 
@@ -28,7 +28,12 @@ async function addEntriesToQueue (): Promise<any> {
     history = {} as iCardList,
     ignored = {} as iCardList,
     lngs = [] as string[]
-  } = await browser.storage.local.get(['queue','history','ignored','lngs']);
+  } = await browser.storage.local.get([
+    'queue',
+    'history',
+    'ignored',
+    'lngs'
+  ]);
 
   let lng:string, originUrl:string;
   // get lng (there should be only one, unique one)
@@ -108,6 +113,7 @@ async function addEntriesToQueue (): Promise<any> {
   reqs = [];
 }
 
-async function setIconToPending (): Promise<any> {
-  browser.browserAction.setIcon({ path: './icons/48-pending.png' });
+function setIcon (queueLen:number): void {
+  const path:string = queueLen > 0 ? './icons/48-pending.png' : './icons/48.png';
+  browser.browserAction.setIcon({ path });
 }
