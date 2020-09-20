@@ -1,4 +1,4 @@
-import { v4 as uuid } from 'uuid'; // TODO false error, module not found; seems safe to ignore
+import { v4 as uuid } from 'uuid'; // TODO false error (module not found); seems safe to ignore
 import { ttsNameMap } from './ttsNameMap';
 import { iCard, iCardGroup, iCardList } from './interfaces/iCards';
 import httpOriginUrlParser from './util/httpOriginUrlParser';
@@ -28,7 +28,7 @@ async function addEntriesToQueue (): Promise<any> {
     history = {} as iCardList,
     ignored = {} as iCardList,
     lngs = [] as string[]
-  } = await browser.storage.local.get(['lngs','queue','history','ignored']);
+  } = await browser.storage.local.get(['queue','history','ignored','lngs']);
 
   let lng:string, originUrl:string;
   // get lng (there should be only one, unique one)
