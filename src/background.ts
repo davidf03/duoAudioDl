@@ -13,7 +13,7 @@ let reqs = [], timeout; // TODO types
     { urls: [pattern] },
   );
   browser.storage.onChanged.addListener(() => {
-    browser.storage.local.get('queue').then(res => setIcon(Object.keys(res?.queue)?.length));
+    browser.storage.local.get('queue').then((res:iCardList) => setIcon(res?.queue ? Object.keys(res?.queue)?.length : 0));
   });
 })();
 
