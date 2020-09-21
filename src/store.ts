@@ -23,7 +23,7 @@ interface iUpdatesCallback<T, U> {
   (data:T, localData?:U): U;
 }
 
-const createLocalStore = <T>(key:string, startValue:T): any => {
+const createPersistentStore = <T>(key:string, startValue:T): any => {
   const { subscribe, set: svelteSet } = writable(startValue);
   return {
     subscribe,
@@ -37,25 +37,25 @@ const createLocalStore = <T>(key:string, startValue:T): any => {
         val = JSON.parse(json);
         json && svelteSet(val);
       }
-      subscribe(val => browser.storage.local.set({ [key]: JSON.stringify(val) }))
+      subscribe(val => browser.storage.local.set({ [key]: JSON.stringify(val) }).then(() => browser.storage.local.get(key).then(res => console.log(res[key]))))
       return val;
     }
   };
 }
 
 // local stores
-export const lngs = createLocalStore('lngs', [] as string[]);
-export const lng = createLocalStore('lng', '' as string);
-export const queue = createLocalStore('queue', {} as iCardList);
-export const ignored = createLocalStore('ignored', {} as iCardList);
-export const prefs = createLocalStore('prefs', {} as iPrefs);
-export const templateHistory = createLocalStore('templateHistory', [] as iTemplate[]);
+export const lngs = createPersistentStore('lngs', [] as string[]);
+export const lng = createPersistentStore('lng', '' as string);
+export const queue = createPersistentStore('queue', {} as iCardList);
+export const ignored = createPersistentStore('ignored', {} as iCardList);
+export const prefs = createPersistentStore('prefs', {} as iPrefs);
+export const templateHistory = createPersistentStore('templateHistory', [] as iTemplate[]);
 
 // joint local-anki stores
-export const history = createLocalStore('cards', {} as iCardList);
-export const deckNamesAndIds = createLocalStore('deckNamesAndIds', [] as iNameAndId[]);
-export const templateNamesAndIds = createLocalStore('templateNamesAndIds', [] as iNameAndId[]);
-export const templates = createLocalStore('templates', [] as iTemplate[])
+export const history = createPersistentStore('cards', {} as iCardList);
+export const deckNamesAndIds = createPersistentStore('deckNamesAndIds', [] as iNameAndId[]);
+export const templateNamesAndIds = createPersistentStore('templateNamesAndIds', [] as iNameAndId[]);
+export const templates = createPersistentStore('templates', [] as iTemplate[])
 
 // temporary stores
 const createNotificationsStore = (): any => {
@@ -162,17 +162,19 @@ function initJointStore
     callback:iUpdatesCallback<T, U>
   ): void {
   // load anki and local simultaneously; last to load calls callback; if local loads first set store while updates from anki load
+  const localPromise:Promise<{[localKey:string]:string}> = browser.storage.local.get(localKey);
   const ankiPromise:Promise<T> = ankiconnect.invoke(action, version);
-  const localPromise:Promise<U> = browser.storage.local.get(localKey);
   Promise.allSettled([localPromise, ankiPromise]).then(res => {
     let data:U;
+    let localJson:string = res[0].value?.[localKey];
+    const localRes:U = localJson && JSON.parse(localJson);
     if (res[1].status === 'rejected') {
       connectedToAnki.off();
-      data = res[0].value;
+      data = localRes;
     } else {
-      data = callback(res[1].value as T, res[0].value); // TODO is potentially overloading ankiParser illegal in ts?
+      data = callback(res[1].value as T, localRes); // TODO is potentially overloading ankiParser illegal in ts?
     }
-    if (data && Object.keys(data).length !== 0) { // TODO not sure this would always work
+    if (data) { // TODO not sure this would always work
       store.useLocalStorage();
       store.set(data);
     }
