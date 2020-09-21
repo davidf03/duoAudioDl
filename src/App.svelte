@@ -20,7 +20,6 @@ import Notifier from './components/Notifier/Notifier.svelte';
 import Queue from './components/Main/Queue.svelte';
 import History from './components/Main/History.svelte';
 import Settings from './components/Main/Settings.svelte';
-import Debug from './components/Main/Debug.svelte';
 import { onDestroy } from 'svelte';
 
 const mainContentId:string = 'main-content';
@@ -46,13 +45,6 @@ function buildNavItems (): iNavItem[] {
       component: Settings,
       name: 'Settings',
       icon: 'S',
-      disabled: !$lng
-    },
-    {
-      alias: 'debug',
-      component: Debug,
-      name: 'Debug',
-      icon: 'D',
       disabled: !$lng
     }
   ];
@@ -85,6 +77,10 @@ function moveToSection (e): void {
   }
   currentSection = navItems.find(s => s.alias === alias)
 }
+
+function clearData (): void {
+  browser.storage.local.clear();
+}
 </script>
 
 <div class="dag-c-main">
@@ -105,4 +101,5 @@ function moveToSection (e): void {
     {/if}
   </div>
   <Notifier />
+  <button on:click={clearData}>clear data</button>
 </div>

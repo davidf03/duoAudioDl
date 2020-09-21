@@ -12,9 +12,11 @@ let reqs = [], timeout; // TODO types
     collectNewQueueEntries,
     { urls: [pattern] },
   );
-  browser.storage.onChanged.addListener(() => {
-    browser.storage.local.get('queue').then((res:iCardList) => setIcon(res?.queue ? Object.keys(res?.queue)?.length : 0));
-  });
+  browser.storage.onChanged.addListener(() =>
+    browser.storage.local.get('queue').then((res:{queue?:string;}) => 
+      setIcon(res?.queue ? Object.keys(res?.queue)?.length : 0)
+    )
+  );
 })();
 
 function collectNewQueueEntries (req): void {
@@ -24,16 +26,22 @@ function collectNewQueueEntries (req): void {
 
 async function addEntriesToQueue (): Promise<any> {
   const {
-    queue = {} as iCardList,
-    history = {} as iCardList,
-    ignored = {} as iCardList,
-    lngs = [] as string[]
+    queue: queueLocal,
+    history: historyLocal,
+    ignored: ignoredLocal,
+    lngs: lngsLocal
   } = await browser.storage.local.get([
     'queue',
     'history',
     'ignored',
     'lngs'
   ]);
+  const parseJSON = <T>(key:string, json:string, defaultVal:T): T => json ? JSON.parse(json) : defaultVal;
+  const queue = parseJSON('queue', queueLocal, {} as iCardList);
+  const history = parseJSON('history', historyLocal, {} as iCardList);
+  const ignored = parseJSON('ignored', ignoredLocal, {} as iCardList);
+  const lngs = parseJSON('lngslocal', lngsLocal, [] as string[]);
+  const setStore = async <T>(key:string, val:T): Promise<void> => browser.storage.local.set({ [key]: JSON.stringify(val) });
 
   let lng:string, originUrl:string;
   // get lng (there should be only one, unique one)
@@ -45,11 +53,12 @@ async function addEntriesToQueue (): Promise<any> {
   }
   // exit if no lng urls
   if (!lng) return;
+
   // add lng if not already added
   if (lngs.indexOf(lng) === -1) {
     lngs.push(lng);
     lngs.sort();
-    browser.storage.local.set({ lngs });
+    setStore('lngs', lngs);
   }
 
   queue[lng] ??= [] as iCardGroup[];
@@ -80,14 +89,14 @@ async function addEntriesToQueue (): Promise<any> {
     }
     // pass over if already dealt with
     if (
-      ignored[lng]?.find(g => g.name === name)?.some(c => c.audioUrl === audioUrl) ||
-      history[lng]?.find(g => g.name === name)?.some(c => c.audioUrl === audioUrl)
+      ignored[lng]?.find(g => g.name === name)?.cards?.some(c => c.audioUrl === audioUrl) ||
+      history[lng]?.find(g => g.name === name)?.cards?.some(c => c.audioUrl === audioUrl)
     ) {
       return;
     }
     hasModifiedQueue = true; // (everything after this will have modified the queue)
     // if new group or card not present
-    if (isNewGroup || !queue[lng][group].cards.includes(c => c.audioUrl === audioUrl)) {
+    if (isNewGroup || !queue[lng][group].cards.some(c => c.audioUrl === audioUrl)) {
       // add card to (potentially new) group of (potentially new) lng
       queue[lng][group].cards.unshift({
         id: uuid(),
@@ -101,15 +110,13 @@ async function addEntriesToQueue (): Promise<any> {
     queue[lng][group].cards.unshift(
       queue[lng][group].cards.splice(
         queue[lng][group].cards.findIndex(c => c.audioUrl === audioUrl), 1
-      )
+      )[0]
     );
-    queue[lng].unshift(
-      queue[lng].splice(group, 1)
-    );
+    queue[lng].unshift(queue[lng].splice(group, 1)[0]);
   });
 
   // update storage.local accordingly
-  hasModifiedQueue && browser.storage.local.set({ queue });
+  hasModifiedQueue && setStore('queue', queue);
   reqs = [];
 }
 

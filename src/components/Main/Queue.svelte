@@ -10,9 +10,13 @@ function assignCardList (): void {
   cardGroups = $queue?.[$lng];
 };
 
-const unsubFromLoadingStore = queue.subscribe(val => !val && assignCardList());
+const unsubFromLoadingStore = loadingStore.subscribe((val): void => !val && assignCardList());
 onDestroy(unsubFromLoadingStore);
-const unsubFromLng = lng.subscribe(val => { // TODO type
+
+const unsubFromQueue = queue.subscribe((): void => assignCardList());
+onDestroy(unsubFromQueue);
+
+const unsubFromLng = lng.subscribe((val): void => { // TODO type
   assignCardList();
   // scroll to top
 });
