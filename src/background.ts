@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid'; // TODO false error (module not found); seems safe to ignore
-import { ttsNameMap } from './maps/ttsNameMapmeMap';
+import { ttsNameMap } from './maps/ttsNameMap';
 import { iCard, iCardGroup, iCardList } from './interfaces/iCards';
 import httpOriginUrlParser from './util/httpOriginUrlParser';
 import audioUrlParser from './util/audioUrlParser';

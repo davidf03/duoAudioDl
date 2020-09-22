@@ -30,3 +30,5 @@
 [ ] card history after queue
 
 [ ] choose deck after language
+
+[ ] Anki connection status indicator, potentially with option to reload (idk why, but might be nice)
