@@ -10,6 +10,10 @@ let notificationList:iNotification[];
 
 const unsub = notifications.subscribe(val => notificationList = val);
 onDestroy(unsub);
+
+function onClear (e): void {
+  notifications.clearById(e.detail.id);
+}
 </script>
 
 <div class="dag-c-notifier">
@@ -17,6 +21,7 @@ onDestroy(unsub);
     {#each notificationList as notification}
       <li>
         <Notification
+          on:clear={onClear}
           {notification}
           classlist="dag-c-notifier__item"
         />

@@ -1,10 +1,19 @@
 <script lang="ts">
 // appear from bottom, unfold, give info/options like undo last action
-import { notifications } from '../../store';
+import { beforeUpdate, createEventDispatcher } from 'svelte';
 import type { iNotification } from "src/interfaces/iNotification";
 
 export let classlist:string;
 export let notification:iNotification;
+
+const dispatch = createEventDispatcher();
+
+beforeUpdate(init);
+function init (): void {
+  const duration:number = notification.duration;
+  const boundDispatch = (id:string) => dispatch('clear', { id });
+  duration !== 0 && setTimeout(boundDispatch.bind(null, notification.id), duration*1000);
+}
 
 let modifierFragment:string;
 switch (notification.priority) {
@@ -15,7 +24,7 @@ switch (notification.priority) {
 let modifier:string = 'dag-c-notification--' + modifierFragment;
 
 function onClick (e): void {
-  notifications.clearById(notification.id);
+  dispatch('clear', { id: notification.id });
 }
 
 </script>

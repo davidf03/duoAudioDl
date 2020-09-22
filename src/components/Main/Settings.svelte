@@ -14,8 +14,6 @@ import type { iLngPrefs } from '../../interfaces/iLngPrefs';
 import { iNameAndId } from '../../interfaces/iNameAndId';
 import Spinner from '../Icons/Spinner.svelte';
 
-prefs.useLocalStorage()
-
 const fallbackDeckId = FALLBACK_DECK_ID;
 
 let deckId:number;

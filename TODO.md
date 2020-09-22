@@ -34,3 +34,5 @@
 [ ] Anki connection status indicator, potentially with option to reload (idk why, but might be nice)
 
 [ ] Variable notifications (e.g. connecting -> connected)
+
+[ ] Fix automatic setting of first language

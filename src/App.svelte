@@ -4,7 +4,6 @@ import {
   lngs,
   lng,
   loadingStore,
-  deckNamesAndIds,
   connectingToAnki,
   connectedToAnki,
   notifications

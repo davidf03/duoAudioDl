@@ -63,16 +63,16 @@ const createNotificationsStore = (): any => {
   return {
     subscribe,
     set,
-    add: (n:iNotification): void => update(ns => {
+    add: (n:iNotification): void => update((ns:iNotification[]): iNotification[] => {
       ns.push(n);
       return ns;
     }),
-    clearById: (id:string): void => update(ns => {
+    clearById: (id:string): void => update((ns:iNotification[]): iNotification[] => {
       const index = ns.findIndex(n => n.id === id);
       if (index !== -1) ns.splice(index, 1);
       return ns;
     }),
-    clearByCode: (codesParam:number|number[]): void => update(ns => {
+    clearByCode: (codesParam:number|number[]): void => update((ns:iNotification[]): iNotification[] => {
       const codes:number[] = typeof(codesParam) === 'number' ? [codesParam] : codesParam;
       ns = ns.filter((n:iNotification): boolean => !codes.includes(n.code));
       return ns;
@@ -98,7 +98,7 @@ const createSwitchStore = (initialState:boolean): any => {
   const { subscribe, set, update } = writable(initialState);
   return {
     subscribe,
-    toggle: (): void => update(s => !s),
+    toggle: (): void => update((s:boolean): boolean => !s),
     on: (): void => set(true),
     off: (): void => set(false)
   };

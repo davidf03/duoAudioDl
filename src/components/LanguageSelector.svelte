@@ -1,8 +1,6 @@
 <script lang="ts">
 import { lngs, lng, loadingStore } from '../store'
-import ISO6391 from 'iso-639-1'
-
-lng.useLocalStorage()
+// import ISO6391 from 'iso-639-1'
 
 const id:string = 'dag-language-selector-label'
 </script>
