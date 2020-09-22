@@ -62,7 +62,7 @@ const unsubFromConnectingToAnki = connectingToAnki.subscribe((val:boolean): void
   notifications.clearByCode(...notificationTypes.map((n:iNotificationReference): number => n.code));
   if (!!$notifications.find((n:iNotification): boolean => n.code === notificationType.code))
     return;
-  notifications.push({
+  $notifications.push({
     id: uuid(),
     ...notificationType
   } as iNotification);
