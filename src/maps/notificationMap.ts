@@ -1,6 +1,6 @@
 import type { iNotificationReference } from '../interfaces/iNotification';
 
-export const notificationCodeMap:{[key:string]:iNotificationReference} = {
+export const notificationMap:{[key:string]:iNotificationReference} = {
   ankiConnecting: {
     code: 0,
     priority: 1,
@@ -10,7 +10,7 @@ export const notificationCodeMap:{[key:string]:iNotificationReference} = {
   ankiNotConnected: {
     code: 1,
     priority: 0,
-    message: 'Not connected to Anki',
+    message: 'No connection to Anki',
     duration: 0
   },
   ankiConnected: {

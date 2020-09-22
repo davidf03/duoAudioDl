@@ -11,7 +11,7 @@ import {
 } from './store';
 import type { iNavItem } from './interfaces/iNav';
 import type { iNotification } from './interfaces/iNotification';
-import { notificationMap as nMap } from './maps/notificationCodeMap';
+import { notificationMap as nMap } from './maps/notificationMap';
 import Spinner from './components/Icons/Spinner.svelte';
 import Nav from './components/Nav/Nav.svelte';
 import LanguageSelector from './components/LanguageSelector.svelte';
@@ -55,34 +55,34 @@ onDestroy(unsubFromLng);
 
 const unsubFromConnectingToAnki = connectingToAnki.subscribe(val => {
   if (val) {
-    notifications.clearByCode(nCodes.ankiNotConnected.code, nCodes.ankiConnected.code);
-    if (!!$notifications.find(n => n.code === nCodes.ankiConnecting.code)) {
+    notifications.clearByCode(nMap.ankiNotConnected.code, nMap.ankiConnected.code);
+    if (!!$notifications.find(n => n.code === nMap.ankiConnecting.code)) {
       return;
     }
     notifications.add({
       id: uuid(),
-      ...nCodes.ankiConnecting
+      ...nMap.ankiConnecting
     } as iNotification);
     return;
   }
   if (!$connectedToAnki) {
-    notifications.clearByCode(nCodes.ankiConnecting.code, nCodes.ankiConnected.code);
-    if (!!$notifications.find(n => n.code === nCodes.ankiNotConnected.code)) {
+    notifications.clearByCode(nMap.ankiConnecting.code, nMap.ankiConnected.code);
+    if (!!$notifications.find(n => n.code === nMap.ankiNotConnected.code)) {
       return;
     }
     notifications.add({
       id: uuid(),
-      ...nCodes.ankiNotConnected
+      ...nMap.ankiNotConnected
     } as iNotification);
     return;
   }
-  notifications.clearByCode(nCodes.ankiConnecting.code, nCodes.ankiNotConnected.code);
-  if (!!$notifications.find(n => n.code === nCodes.ankiConnected.code)) {
+  notifications.clearByCode(nMap.ankiConnecting.code, nMap.ankiNotConnected.code);
+  if (!!$notifications.find(n => n.code === nMap.ankiConnected.code)) {
     return;
   }
   notifications.add({
     id: uuid(),
-    ...nCodes.ankiConnected
+    ...nMap.ankiConnected
   } as iNotification);
 });
 onDestroy(unsubFromConnectingToAnki);
