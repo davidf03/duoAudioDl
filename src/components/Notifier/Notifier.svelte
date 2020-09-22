@@ -1,5 +1,6 @@
 <script lang="ts">
 // appear from bottom, unfold, give info/options like undo last action
+// TODO variable status notifications
 import { notifications } from '../../store';
 import type { iNotification } from '../../interfaces/iNotification';
 import Notification from './Notification.svelte';

@@ -4,15 +4,14 @@ import {
   lngs,
   lng,
   loadingStore,
-  templateNamesAndIds,
-  loadingAnkiTemplateNamesAndIds,
   deckNamesAndIds,
-  loadingAnkiDeckNamesAndIds,
+  connectingToAnki,
   connectedToAnki,
   notifications
 } from './store';
 import type { iNavItem } from './interfaces/iNav';
 import type { iNotification } from './interfaces/iNotification';
+import { notificationMap as nMap } from './maps/notificationCodeMap';
 import Spinner from './components/Icons/Spinner.svelte';
 import Nav from './components/Nav/Nav.svelte';
 import LanguageSelector from './components/LanguageSelector.svelte';
@@ -51,23 +50,42 @@ function buildNavItems (): iNavItem[] {
 };
 let currentSection:iNavItem = navItems[0];
 
-const unsubFromDecks = deckNamesAndIds.subscribe(val => console.log(val));
-onDestroy(unsubFromDecks);
-
 const unsubFromLng = lng.subscribe(l => navItems = buildNavItems());
 onDestroy(unsubFromLng);
 
-const unsubFromConnectedToAnki = connectedToAnki.subscribe(val => {
-  if (val || $notifications.find(n => n.code === 0)) return;
+const unsubFromConnectingToAnki = connectingToAnki.subscribe(val => {
+  if (val) {
+    notifications.clearByCode(nCodes.ankiNotConnected.code, nCodes.ankiConnected.code);
+    if (!!$notifications.find(n => n.code === nCodes.ankiConnecting.code)) {
+      return;
+    }
+    notifications.add({
+      id: uuid(),
+      ...nCodes.ankiConnecting
+    } as iNotification);
+    return;
+  }
+  if (!$connectedToAnki) {
+    notifications.clearByCode(nCodes.ankiConnecting.code, nCodes.ankiConnected.code);
+    if (!!$notifications.find(n => n.code === nCodes.ankiNotConnected.code)) {
+      return;
+    }
+    notifications.add({
+      id: uuid(),
+      ...nCodes.ankiNotConnected
+    } as iNotification);
+    return;
+  }
+  notifications.clearByCode(nCodes.ankiConnecting.code, nCodes.ankiNotConnected.code);
+  if (!!$notifications.find(n => n.code === nCodes.ankiConnected.code)) {
+    return;
+  }
   notifications.add({
     id: uuid(),
-    code: 0,
-    priority: 0,
-    message: 'No connection to Anki',
-    duration: 0
+    ...nCodes.ankiConnected
   } as iNotification);
 });
-onDestroy(unsubFromConnectedToAnki);
+onDestroy(unsubFromConnectingToAnki);
 
 function moveToSection (e): void {
   const { alias } = e.detail;

@@ -10,9 +10,9 @@ import type { iTemplateAnki } from './interfaces/iTemplateAnki';
 import { iNotification } from './interfaces/iNotification';
 
 
-interface iLocalStore<T, U> {
-  useLocalStorage: ()=>U;
-  set: (val:T)=>U;
+interface iLocalStore<T> {
+  useLocalStorage: ()=>Promise<T>;
+  set: (val:T)=>void;
 }
 interface iSwitchStore<T> {
   toggle: ()=>T;
@@ -27,17 +27,16 @@ const createPersistentStore = <T>(key:string, startValue:T): any => {
   const { subscribe, set: svelteSet } = writable(startValue);
   return {
     subscribe,
-    set: (val:T): void => svelteSet(val),
-    unset: (): void => svelteSet(startValue),
+    set: (val:T): void => val !== undefined && svelteSet(val),
+    unset: (): void => svelteSet(null),
     useLocalStorage: async (): Promise<T> => {
-      const res:{ [key:string]:string } = await browser.storage.local.get(key);
-      const json:string = res[key];
+      const json:string = await browser.storage.local.get(key).then(res => res[key]);
       let val:T;
       if (json) {
         val = JSON.parse(json);
         json && svelteSet(val);
       }
-      subscribe(val => browser.storage.local.set({ [key]: JSON.stringify(val) }).then(() => browser.storage.local.get(key).then(res => console.log(res[key]))))
+      subscribe(val => browser.storage.local.set({ [key]: JSON.stringify(val) }))
       return val;
     }
   };
@@ -73,6 +72,11 @@ const createNotificationsStore = (): any => {
       if (index !== -1) ns.splice(index, 1);
       return ns;
     }),
+    clearByCode: (codesParam:number|number[]): void => update(ns => {
+      const codes:number[] = typeof(codesParam) === 'number' ? [codesParam] : codesParam;
+      ns = ns.filter((n:iNotification): boolean => !codes.includes(n.code));
+      return ns;
+    }),
     clearAll: (): void => set(startValue)
   };
 }
@@ -100,15 +104,29 @@ const createSwitchStore = (initialState:boolean): any => {
   };
 }
 export const loadingStore = createSwitchStore(true);
+
+export const loadingLocalCards = createSwitchStore(true);
+export const loadedLocalCards = createSwitchStore(false);
 export const loadingAnkiCards = createSwitchStore(true);
 export const loadedAnkiCards = createSwitchStore(false);
+
+export const loadingLocalDeckNamesAndIds = createSwitchStore(true);
+export const loadedLocalDeckNamesAndIds = createSwitchStore(false);
 export const loadingAnkiDeckNamesAndIds = createSwitchStore(true);
 export const loadedAnkiDeckNamesAndIds = createSwitchStore(false);
+
+export const loadingLocalTemplateNamesAndIds = createSwitchStore(true);
+export const loadedLocalTemplateNamesAndIds = createSwitchStore(false);
 export const loadingAnkiTemplateNamesAndIds = createSwitchStore(true);
 export const loadedAnkiTemplateNamesAndIds = createSwitchStore(false);
+
+export const loadingLocalTemplates = createSwitchStore(true);
+export const loadedLocalTemplates = createSwitchStore(false);
 export const loadingAnkiTemplates = createSwitchStore(true);
 export const loadedAnkiTemplates = createSwitchStore(false);
-export const connectedToAnki = createSwitchStore(true);
+
+export const connectingToAnki = createSwitchStore(true);
+export const connectedToAnki = createSwitchStore(false);
 
 
 // init local stores
@@ -127,15 +145,17 @@ Promise.allSettled([
 
 // init joint stores
 initJointStore(
-  'deckNamesAndIds',
   'deckNamesAndIds', 6,
-  deckNamesAndIds, loadingAnkiDeckNamesAndIds, loadedAnkiDeckNamesAndIds,
+  deckNamesAndIds,
+  loadingLocalDeckNamesAndIds, loadedLocalDeckNamesAndIds,
+  loadingAnkiDeckNamesAndIds, loadedAnkiDeckNamesAndIds,
   ankiParser.namesAndIds.from
 );
 initJointStore(
-  'templateNamesAndIds',
   'modelNamesAndIds', 6,
-  templateNamesAndIds, loadingAnkiTemplateNamesAndIds, loadedAnkiTemplateNamesAndIds,
+  templateNamesAndIds,
+  loadingLocalTemplateNamesAndIds, loadedLocalTemplateNamesAndIds,
+  loadingAnkiTemplateNamesAndIds, loadedAnkiTemplateNamesAndIds,
   ankiParser.namesAndIds.from
 );
 // initJointStore(
@@ -151,36 +171,54 @@ initJointStore(
 //   integrateTemplateUpdates
 // );
 
-function initJointStore
+async function initJointStore
   <T, U, V>(
-    localKey:string,
     action:string,
     version:number,
-    store:iLocalStore<U, V>,
-    storeLoader:iSwitchStore<V>,
-    storeLoaderDone:iSwitchStore<V>,
+    store:iLocalStore<U>,
+    localLoader:iSwitchStore<V>,
+    localLoaderDone:iSwitchStore<V>,
+    ankiLoader:iSwitchStore<V>,
+    ankiLoaderDone:iSwitchStore<V>,
+    callback:iUpdatesCallback<T, U>
+  ): Promise<void> {
+  // load anki and local simultaneously; last to load calls callback; if local loads first set store while updates from anki load
+  let anki:T;
+  let local:U;
+  ankiconnect.invoke(action, version).then((res:T): void => {
+    anki = res;
+    completeJointStoreHalf(anki, local, store, ankiLoader, ankiLoaderDone, callback);
+  })
+  .catch((err:string) => {
+    connectedToAnki.off();
+    connectingToAnki.off();
+  });
+  store.useLocalStorage().then((res:U): void => {
+    local = res;
+    if (!anki) {
+      return;
+    }
+    completeJointStoreHalf(anki, local, store, localLoader, localLoaderDone, callback);
+  });
+}
+function completeJointStoreHalf
+  <T, U, V>(
+    anki:T,
+    local:U,
+    store:iLocalStore<U>,
+    loader:iSwitchStore<V>,
+    loaderDone:iSwitchStore<V>,
     callback:iUpdatesCallback<T, U>
   ): void {
-  // load anki and local simultaneously; last to load calls callback; if local loads first set store while updates from anki load
-  const localPromise:Promise<{[localKey:string]:string}> = browser.storage.local.get(localKey);
-  const ankiPromise:Promise<T> = ankiconnect.invoke(action, version);
-  Promise.allSettled([localPromise, ankiPromise]).then(res => {
-    let data:U;
-    let localJson:string = res[0].value?.[localKey];
-    const localRes:U = localJson && JSON.parse(localJson);
-    if (res[1].status === 'rejected') {
-      connectedToAnki.off();
-      data = localRes;
-    } else {
-      data = callback(res[1].value as T, localRes); // TODO is potentially overloading ankiParser illegal in ts?
-    }
-    if (data) { // TODO not sure this would always work
-      store.useLocalStorage();
-      store.set(data);
-    }
-    res[1].status !== 'rejected' && storeLoaderDone.on();
-    storeLoader.off();
-  });
+  loaderDone.on();
+  loader.off();
+  if (!anki || !local) {
+    !anki && store.set(local);
+    return;
+  }
+  store.set(callback(anki, local));
+  connectedToAnki.on();
+  connectingToAnki.off();
 }
 function integrateHistoryUpdates(data:iCardAnki[], localData:iCardList): iCardList {
   const updatedData:iCardList = localData;
