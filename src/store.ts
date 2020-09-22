@@ -72,11 +72,11 @@ const createNotificationsStore = (): any => {
       if (index !== -1) ns.splice(index, 1);
       return ns;
     }),
-    clearByCode: (codesParam:number|number[]): void => update((ns:iNotification[]): iNotification[] => {
-      const codes:number[] = typeof(codesParam) === 'number' ? [codesParam] : codesParam;
-      ns = ns.filter((n:iNotification): boolean => !codes.includes(n.code));
-      return ns;
-    }),
+    clearByCode: (...codes:number[]): void => update(
+      (ns:iNotification[]): iNotification[] => ns.filter(
+        (n:iNotification): boolean => !codes.includes(n.code)
+      )
+    ),
     clearAll: (): void => set(startValue)
   };
 }

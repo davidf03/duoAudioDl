@@ -9,7 +9,7 @@ import {
   notifications
 } from './store';
 import type { iNavItem } from './interfaces/iNav';
-import type { iNotification } from './interfaces/iNotification';
+import type { iNotification, iNotificationReference } from './interfaces/iNotification';
 import { notificationMap as nMap } from './maps/notificationMap';
 import Spinner from './components/Icons/Spinner.svelte';
 import Nav from './components/Nav/Nav.svelte';
@@ -52,36 +52,19 @@ let currentSection:iNavItem = navItems[0];
 const unsubFromLng = lng.subscribe(l => navItems = buildNavItems());
 onDestroy(unsubFromLng);
 
-const unsubFromConnectingToAnki = connectingToAnki.subscribe(val => {
-  if (val) {
-    notifications.clearByCode(nMap.ankiNotConnected.code, nMap.ankiConnected.code);
-    if (!!$notifications.find(n => n.code === nMap.ankiConnecting.code)) {
-      return;
-    }
-    notifications.add({
-      id: uuid(),
-      ...nMap.ankiConnecting
-    } as iNotification);
+const unsubFromConnectingToAnki = connectingToAnki.subscribe((val:boolean): void => {
+  const notificationTypes:iNotificationReference[] = [
+    nMap.ankiConnecting,
+    nMap.ankiNotConnected,
+    nMap.ankiConnected
+  ];
+  const notificationType:iNotificationReference = notificationTypes.splice(val ? 0 : !$connectedToAnki ? 1 : 2, 1)[0];
+  notifications.clearByCode(...notificationTypes.map((n:iNotificationReference): number => n.code));
+  if (!!$notifications.find((n:iNotification): boolean => n.code === notificationType.code))
     return;
-  }
-  if (!$connectedToAnki) {
-    notifications.clearByCode(nMap.ankiConnecting.code, nMap.ankiConnected.code);
-    if (!!$notifications.find(n => n.code === nMap.ankiNotConnected.code)) {
-      return;
-    }
-    notifications.add({
-      id: uuid(),
-      ...nMap.ankiNotConnected
-    } as iNotification);
-    return;
-  }
-  notifications.clearByCode(nMap.ankiConnecting.code, nMap.ankiNotConnected.code);
-  if (!!$notifications.find(n => n.code === nMap.ankiConnected.code)) {
-    return;
-  }
-  notifications.add({
+  notifications.push({
     id: uuid(),
-    ...nMap.ankiConnected
+    ...notificationType
   } as iNotification);
 });
 onDestroy(unsubFromConnectingToAnki);
