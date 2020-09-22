@@ -26,7 +26,7 @@ function collectNewQueueEntries (req): void {
 
 async function addEntriesToQueue (): Promise<any> {
   const parseJSON = <T>(json:string, defaultVal:T): T => json ? JSON.parse(json) : defaultVal;
-  const pastStores = [
+  const localStores = [
     { key: 'queue', defaultVal: {} as iCardList },
     { key: 'history', defaultVal: {} as iCardList },
     { key: 'ignored', defaultVal: {} as iCardList },
@@ -37,9 +37,9 @@ async function addEntriesToQueue (): Promise<any> {
     history,
     ignored,
     lngs
-  } = await browser.storage.local.get(pastStores.map(s => s.key))
+  } = await browser.storage.local.get(localStores.map(s => s.key))
   .then(res =>
-    pastStores.reduce((obj, s) =>
+    localStores.reduce((obj, s) =>
       (obj[s.key] = parseJSON(res[s.key], s.defaultVal), obj), {}
     )
   );
