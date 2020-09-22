@@ -8,8 +8,8 @@ export let notification:iNotification;
 
 const dispatch = createEventDispatcher();
 
-beforeUpdate(primeAutoClear);
-function primeAutoClear (): void {
+beforeUpdate(primeToClear);
+function primeToClear (): void {
   const duration:number = notification.duration;
   const boundDispatch = (id:string) => dispatch('clear', { id });
   duration !== 0 && setTimeout(boundDispatch.bind(null, notification.id), duration*1000);
