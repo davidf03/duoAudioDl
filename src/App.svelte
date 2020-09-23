@@ -84,15 +84,17 @@ function clearData (): void {
 </script>
 
 <div class="dag-c-main">
-  <Nav
-    skipId={mainContentId}
-    {navItems}
-    {currentSection}
-    on:move-to-section={moveToSection}
-  />
-  {#if $lngs.length > 0}
-    <LanguageSelector />
-  {/if}
+  <div class="dag-c-main__nav">
+    <Nav
+      skipId={mainContentId}
+      {navItems}
+      {currentSection}
+      on:move-to-section={moveToSection}
+    />
+    {#if $lngs.length > 0}
+      <LanguageSelector />
+    {/if}
+  </div>
   <div id={mainContentId}>
     {#if $loadingStore}
       <Spinner />

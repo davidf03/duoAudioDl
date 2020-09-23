@@ -21,12 +21,21 @@ const unsubFromLng = lng.subscribe((val): void => { // TODO type
   // scroll to top
 });
 onDestroy(unsubFromLng);
+
+function onIgnore (e) {
+  const { id, groupId } = e.detail;
+  queue.clearById(id, groupId, $lng);
+}
 </script>
 
 <div class="dag-c-home">
   {#if $lng}
     {#if cardGroups.length > 0}
-      <CardList {cardGroups} pending/>
+      <CardList
+        on:ignore-card={onIgnore}
+        {cardGroups}
+        pending
+      />
     {:else}
       <p>No cards in queue</p>
     {/if}

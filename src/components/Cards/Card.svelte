@@ -25,15 +25,13 @@ export let pending:boolean = false;
 
 const dispatch = createEventDispatcher();
 
-const id:string = audioUrlParser.getId(card.audioUrl);
+const id:string = card.id;
 let isOpen:boolean = false;
 let isPlayBtnPressed:boolean = false;
 let deck:number
 
 
-const unsubFromLng = lng.subscribe(val => { // TODO type
-  isOpen = false;
-});
+const unsubFromLng = lng.subscribe(val => isOpen = false);
 onDestroy(unsubFromLng);
 
 const unsubFromExpandedCardId = expandedCardId.subscribe(val => val && val !== id && isOpen && close());
@@ -47,8 +45,11 @@ function close (): void {
   isOpen = false;
 }
 
-function onClick (e): void {
+function onClickMain (e): void {
   isOpen ? close() : open();
+}
+function onClickIgnore (e): void {
+  dispatch('ignore', { id });
 }
 </script>
 
@@ -61,7 +62,12 @@ function onClick (e): void {
   />
   <!-- <span>{card.audioUrl}</span> -->
   <button
-    on:click={onClick}
+    on:click={onClickIgnore}
+    title="Ignore"
+    class="dag-o-bg-btn-set__sibling"
+  >I</button>
+  <button
+    on:click={onClickMain}
     class="dag-o-bg-btn-set__btn dag-o-unbutton"
   ><span class="dag-u-accessible-hidden">{isOpen ? 'Collapse' : 'Expand'} card</span></button>
 </div>

@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
 import ankiconnect from './contentScripts/ankiConnect';
 import ankiParser from './util/ankiParser';
-import type { iCardList, iCard } from './interfaces/iCards';
+import type { iCardList, iCard, iCardGroup } from './interfaces/iCards';
 import type { iPrefs } from './interfaces/iPrefs';
 import type { iNameAndId } from './interfaces/iNameAndId';
 import type { iTemplate } from './interfaces/iTemplate';
@@ -24,9 +24,10 @@ interface iUpdatesCallback<T, U> {
 }
 
 const createPersistentStore = <T>(key:string, startValue:T): any => {
-  const { subscribe, set: svelteSet } = writable(startValue);
+  const { subscribe, update, set: svelteSet } = writable(startValue);
   return {
     subscribe,
+    update,
     set: (val:T): void => val !== undefined && svelteSet(val),
     unset: (): void => svelteSet(null),
     useLocalStorage: async (): Promise<T> => {
@@ -41,17 +42,46 @@ const createPersistentStore = <T>(key:string, startValue:T): any => {
     }
   };
 }
+const createCardListStore = (key:string): any => {
+  const { subscribe, update, set, unset, useLocalStorage } = createPersistentStore(key, {} as iCardList);
+  return {
+    subscribe,
+    set,
+    unset,
+    useLocalStorage,
+    add: (card:iCard, groupName:string, lng:string): void => update((list:iCardList): iCardList => {
+      list[lng] ??= [] as iCardGroup[];
+      let groupIndex:number = list[lng].findIndex((g:iCardGroup): boolean => g.name === groupName);
+      if (groupIndex === -1) {
+        groupIndex = 0;
+        list[lng].unshift({
+          name: groupName,
+          cards: []
+        } as iCardGroup);
+      }
+      list[lng][groupIndex].cards.unshift(card);
+      return list;
+    }),
+    clearById: (cardId:string, groupId:string, lng:string): void => update((list:iCardList): iCardList => {
+      const cards:iCard[] = list[lng]?.find((g:iCardGroup): boolean => g.id === groupId)?.cards;
+      cards?.splice(cards?.findIndex((c:iCard): boolean => c.id === cardId), 1);
+      return list;
+    }),
+    // clearByGroup: (groupName:string, lng?:string): void => {}, // TODO
+    // clearByLng: (lng:string): void => {} // TODO
+  };
+}
 
 // local stores
+export const queue = createCardListStore('queue');
+export const ignored = createCardListStore('ignored');
 export const lngs = createPersistentStore('lngs', [] as string[]);
 export const lng = createPersistentStore('lng', '' as string);
-export const queue = createPersistentStore('queue', {} as iCardList);
-export const ignored = createPersistentStore('ignored', {} as iCardList);
 export const prefs = createPersistentStore('prefs', {} as iPrefs);
 export const templateHistory = createPersistentStore('templateHistory', [] as iTemplate[]);
 
 // joint local-anki stores
-export const history = createPersistentStore('cards', {} as iCardList);
+export const history = createCardListStore('cards');
 export const deckNamesAndIds = createPersistentStore('deckNamesAndIds', [] as iNameAndId[]);
 export const templateNamesAndIds = createPersistentStore('templateNamesAndIds', [] as iNameAndId[]);
 export const templates = createPersistentStore('templates', [] as iTemplate[])

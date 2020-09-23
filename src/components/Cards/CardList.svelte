@@ -10,6 +10,7 @@ export let pending:boolean = false;
   {#each cardGroups as cardGroup}
     <li class="dag-c-card-list__group">
       <CardGroup
+        on:ignore-card
         {cardGroup}
         {pending}
       />
