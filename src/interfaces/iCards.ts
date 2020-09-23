@@ -1,9 +1,9 @@
 export interface iCard {
   readonly id:string;
   readonly audioUrl:string;
-  modified:number;
   pending:boolean;
   fields:string[];
+  lastFields:string[];
 }
 
 export interface iCardGroup {

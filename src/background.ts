@@ -102,9 +102,9 @@ async function addEntriesToQueue (): Promise<any> {
       queue[lng][group].cards.unshift({
         id: uuid(),
         audioUrl,
-        modified: Date.now(),
         pending:true,
-        fields:[]
+        fields:[],
+        lastFields: []
       } as iCard);
       return;
     }
