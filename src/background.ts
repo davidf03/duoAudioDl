@@ -5,6 +5,13 @@ import httpOriginUrlParser from './util/httpOriginUrlParser';
 import audioUrlParser from './util/audioUrlParser';
 
 const pattern:string = 'https://*.cloudfront.net/*/*';
+const queueStoreKey:string = 'queue';
+const localStores = [
+  { key: queueStoreKey, defaultVal: {} as iCardList },
+  { key: 'history', defaultVal: {} as iCardList },
+  { key: 'ignored', defaultVal: {} as iCardList },
+  { key: 'lngs', defaultVal: [] as string[] }
+];
 let reqs = [], timeout; // TODO types
 
 (async function init(): Promise<any> { // TODO return type
@@ -12,11 +19,12 @@ let reqs = [], timeout; // TODO types
     collectNewQueueEntries,
     { urls: [pattern] },
   );
-  browser.storage.onChanged.addListener(() =>
-    browser.storage.local.get('queue').then((res:{queue?:string;}) => 
-      setIcon(res?.queue ? Object.keys(res?.queue)?.length : 0)
+  browser.storage.onChanged.addListener(() => {
+    const queueStoreDefaultVal = localStores.find(s => s.key === queueStoreKey);
+    browser.storage.local.get(queueStoreKey).then((res => 
+      setIcon(Object.keys(parseJSON(res[queueStoreKey], queueStoreDefaultVal)).length)
     )
-  );
+  });
 })();
 
 function collectNewQueueEntries (req): void {
@@ -25,13 +33,6 @@ function collectNewQueueEntries (req): void {
 }
 
 async function addEntriesToQueue (): Promise<any> {
-  const parseJSON = <T>(json:string, defaultVal:T): T => json ? JSON.parse(json) : defaultVal;
-  const localStores = [
-    { key: 'queue', defaultVal: {} as iCardList },
-    { key: 'history', defaultVal: {} as iCardList },
-    { key: 'ignored', defaultVal: {} as iCardList },
-    { key: 'lngs', defaultVal: [] as string[] }
-  ];
   const {
     queue,
     history,
@@ -125,4 +126,8 @@ async function addEntriesToQueue (): Promise<any> {
 function setIcon (queueLen:number): void {
   const path:string = queueLen > 0 ? './icons/48-pending.png' : './icons/48.png';
   browser.browserAction.setIcon({ path });
+}
+
+function parseJSON <T>(json:string, defaultVal:T): T {
+  return json ? JSON.parse(json) : defaultVal;
 }
