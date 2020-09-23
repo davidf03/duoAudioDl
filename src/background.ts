@@ -14,7 +14,7 @@ const localStores = [
 ];
 let reqs = [], timeout; // TODO types
 
-(async function init(): Promise<any> { // TODO return type
+(async function init(): Promise<void> {
   browser.webRequest.onBeforeRequest.addListener(
     collectNewQueueEntries,
     { urls: [pattern] },
@@ -32,7 +32,7 @@ function collectNewQueueEntries (req): void {
   reqs.push(req);
 }
 
-async function addEntriesToQueue (): Promise<any> {
+async function addEntriesToQueue (): Promise<void> {
   const {
     queue,
     history,
