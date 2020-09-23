@@ -1,6 +1,7 @@
 export interface iCard {
   readonly id:string;
   readonly audioUrl:string;
+  modified:number;
   pending:boolean;
   fields:string[];
 }
