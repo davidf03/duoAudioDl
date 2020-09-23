@@ -195,9 +195,6 @@ async function initJointStore
   });
   store.useLocalStorage().then((res:U): void => {
     local = res;
-    if (!anki) {
-      return;
-    }
     completeJointStoreHalf(anki, local, store, localLoader, localLoaderDone, callback);
   });
 }
@@ -212,10 +209,7 @@ function completeJointStoreHalf
   ): void {
   loaderDone.on();
   loader.off();
-  if (!anki || !local) {
-    !anki && store.set(local);
-    return;
-  }
+  if (!anki || !local) return;
   store.set(callback(anki, local));
   connectedToAnki.on();
   connectingToAnki.off();
