@@ -38,7 +38,7 @@ async function addEntriesToQueue (): Promise<any> {
     ignored,
     lngs
   } = await browser.storage.local.get(localStores.map(s => s.key))
-  .then(res =>
+  .then((res:{[key:string]:string}) =>
     localStores.reduce((obj, s) =>
       (obj[s.key] = parseJSON(res[s.key], s.defaultVal), obj), {}
     )
@@ -63,12 +63,13 @@ async function addEntriesToQueue (): Promise<any> {
     setStore('lngs', lngs);
   }
 
+  // adding queue list for this lng as needed
   queue[lng] ??= [] as iCardGroup[];
 
   //find index of group
   const groupName:string = httpOriginUrlParser.getGroup(originUrl);
   let group:number = queue[lng]?.findIndex(g => g.name === name);
-  // adding new list and/or group as needed
+  // adding new group as needed
   let isNewGroup:boolean = false;
   if (typeof(group) !== 'number' || group === -1) {
     isNewGroup = true;
@@ -76,7 +77,7 @@ async function addEntriesToQueue (): Promise<any> {
     queue[lng].unshift({
       id: uuid(),
       name: groupName,
-      cards: []
+      cards: [] as iCard[]
     } as iCardGroup);
   }
 
@@ -84,21 +85,19 @@ async function addEntriesToQueue (): Promise<any> {
 
   reqs.forEach(req => {
     const audioUrl:string = req.url;
-    // pass over if audioUrl TTS name not valid
     const ttsName:string = audioUrlParser.getTTSName(audioUrl);
-    if (!ttsNameMap[lng]?.includes(ttsName)) {
-      return;
-    }
-    // pass over if already dealt with
+    // pass over if audioUrl TTS name not valid or card already dealt with
     if (
-      ignored[lng]?.find(g => g.name === name)?.cards?.some(c => c.audioUrl === audioUrl) ||
-      history[lng]?.find(g => g.name === name)?.cards?.some(c => c.audioUrl === audioUrl)
+      !ttsNameMap[lng]?.includes(ttsName)
+      || ignored[lng]?.find((g:iCardGroup): boolean => g.name === name)?.cards?.some((c:iCard): boolean => c.audioUrl === audioUrl)
+      || history[lng]?.find((g:iCardGroup): boolean => g.name === name)?.cards?.some((c:iCard): boolean => c.audioUrl === audioUrl)
     ) {
       return;
     }
     hasModifiedQueue = true; // (everything after this will have modified the queue)
     // if new group or card not present
-    if (isNewGroup || !queue[lng][group].cards.some(c => c.audioUrl === audioUrl)) {
+    const card:number = isNewGroup ? -1 : queue[lng][group].cards.findIndex((c:iCard): boolean => c.audioUrl === audioUrl);
+    if (card === -1) {
       // add card to (potentially new) group of (potentially new) lng
       queue[lng][group].cards.unshift({
         id: uuid(),
@@ -110,11 +109,11 @@ async function addEntriesToQueue (): Promise<any> {
     }
     // if card already exists bump priority
     queue[lng][group].cards.unshift(
-      queue[lng][group].cards.splice(
-        queue[lng][group].cards.findIndex(c => c.audioUrl === audioUrl), 1
-      )[0]
-    );
-    queue[lng].unshift(queue[lng].splice(group, 1)[0]);
+      queue[lng][group].cards.splice(card, 1)
+    [0]);
+    queue[lng].unshift(
+      queue[lng].splice(group, 1)
+    [0]);
   });
 
   // update storage.local accordingly
