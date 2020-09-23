@@ -110,11 +110,11 @@ async function addEntriesToQueue (): Promise<any> {
     }
     // if card already exists bump priority
     queue[lng][group].cards.unshift(
-      queue[lng][group].cards.splice(card, 1)
-    [0]);
+      queue[lng][group].cards.splice(card, 1)[0]
+    );
     queue[lng].unshift(
-      queue[lng].splice(group, 1)
-    [0]);
+      queue[lng].splice(group, 1)[0]
+    );
   });
 
   // update storage.local accordingly
