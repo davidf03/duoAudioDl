@@ -14,10 +14,10 @@ interface iLocalStore<T> {
   useLocalStorage: ()=>Promise<T>;
   set: (val:T)=>void;
 }
-interface iSwitchStore<T> {
-  toggle: ()=>T;
-  on: ()=>T;
-  off: ()=>T;
+interface iSwitchStore {
+  toggle: ()=>void;
+  on: ()=>void;
+  off: ()=>void;
 }
 interface iUpdatesCallback<T, U> {
   (data:T, localData?:U): U;
@@ -172,14 +172,14 @@ initJointStore(
 // );
 
 async function initJointStore
-  <T, U, V>(
+  <T, U>(
     action:string,
     version:number,
     store:iLocalStore<U>,
-    localLoader:iSwitchStore<V>,
-    localLoaderDone:iSwitchStore<V>,
-    ankiLoader:iSwitchStore<V>,
-    ankiLoaderDone:iSwitchStore<V>,
+    localLoader:iSwitchStore,
+    localLoaderDone:iSwitchStore,
+    ankiLoader:iSwitchStore,
+    ankiLoaderDone:iSwitchStore,
     callback:iUpdatesCallback<T, U>
   ): Promise<void> {
   // load anki and local simultaneously; last to load calls callback; if local loads first set store while updates from anki load
@@ -199,12 +199,12 @@ async function initJointStore
   });
 }
 function completeJointStoreHalf
-  <T, U, V>(
+  <T, U>(
     anki:T,
     local:U,
     store:iLocalStore<U>,
-    loader:iSwitchStore<V>,
-    loaderDone:iSwitchStore<V>,
+    loader:iSwitchStore,
+    loaderDone:iSwitchStore,
     callback:iUpdatesCallback<T, U>
   ): void {
   loaderDone.on();
