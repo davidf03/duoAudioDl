@@ -49,6 +49,9 @@ const createCardListStore = (key:string): any => {
     set,
     unset,
     useLocalStorage,
+    getCardById: (cardId:string, groupId:string, lng:string, list:iCardList): iCard => { // TODO make these methods more flexible
+      return list?.[lng]?.find((g:iCardGroup): boolean => g.id === groupId)?.cards?.find((c:iCard): boolean => c.id === cardId);
+    },
     add: (card:iCard, groupName:string, lng:string): void => update((list:iCardList): iCardList => {
       list[lng] ??= [] as iCardGroup[];
       let groupIndex:number = list[lng].findIndex((g:iCardGroup): boolean => g.name === groupName);

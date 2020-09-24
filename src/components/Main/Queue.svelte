@@ -24,6 +24,7 @@ onDestroy(unsubFromLng);
 
 function onIgnore (e) {
   const { id, groupId } = e.detail;
+  const card:iCard = 
   queue.clearById(id, groupId, $lng);
 }
 </script>
@@ -32,7 +33,7 @@ function onIgnore (e) {
   {#if $lng}
     {#if cardGroups.length > 0}
       <CardList
-        on:ignore-card={onIgnore}
+        on:ignorecard={onIgnore}
         {cardGroups}
         pending
       />

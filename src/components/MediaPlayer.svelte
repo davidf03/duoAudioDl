@@ -46,7 +46,6 @@ function onClickPlay (e): void {
 
 <audio {id} preload="none">
   <source src={testUrl} />
-  <track kind="captions" />
 </audio>
 <button
   on:click={onClickPlay}

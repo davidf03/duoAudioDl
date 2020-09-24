@@ -21,14 +21,13 @@ import type { iCard } from '../../interfaces/iCards';
 import MediaPlayer from '../MediaPlayer.svelte';
 
 export let card:iCard;
-export let pending:boolean = false;
+export let headingPriority:number = 3;
 
 const dispatch = createEventDispatcher();
 
 const id:string = card.id;
+let isMainHovered:boolean = false;
 let isOpen:boolean = false;
-let isPlayBtnPressed:boolean = false;
-let deck:number
 
 
 const unsubFromLng = lng.subscribe(val => isOpen = false);
@@ -53,26 +52,26 @@ function onClickIgnore (e): void {
 }
 </script>
 
-<div
-  class="dag-c-card dag-o-bg-btn-set"
->
-  <MediaPlayer
-    audioUrl={card.audioUrl}
-    classlist="dag-o-bg-btn-set__sibling dag-u-d-b"
-  />
-  <!-- <span>{card.audioUrl}</span> -->
-  <button
-    on:click={onClickIgnore}
-    title="Ignore"
-    class="dag-o-bg-btn-set__sibling"
-  >I</button>
-  <button
-    on:click={onClickMain}
-    class="dag-o-bg-btn-set__btn dag-o-unbutton"
-  ><span class="dag-u-accessible-hidden">{isOpen ? 'Collapse' : 'Expand'} card</span></button>
-</div>
-{#if isOpen}
-  <div>
-    card content
+<div class="dag-c-card">
+  <div class="dag-c-card__header dag-o-bg-btn-set">
+    <MediaPlayer
+      audioUrl={card.audioUrl}
+      classlist="dag-c-card__media dag-o-bg-btn-set__sibling dag-u-d-b"
+    />
+    <h3 class="dag-c-card__name">{card.audioUrl}</h3>
+    <button
+      on:click={onClickIgnore}
+      title="Ignore"
+      class="dag-c-card__ignore dag-o-bg-btn-set__sibling"
+    >I</button>
+    <button
+      on:click={onClickMain}
+      class="dag-o-bg-btn-set__btn dag-o-unbutton"
+    ><span class="dag-u-accessible-hidden">{isOpen ? 'Collapse' : 'Expand'} card</span></button>
   </div>
-{/if}
+  {#if isOpen}
+    <div>
+      card content
+    </div>
+  {/if}
+</div>

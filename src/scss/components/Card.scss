@@ -1,5 +1,30 @@
 .dag-c-card {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+
+
+  &__header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  &__name {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    width: 0;
+    flex-grow: 1;
+
+    font-size: unset;
+    font-weight: unset;
+  }
+
+  &__ignore {
+    display: none;
+    margin-inline-start: auto;
+  }
+  &:hover &__ignore {
+    display: block;
+  }
+
 }

@@ -4,12 +4,11 @@ import type { iCardGroup } from '../../interfaces/iCards';
 import { lng } from '../../store';
 import Card from './Card.svelte';
 
-export let cardGroup:iCardGroup;
-export let pending:boolean = false;
-
 const dispatch = createEventDispatcher();
+export let cardGroup:iCardGroup;
 
 let isShowingCards:boolean = false;
+
 function showCards (): void {
   isShowingCards = !isShowingCards;
 }
@@ -20,21 +19,21 @@ const unsubFromLng = lng.subscribe(val => { // TODO type
 onDestroy(unsubFromLng);
 
 function onIgnoreCard (e): void {
-  dispatch('ignore-card', Object.assign(e.detail, { groupId: cardGroup.id }));
+  dispatch('ignorecard', Object.assign(e.detail, { groupId: cardGroup.id }));
 }
 </script>
 
 <div class="dag-c-card-group">
   <div
     on:click={showCards}
-    class="dag-o-bg-btn-set"
+    class="dag-c-card-group__header dag-o-bg-btn-set"
   >
     <button
       on:click|stopPropagation={showCards}
       class="dag-c-card-group__toggle dag-o-bg-btn-set__btn dag-o-unbutton"
     ><span class="dag-u-accessible-hidden">{isShowingCards ? 'Collapse' : 'Expand'} group</span></button>
-    <span class="dag-o-bg-btn-set__sibling">{cardGroup.name}</span>
-    <span class="dag-o-bg-btn-set__sibling">{cardGroup.cards.length}</span>
+    <h2 class="dag-c-card-group__name dag-o-bg-btn-set__sibling">{cardGroup.name}</h2>
+    <span class="dag-c-card-group__counter dag-o-bg-btn-set__sibling">{cardGroup.cards.length}</span>
   </div>
   {#if isShowingCards}
     <ol class="dag-c-card-group__list dag-o-semantic-list">
@@ -43,7 +42,6 @@ function onIgnoreCard (e): void {
           <Card
             on:ignore={onIgnoreCard}
             {card}
-            {pending}
           />
         </li>
       {/each}
