@@ -7,7 +7,6 @@ import CardList from '../Cards/CardList.svelte';
 let cardGroups:iCardGroup[];
 function assignCardList (): void {
   cardGroups = $queue.getGroups($lng);
-  console.log($queue);
 };
 
 const unsubFromLoadingStore = loadingStore.subscribe((val:boolean): void => !val && assignCardList());

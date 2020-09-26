@@ -9,6 +9,7 @@ import type { iCardAnki } from './interfaces/iCardAnki';
 import type { iTemplateAnki } from './interfaces/iTemplateAnki';
 import { iNotification } from './interfaces/iNotification';
 
+console.log('testing');
 
 interface iLocalStore<T> {
   useLocalStorage: ()=>Promise<T>;
@@ -23,7 +24,7 @@ interface iUpdatesCallback<T, U> {
   (data:T, localData?:U): U;
 }
 
-const createPersistentStore = <T>(key:string, startValue:T, tClass?:{ new(...args: any[]): T }): any => {
+const createPersistentStore = <T>(key:string, startValue:T, tClass?:{ new(): T }): any => {
   const { subscribe, set: internalSet } = writable(startValue);
   const set = (val:T): void => val !== undefined && internalSet(val);
   return {

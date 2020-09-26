@@ -95,7 +95,7 @@ function setIcon (queueLen:number): void {
   browser.browserAction.setIcon({ path });
 }
 
-function parseJSON <T>(json:string, defaultVal:T, tClass?:{ new(...args: any[]): T }): T {
+function parseJSON <T>(json:string, defaultVal:T, tClass?:{ new(): T }): T {
   const val:T = json ? JSON.parse(json) as T : defaultVal;
   return !tClass ? val : Object.assign(new tClass(), val) as T;
 }
