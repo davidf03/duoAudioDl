@@ -1,41 +1,41 @@
 <script lang="ts">
 import { onDestroy } from 'svelte';
-import { assign } from 'svelte/internal';
-import type { iCardGroup } from '../../interfaces/iCards';
-import { queue, lng, loadingStore } from '../../store';
+import type { iCard, iCardGroup } from '../../interfaces/iCards';
+import { queue, lng, loadingStore, ignored } from '../../store';
 import CardList from '../Cards/CardList.svelte';
 
 let cardGroups:iCardGroup[];
 function assignCardList (): void {
-  cardGroups = $queue?.[$lng];
+  cardGroups = $queue.getGroups($lng);
+  console.log($queue);
 };
 
-const unsubFromLoadingStore = loadingStore.subscribe((val): void => !val && assignCardList());
+const unsubFromLoadingStore = loadingStore.subscribe((val:boolean): void => !val && assignCardList());
 onDestroy(unsubFromLoadingStore);
 
 const unsubFromQueue = queue.subscribe((): void => assignCardList());
 onDestroy(unsubFromQueue);
 
-const unsubFromLng = lng.subscribe((val): void => { // TODO type
+const unsubFromLng = lng.subscribe((): void => { // TODO type
   assignCardList();
   // scroll to top
 });
 onDestroy(unsubFromLng);
 
 function onIgnore (e) {
-  const { id, groupId } = e.detail;
-  const card:iCard = 
-  queue.clearById(id, groupId, $lng);
+  const { id, groupName } = e.detail;
+  const card:iCard = $queue.clearCard(id);
+  $queue = $queue;
+  $ignored.addCard(card, groupName, $lng);
 }
 </script>
 
 <div class="dag-c-home">
   {#if $lng}
-    {#if cardGroups.length > 0}
+    {#if cardGroups?.length > 0}
       <CardList
         on:ignorecard={onIgnore}
         {cardGroups}
-        pending
       />
     {:else}
       <p>No cards in queue</p>

@@ -6,7 +6,6 @@ import Card from './Card.svelte';
 
 const dispatch = createEventDispatcher();
 export let cardGroup:iCardGroup;
-
 let isShowingCards:boolean = false;
 
 function showCards (): void {
@@ -18,8 +17,8 @@ const unsubFromLng = lng.subscribe(val => { // TODO type
 });
 onDestroy(unsubFromLng);
 
-function onIgnoreCard (e): void {
-  dispatch('ignorecard', Object.assign(e.detail, { groupId: cardGroup.id }));
+function onIgnoreCard (e) {
+  dispatch('ignorecard', Object.assign(e.detail, { groupName: cardGroup.name }));
 }
 </script>
 
@@ -37,10 +36,10 @@ function onIgnoreCard (e): void {
   </div>
   {#if isShowingCards}
     <ol class="dag-c-card-group__list dag-o-semantic-list">
-      {#each cardGroup.cards as card}
+      {#each cardGroup.cards as card (card.audioUrl)}
         <li>
           <Card
-            on:ignore={onIgnoreCard}
+            on:ignorecard={onIgnoreCard}
             {card}
           />
         </li>

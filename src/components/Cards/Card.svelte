@@ -15,22 +15,19 @@
 //   save
 
 import { createEventDispatcher, onDestroy } from 'svelte';
-import audioUrlParser from '../../util/audioUrlParser';
 import { lng, expandedCardId } from '../../store';
 import type { iCard } from '../../interfaces/iCards';
 import MediaPlayer from '../MediaPlayer.svelte';
 
-export let card:iCard;
-export let headingPriority:number = 3;
 
 const dispatch = createEventDispatcher();
-
-const id:string = card.id;
-let isMainHovered:boolean = false;
+export let card:iCard;
+export let headingPriority:number = 3;
+const id:string = card.audioUrl;
 let isOpen:boolean = false;
 
 
-const unsubFromLng = lng.subscribe(val => isOpen = false);
+const unsubFromLng = lng.subscribe(() => isOpen = false);
 onDestroy(unsubFromLng);
 
 const unsubFromExpandedCardId = expandedCardId.subscribe(val => val && val !== id && isOpen && close());
@@ -41,6 +38,7 @@ function open (): void {
   isOpen = true;
 }
 function close (): void {
+  $expandedCardId === id && expandedCardId.unset();
   isOpen = false;
 }
 
@@ -48,13 +46,14 @@ function onClickMain (e): void {
   isOpen ? close() : open();
 }
 function onClickIgnore (e): void {
-  dispatch('ignore', { id });
+  dispatch('ignorecard', { id });
 }
 </script>
 
 <div class="dag-c-card">
   <div class="dag-c-card__header dag-o-bg-btn-set">
     <MediaPlayer
+      {id}
       audioUrl={card.audioUrl}
       classlist="dag-c-card__media dag-o-bg-btn-set__sibling dag-u-d-b"
     />

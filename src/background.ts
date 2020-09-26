@@ -1,16 +1,17 @@
 import { v4 as uuid } from 'uuid'; // TODO false error (module not found); seems safe to ignore
 import { ttsNameMap } from './maps/ttsNameMap';
-import { iCard, iCardGroup, iCardList } from './interfaces/iCards';
+import { CardList } from './classes/CardList';
+import type { iCard } from './interfaces/iCards';
 import httpOriginUrlParser from './util/httpOriginUrlParser';
 import audioUrlParser from './util/audioUrlParser';
 
 const pattern:string = 'https://*.cloudfront.net/*/*';
 const queueStoreKey:string = 'queue';
+const lngsStoreKey:string = 'lngs';
 const localStores = [
-  { key: queueStoreKey, defaultVal: {} as iCardList },
-  { key: 'history', defaultVal: {} as iCardList },
-  { key: 'ignored', defaultVal: {} as iCardList },
-  { key: 'lngs', defaultVal: [] as string[] }
+  { key: queueStoreKey, defaultVal: new CardList(), class: CardList },
+  { key: 'history', defaultVal: new CardList(), class: CardList },
+  { key: 'ignored', defaultVal: new CardList(), class: CardList }
 ];
 let reqs = [], timeout; // TODO types
 
@@ -20,10 +21,11 @@ let reqs = [], timeout; // TODO types
     { urls: [pattern] },
   );
   browser.storage.onChanged.addListener(() => {
-    const queueStoreDefaultVal = localStores.find(s => s.key === queueStoreKey);
-    browser.storage.local.get(queueStoreKey).then((res => 
-      setIcon(Object.keys(parseJSON(res[queueStoreKey], queueStoreDefaultVal)).length)
-    )
+    const queueStoreDefaultVal:CardList = localStores.find(s => s.key === queueStoreKey).defaultVal as CardList;
+    browser.storage.local.get(queueStoreKey).then(res => {
+      const queue:CardList = parseJSON(res[queueStoreKey], queueStoreDefaultVal, localStores.find(s => s.key === queueStoreKey).class); // TODO how do you make this generic
+      setIcon(queue ? queue.getLngs().length : 0)
+    })
   });
 })();
 
@@ -36,12 +38,11 @@ async function addEntriesToQueue (): Promise<void> {
   const {
     queue,
     history,
-    ignored,
-    lngs
+    ignored
   } = await browser.storage.local.get(localStores.map(s => s.key))
   .then((res:{[key:string]:string}) =>
     localStores.reduce((obj, s) =>
-      (obj[s.key] = parseJSON(res[s.key], s.defaultVal), obj), {}
+      (obj[s.key] = parseJSON(res[s.key], s.defaultVal, s.class), obj), {}
     )
   );
   const setStore = async <T>(key:string, val:T): Promise<void> => browser.storage.local.set({ [key]: JSON.stringify(val) });
@@ -57,30 +58,7 @@ async function addEntriesToQueue (): Promise<void> {
   // exit if no lng urls
   if (!lng) return;
 
-  // add lng if not already added
-  if (lngs.indexOf(lng) === -1) {
-    lngs.push(lng);
-    lngs.sort();
-    setStore('lngs', lngs);
-  }
-
-  // adding queue list for this lng as needed
-  queue[lng] ??= [] as iCardGroup[];
-
-  //find index of group
   const groupName:string = httpOriginUrlParser.getGroup(originUrl);
-  let group:number = queue[lng]?.findIndex(g => g.name === name);
-  // adding new group as needed
-  let isNewGroup:boolean = false;
-  if (typeof(group) !== 'number' || group === -1) {
-    isNewGroup = true;
-    group = 0;
-    queue[lng].unshift({
-      id: uuid(),
-      name: groupName,
-      cards: [] as iCard[]
-    } as iCardGroup);
-  }
 
   let hasModifiedQueue:boolean = false;
 
@@ -90,37 +68,26 @@ async function addEntriesToQueue (): Promise<void> {
     // pass over if audioUrl TTS name not valid or card already dealt with
     if (
       !ttsNameMap[lng]?.includes(ttsName)
-      || ignored[lng]?.find((g:iCardGroup): boolean => g.name === name)?.cards?.some((c:iCard): boolean => c.audioUrl === audioUrl)
-      || history[lng]?.find((g:iCardGroup): boolean => g.name === name)?.cards?.some((c:iCard): boolean => c.audioUrl === audioUrl)
-    ) {
-      return;
-    }
-    hasModifiedQueue = true; // (everything after this will have modified the queue)
-    // if new group or card not present
-    const card:number = isNewGroup ? -1 : queue[lng][group].cards.findIndex((c:iCard): boolean => c.audioUrl === audioUrl);
-    if (card === -1) {
-      // add card to (potentially new) group of (potentially new) lng
-      queue[lng][group].cards.unshift({
-        id: uuid(),
-        audioUrl,
-        pending:true,
-        fields:[],
-        lastFields: []
-      } as iCard);
-      return;
-    }
-    // if card already exists bump priority
-    queue[lng][group].cards.unshift(
-      queue[lng][group].cards.splice(card, 1)[0]
-    );
-    queue[lng].unshift(
-      queue[lng].splice(group, 1)[0]
-    );
+      || ignored.hasCard(audioUrl)
+      || history.hasCard(audioUrl)
+    ) return;
+    const card:iCard = {
+      audioUrl,
+      fields:[],
+      lastFields: []
+    };
+    queue.addCard(card, groupName, lng);
+    hasModifiedQueue = true;
   });
-
-  // update storage.local accordingly
-  hasModifiedQueue && setStore('queue', queue);
   reqs = [];
+
+  if (!hasModifiedQueue) return;
+  setStore(queueStoreKey, queue);
+  setStore(lngsStoreKey, Array.from(new Set([].concat(
+    queue.getLngs(),
+    history.getLngs(),
+    ignored.getLngs()
+  ))));
 }
 
 function setIcon (queueLen:number): void {
@@ -128,6 +95,7 @@ function setIcon (queueLen:number): void {
   browser.browserAction.setIcon({ path });
 }
 
-function parseJSON <T>(json:string, defaultVal:T): T {
-  return json ? JSON.parse(json) : defaultVal;
+function parseJSON <T>(json:string, defaultVal:T, tClass?:{ new(...args: any[]): T }): T {
+  const val:T = json ? JSON.parse(json) as T : defaultVal;
+  return !tClass ? val : Object.assign(new tClass(), val) as T;
 }

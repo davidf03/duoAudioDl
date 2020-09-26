@@ -18,7 +18,7 @@ function onClear (e): void {
 
 <div class="dag-c-notifier">
   <ul class="dag-o-semantic-list">
-    {#each notificationList as notification}
+    {#each notificationList as notification (notification.id)}
       <li>
         <Notification
           on:clear={onClear}

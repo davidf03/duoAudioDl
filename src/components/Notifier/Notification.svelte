@@ -3,17 +3,12 @@
 import { beforeUpdate, createEventDispatcher } from 'svelte';
 import type { iNotification } from "src/interfaces/iNotification";
 
+const dispatch = createEventDispatcher();
 export let classlist:string;
 export let notification:iNotification;
 
-const dispatch = createEventDispatcher();
-
-beforeUpdate(primeToClear);
-function primeToClear (): void {
-  const duration:number = notification.duration;
-  const boundDispatch = (id:string) => dispatch('clear', { id });
-  duration !== 0 && setTimeout(boundDispatch.bind(null, notification.id), duration*1000);
-}
+const duration:number = notification.duration;
+duration !== 0 && setTimeout(clear, duration*1000);
 
 let modifierFragment:string;
 switch (notification.priority) {
@@ -23,8 +18,11 @@ switch (notification.priority) {
 }
 let modifier:string = 'dag-c-notification--' + modifierFragment;
 
-function onClick (e): void {
+function clear (): void {
   dispatch('clear', { id: notification.id });
+}
+function onClick (e): void {
+  clear();
 }
 
 </script>
