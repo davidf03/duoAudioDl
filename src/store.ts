@@ -9,7 +9,6 @@ import type { iCardAnki } from './interfaces/iCardAnki';
 import type { iTemplateAnki } from './interfaces/iTemplateAnki';
 import { iNotification } from './interfaces/iNotification';
 
-console.log('testing');
 
 interface iLocalStore<T> {
   useLocalStorage: ()=>Promise<T>;
