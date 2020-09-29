@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import ankiconnect from './contentScripts/ankiConnect';
+import ankiconnect from './ankiConnect';
 import ankiParser from './util/ankiParser';
 import { CardList } from './classes/CardList';
 import type { iPrefs } from './interfaces/iPrefs';

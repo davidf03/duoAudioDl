@@ -16,6 +16,7 @@
 import { createEventDispatcher, onDestroy } from 'svelte';
 import { lng, expandedCardId } from '../../store';
 import type { iCard } from '../../interfaces/iCards';
+import Spinner from '../Icons/Spinner.svelte';
 import MediaPlayer from '../MediaPlayer.svelte';
 
 
@@ -51,11 +52,15 @@ function onClickIgnore (e): void {
 
 <div class="dag-c-card">
   <div class="dag-c-card__header dag-o-bg-btn-set">
-    <MediaPlayer
-      {id}
-      audioFile={card.audioFile}
-      classlist="dag-c-card__media dag-o-bg-btn-set__sibling dag-u-d-b"
-    />
+    {#if !card.audioFile}
+      <Spinner />
+    {:else}
+      <MediaPlayer
+        {id}
+        audioFile={card.audioFile}
+        classlist="dag-c-card__media dag-o-bg-btn-set__sibling dag-u-d-b"
+      />
+    {/if}
     <h3 class="dag-c-card__name">{card.audioUrl}</h3>
     <button
       on:click={onClickIgnore}

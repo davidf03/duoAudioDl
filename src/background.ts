@@ -47,7 +47,7 @@ async function addEntriesToQueue (): Promise<void> {
       (obj[s.key] = parseJSON(res[s.key], s.defaultVal, s.class), obj), {}
     )
   );
-  const setStore = async <T>(key:string, val:T): Promise<void> => browser.storage.local.set({ [key]: JSON.stringify(val) });
+  const setStore = <T>(key:string, val:T): Promise<void> => browser.storage.local.set({ [key]: JSON.stringify(val) });
 
   let lng:string, originUrl:string;
   // get lng (there should be only one, unique one)
@@ -63,11 +63,11 @@ async function addEntriesToQueue (): Promise<void> {
 
   const groupName:string = httpOriginUrlParser.getGroup(originUrl);
 
+  // skip cards if audioUrl TTS name not valid or card already exists
   const filteredReqsInstance = reqsInstance.filter(req => {
     const audioUrl:string = req.url;
     if (!audioUrl) return false;
     const ttsName:string = audioUrlParser.getTTSName(audioUrl);
-    // pass over if audioUrl TTS name not valid or card already dealt with
     if (
       !ttsNameMap[lng]?.includes(ttsName)
       || ignored.hasCard(audioUrl)
@@ -85,13 +85,16 @@ async function addEntriesToQueue (): Promise<void> {
 
   if (filteredReqsInstance.length === 0) return;
 
+  // set lngs and queue added cards
   setStore(lngsStoreKey, Array.from(new Set([].concat(
     queue.getLngs(),
     history.getLngs(),
     ignored.getLngs()
   ))));
-  await setStore(queueStoreKey, queue);
+  await setStore(queueStoreKey, queue, CardList);
+  console.log('cards added');
 
+  // download files for all new cards and commit to queue
   Promise.all(filteredReqsInstance.map(req => {
     const audioUrl:string = req.url;
 
@@ -101,7 +104,7 @@ async function addEntriesToQueue (): Promise<void> {
     return new Promise((resolve) => {
       xhr.open('GET', audioUrl, true);
       xhr.responseType = 'arraybuffer';
-      xhr.addEventListener('load', (e) => resolve(), false);
+      xhr.addEventListener('load', () => resolve(), false);
       xhr.send();
     }).then(() => new Promise<string|ArrayBuffer>((resolve) => {
       const blob:Blob = new Blob([xhr.response], {type: 'audio/ogg'});
@@ -116,7 +119,7 @@ async function addEntriesToQueue (): Promise<void> {
       card.audioFile = audioFiles[i];
       queue.updateCard(card);
     }
-    setStore(queueStoreKey, queue);
+    setStore(queueStoreKey, queue, CardList);
   });
 }
 
