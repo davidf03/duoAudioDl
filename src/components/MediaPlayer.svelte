@@ -5,7 +5,7 @@ import { createEventDispatcher, onMount, onDestroy } from 'svelte';
 import { playingAudioId } from '../store';
 import PlayPause from './Icons/PlayPause/PlayPause.svelte';
 
-export let audioUrl:string = '';
+export let audioFile:string = '';
 export let id:string = '';
 export let classlist:string = '';
 
@@ -44,7 +44,7 @@ function onClickPlay (e): void {
 </script>
 
 <audio {id} preload="none">
-  <source src={testUrl} />
+  <source src={audioFile} />
 </audio>
 <button
   on:click={onClickPlay}

@@ -31,19 +31,27 @@ export class CardList {
     if (!cs) return null;
     return this.cardList[cs.lng][cs.groupIndex].cards[cs.cardIndex];
   }
-  public addCard (card:iCard, groupName:string, lng:string): void {
+  public addCard (card:iCard, groupName:string, lng:string): boolean {
     this.cardList[lng] ??= [] as iCardGroup[];
     const cs:iCardStructure = this.getCardStructure(card.audioUrl);
     if (!!cs) {
       this.reprioritizeCard(cs);
-      return;
+      return false;
     }
     this.cardList[lng][this.getGroupIndex(groupName, lng)].cards.unshift(card);
+    return true;
+  }
+  public updateCard (card:iCard): void {
+    const cs:iCardStructure = this.getCardStructure(card.audioUrl);
+    this.cardList[cs.lng][cs.groupIndex].cards[cs.cardIndex] = card;
   }
   public clearCard (audioUrl:string): iCard {
     const cs:iCardStructure = this.getCardStructure(audioUrl);
     if (!cs) return null;
-    return this.cardList[cs.lng][cs.groupIndex].cards.splice(cs.cardIndex, 1)[0];
+    const cards:iCard[] = this.cardList[cs.lng][cs.groupIndex].cards;
+    const card:iCard = cards.splice(cs.cardIndex, 1)[0];
+    cards.length === 0 && this.cardList[cs.lng].splice(cs.groupIndex, 1);
+    return card;
   }
 
   private getCardStructure (audioUrl:string): iCardStructure {

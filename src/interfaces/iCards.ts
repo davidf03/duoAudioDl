@@ -1,5 +1,6 @@
 export interface iCard {
   readonly audioUrl:string;
+  audioFile:string|ArrayBuffer;
   fields:string[];
   lastFields:string[];
 }

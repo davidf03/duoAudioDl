@@ -8,6 +8,7 @@ import type { iTemplate } from './interfaces/iTemplate';
 import type { iCardAnki } from './interfaces/iCardAnki';
 import type { iTemplateAnki } from './interfaces/iTemplateAnki';
 import { iNotification } from './interfaces/iNotification';
+import { Result } from 'sass';
 
 
 interface iLocalStore<T> {
@@ -137,7 +138,7 @@ Promise.allSettled([
   prefs.useLocalStorage(),
   templateHistory.useLocalStorage()
 ])
-.then(res => {
+.then((res:Response): void => {
   res[1].value || res[0].value?.[0] && lng.set(res[0].value[0]);
   loadingStore.off();
 });

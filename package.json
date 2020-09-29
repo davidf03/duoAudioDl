@@ -12,6 +12,7 @@
     "eslint": "^7.7.0",
     "eslint-plugin-svelte3": "2.7.3",
     "iso-639-1": "^2.1.4",
+    "lodash": "^4.17.20",
     "parcel-bundler": "^1.12.4",
     "parcel-plugin-svelte": "^4.0.6",
     "parcel-plugin-web-extension": "^1.6.1",

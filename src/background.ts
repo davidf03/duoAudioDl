@@ -1,4 +1,4 @@
-import { v4 as uuid } from 'uuid'; // TODO false error (module not found); seems safe to ignore
+import _ from 'lodash';
 import { ttsNameMap } from './maps/ttsNameMap';
 import { CardList } from './classes/CardList';
 import type { iCard } from './interfaces/iCards';
@@ -30,11 +30,13 @@ let reqs = [], timeout; // TODO types
 })();
 
 function collectNewQueueEntries (req): void {
-  timeout = setTimeout(addEntriesToQueue, 1000);
+  timeout = setTimeout(async () => await addEntriesToQueue(), 1000);
   reqs.push(req);
 }
 
 async function addEntriesToQueue (): Promise<void> {
+  const reqsInstance = _.cloneDeep(reqs);
+  reqs = [];
   const {
     queue,
     history,
@@ -50,7 +52,8 @@ async function addEntriesToQueue (): Promise<void> {
   let lng:string, originUrl:string;
   // get lng (there should be only one, unique one)
   const lngRegex:RegExp = new RegExp('^[a-z]{2}$','i');
-  for (const req of reqs) {
+  for (const req of reqsInstance) {
+    if (req.tabId === -1) continue;
     originUrl = await browser.tabs.get(req.tabId).then(res => res.url);
     lng = httpOriginUrlParser.getLng(originUrl);
     if (lng && lngRegex.test(lng)) break;
@@ -60,34 +63,61 @@ async function addEntriesToQueue (): Promise<void> {
 
   const groupName:string = httpOriginUrlParser.getGroup(originUrl);
 
-  let hasModifiedQueue:boolean = false;
-
-  reqs.forEach(req => {
+  const filteredReqsInstance = reqsInstance.filter(req => {
     const audioUrl:string = req.url;
+    if (!audioUrl) return false;
     const ttsName:string = audioUrlParser.getTTSName(audioUrl);
     // pass over if audioUrl TTS name not valid or card already dealt with
     if (
       !ttsNameMap[lng]?.includes(ttsName)
       || ignored.hasCard(audioUrl)
       || history.hasCard(audioUrl)
-    ) return;
+    ) return false;
+
     const card:iCard = {
       audioUrl,
-      fields:[],
+      audioFile: null,
+      fields: [],
       lastFields: []
     };
-    queue.addCard(card, groupName, lng);
-    hasModifiedQueue = true;
+    return queue.addCard(card, groupName, lng);
   });
-  reqs = [];
 
-  if (!hasModifiedQueue) return;
-  setStore(queueStoreKey, queue);
+  if (filteredReqsInstance.length === 0) return;
+
   setStore(lngsStoreKey, Array.from(new Set([].concat(
     queue.getLngs(),
     history.getLngs(),
     ignored.getLngs()
   ))));
+  await setStore(queueStoreKey, queue);
+
+  Promise.all(filteredReqsInstance.map(req => {
+    const audioUrl:string = req.url;
+
+    const xhr:XMLHttpRequest = new XMLHttpRequest();
+    const fileReader:FileReader = new FileReader();
+
+    return new Promise((resolve) => {
+      xhr.open('GET', audioUrl, true);
+      xhr.responseType = 'arraybuffer';
+      xhr.addEventListener('load', (e) => resolve(), false);
+      xhr.send();
+    }).then(() => new Promise<string|ArrayBuffer>((resolve) => {
+      const blob:Blob = new Blob([xhr.response], {type: 'audio/ogg'});
+      fileReader.onload = (e) => resolve(e.target.result);
+      fileReader.readAsDataURL(blob);
+    }));
+  })).then(async (audioFiles:any[]) => {
+    const queueStoreDefaultVal:CardList = localStores.find(s => s.key === queueStoreKey).defaultVal as CardList;
+    const queue:CardList = await browser.storage.local.get(queueStoreKey).then(res => parseJSON(res[queueStoreKey], queueStoreDefaultVal, CardList));
+    for (let i=0; i<filteredReqsInstance.length; i++) {
+      const card:iCard = queue.getCard(filteredReqsInstance[i].url);
+      card.audioFile = audioFiles[i];
+      queue.updateCard(card);
+    }
+    setStore(queueStoreKey, queue);
+  });
 }
 
 function setIcon (queueLen:number): void {

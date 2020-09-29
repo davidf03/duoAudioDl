@@ -6,7 +6,6 @@
 // ignore
 // [body click]
 //   fields
-//     (id)
 //     deck [with default]
 //     template [with default]
 //     [template fields]
@@ -54,7 +53,7 @@ function onClickIgnore (e): void {
   <div class="dag-c-card__header dag-o-bg-btn-set">
     <MediaPlayer
       {id}
-      audioUrl={card.audioUrl}
+      audioFile={card.audioFile}
       classlist="dag-c-card__media dag-o-bg-btn-set__sibling dag-u-d-b"
     />
     <h3 class="dag-c-card__name">{card.audioUrl}</h3>
