@@ -15,10 +15,12 @@
 
 import { CARD_TAG_VALID_CHARS } from '../../consts';
 import { createEventDispatcher, onDestroy } from 'svelte';
-import { lng, expandedCardId, prefs } from '../../store';
+import { lng, expandedCardId, prefs, deckNamesAndIds, templateNamesAndIds } from '../../store';
 import type { iCard } from '../../interfaces/iCards';
+import type { iNameAndId } from '../../interfaces/iNameAndId';
 import Spinner from '../Icons/Spinner.svelte';
 import MediaPlayer from '../MediaPlayer.svelte';
+import Selector from '../Inputs/Selector.svelte';
 import Tokeniser from '../Inputs/Tokeniser.svelte';
 
 
@@ -28,6 +30,12 @@ const invalidTagPatternRegex:RegExp = new RegExp(`[^${CARD_TAG_VALID_CHARS}]`, '
 export let card:iCard;
 const id:string = card.audioUrl;
 let isOpen:boolean = false;
+
+let deckOptions:iNameAndId[] = $deckNamesAndIds?.sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0);
+let deckId:number = card.deckId ?? $prefs?.lngs?.[$lng]?.deckNameAndId?.id ?? deckOptions?.[0]?.id;
+
+let templateOptions:iNameAndId[] = $templateNamesAndIds?.sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0);
+let templateId:number = card.templateId ?? $prefs?.lngs?.[$lng]?.templateNameAndId?.id ?? templateOptions?.[0]?.id;
 
 let defaultTags:string[] = [];
 if ($prefs?.lngs?.[$lng]?.useLngTag !== false) defaultTags = [...defaultTags, `dag-${$lng}`];
@@ -65,6 +73,12 @@ function onUpdateTags (e): void {
   card.tags = tokens.filter((tkn:string): boolean => !defaultTags.includes(tkn));
   dispatch('fieldsupdated');
 }
+function onChangeDeckSelector (): void {
+  card.deckId = deckId;
+}
+function onChangeTemplateSelector (): void {
+  card.templateId = templateId;
+}
 </script>
 
 <div class="dag-c-card">
@@ -91,6 +105,24 @@ function onUpdateTags (e): void {
   </div>
   {#if isOpen}
     <div class="dag-c-card__body">
+      <Selector
+        bind:value={deckId}
+        on:change={onChangeDeckSelector}
+        options={deckOptions.map(o => ({val:o.id, text:o.name}))}
+        emptyText="No decks found"
+        id={`${id}-deck-selector`}
+        label="Create in deck"
+        classlist="dag-u-d-b"
+      />
+      <Selector
+        bind:value={templateId}
+        on:change={onChangeTemplateSelector}
+        options={templateOptions.map(o => ({val:o.id, text:o.name}))}
+        emptyText="No templates found"
+        id={`${id}-template-selector`}
+        label="Use template"
+        classlist="dag-u-d-b"
+      />
       <Tokeniser
         on:update={onUpdateTags}
         id={`${id}-tags-entry`}

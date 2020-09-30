@@ -10,6 +10,7 @@ import {
 } from '../../store';
 import { iNameAndId } from '../../interfaces/iNameAndId';
 import Spinner from '../Icons/Spinner.svelte';
+import Selector from '../Inputs/Selector.svelte';
 
 const fallbackDeckId = FALLBACK_DECK_ID;
 
@@ -51,11 +52,11 @@ function initLngPrefs (): void {
   $prefs.lngs[$lng] ??= {};
 }
 
-function onBlurDecks (): void {
+function onChangeDecks (): void {
   initLngPrefs();
   $prefs.lngs[$lng].deckNameAndId = $deckNamesAndIds.find(d => d.id === deckId);
 }
-function onBlurTemplates (): void {
+function onChangeTemplates (): void {
   initLngPrefs();
   $prefs.lngs[$lng].templateNameAndId = $templateNamesAndIds.find(t => t.id === templateId);
 }
@@ -74,43 +75,25 @@ async function onChangeGroupTag (): Promise<void> {
     <Spinner />
   </div>
 {:else}
-  <label for="settings-deck-selector" class="dag-u-d-b">Create cards in deck</label>
-  <select
-    id="settings-deck-selector"
+  <Selector
     bind:value={deckId}
-    on:blur={onBlurDecks}
-    disabled={deckOptions.length === 0}
-  >
-    {#if deckOptions.length === 0}
-      <option selected>No decks found</option>
-    {:else}
-      {#each deckOptions as d}
-        <option
-          value={d.id}
-          selected={d.id === deckId}
-        >{d.name}</option>
-      {/each}
-    {/if}
-  </select>
+    on:change={onChangeDecks}
+    options={deckOptions.map(o => ({val:o.id, text:o.name}))}
+    emptyText="No decks found"
+    id="settings-deck-selector"
+    label="Create cards in deck"
+    classlist="dag-u-d-b"
+  />
 
-  <label for="settings-template-selector" class="dag-u-d-b">Use template</label>
-  <select
-    id="settings-template-selector"
+  <Selector
     bind:value={templateId}
-    on:blur={onBlurTemplates}
-    disabled={templateOptions.length === 0}
-  >
-    {#if templateOptions.length === 0}
-      <option selected>No templates found</option>
-    {:else}
-      {#each templateOptions as t}
-        <option
-          value={t.id}
-          selected={t.id === templateId}
-        >{t.name}</option>
-      {/each}
-    {/if}
-  </select>
+    on:change={onChangeTemplates}
+    options={templateOptions.map(o => ({val:o.id, text:o.name}))}
+    emptyText="No templates found"
+    id="settings-template-selector"
+    label="Use template"
+    classlist="dag-u-d-b"
+  />
 
   <label for="settings-lng-tag" class="dag-u-d-b">
     <input

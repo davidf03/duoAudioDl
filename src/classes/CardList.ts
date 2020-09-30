@@ -36,18 +36,18 @@ export class CardList {
     const cs:iCardStructure = this.getCardStructure(card.audioUrl);
     if (!!cs) {
       this.reprioritizeCard(cs);
-      // this.addGroupToCard(this.getCard(card.audioUrl), groupName);
+      this.addGroupToCard(this.getCard(card.audioUrl), groupName);
       return false;
     }
     this.cardList[lng][this.getGroupIndex(groupName, lng)].cards.unshift(card);
     return true;
   }
-  // private addGroupToCard(card:iCard, groupName:string): void {
-  //   card.groups = Array.from(new Set([].concat(
-  //     card.groups,
-  //     [groupName]
-  //   )));
-  // }
+  private addGroupToCard(card:iCard, groupName:string): void {
+    card.groups = Array.from(new Set([].concat(
+      card.groups,
+      [groupName]
+    )));
+  }
   public updateCard (card:iCard): void {
     const cs:iCardStructure = this.getCardStructure(card.audioUrl);
     this.cardList[cs.lng][cs.groupIndex].cards[cs.cardIndex] = card;
