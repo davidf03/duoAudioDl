@@ -8,12 +8,10 @@ import audioUrlParser from './util/audioUrlParser';
 const pattern:string = 'https://*.cloudfront.net/*/*';
 const queueStoreKey:string = 'queue';
 const lngsStoreKey:string = 'lngs';
-const lngStoreKey:string = 'lng';
 const localStores = [
   { key: queueStoreKey, defaultVal: new CardList(), class: CardList },
   { key: 'history', defaultVal: new CardList(), class: CardList },
-  { key: 'ignored', defaultVal: new CardList(), class: CardList },
-  { key: lngStoreKey, defaultVal: null } // TODO feels weird including this here, somehow
+  { key: 'ignored', defaultVal: new CardList(), class: CardList }
 ];
 let reqs = [], timeout; // TODO types
 
@@ -79,8 +77,8 @@ async function addEntriesToQueue (): Promise<void> {
     const card:iCard = {
       audioUrl,
       audioFile: null,
-      fields: [],
-      lastFields: []
+      groups: [groupName],
+      fields: []
     };
     return queue.addCard(card, groupName, lng);
   });
@@ -94,9 +92,7 @@ async function addEntriesToQueue (): Promise<void> {
     ignored.getLngs()
   )));
   setStore(lngsStoreKey, lngs);
-  !lng && setStore(lngStoreKey, lngs[0]);
   await setStore(queueStoreKey, queue);
-  console.log('cards added');
 
   // download files for all new cards and commit to queue
   Promise.all(filteredReqsInstance.map(req => {

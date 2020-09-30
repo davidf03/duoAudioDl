@@ -137,7 +137,12 @@ Promise.allSettled([
   prefs.useLocalStorage(),
   templateHistory.useLocalStorage()
 ])
-.then((): void => loadingStore.off());
+.then((res): void => {
+  const lngRes:string = res[1].value;
+  const lngsRes:string[] = res[0].value;
+  !lngRes && lngsRes?.length > 0 && lng.set(lngsRes[0]);
+  loadingStore.off();
+});
 
 // init joint stores
 initJointStore(

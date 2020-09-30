@@ -14,7 +14,7 @@
 //   save
 
 import { createEventDispatcher, onDestroy } from 'svelte';
-import { lng, expandedCardId } from '../../store';
+import { lng, expandedCardId, prefs } from '../../store';
 import type { iCard } from '../../interfaces/iCards';
 import Spinner from '../Icons/Spinner.svelte';
 import MediaPlayer from '../MediaPlayer.svelte';
@@ -26,6 +26,16 @@ export let card:iCard;
 const id:string = card.audioUrl;
 let isOpen:boolean = false;
 
+let defaultTags:string[] = [];
+if ($prefs?.lngs?.[$lng]?.useLngTag !== false) defaultTags = [...defaultTags, `dag-${$lng}`];
+if ($prefs?.lngs?.[$lng]?.useGroupTag !== false) defaultTags = [...defaultTags, ...card.groups.map(
+  (gn:string): string => `dag-${$lng}-${gn.replace(/[^\w\d\-_]/g, '').toLowerCase()}`
+)];
+console.log(defaultTags);
+const tags:string[] = Array.from(new Set([].concat(
+  defaultTags,
+  card.tags || []
+)));
 
 const unsubFromLng = lng.subscribe(() => isOpen = false);
 onDestroy(unsubFromLng);
@@ -49,8 +59,8 @@ function onClickIgnore (): void {
   dispatch('cardignored', { id });
 }
 function onUpdateTags (e): void {
-  const { tokens: tags } = e.detail;
-  card.tags = tags;
+  const { tokens } = e.detail;
+  card.tags = tokens.filter((tkn:string): boolean => !defaultTags.includes(tkn)); // TODO consider actually adding then removing these on settings change
   dispatch('fieldsupdated');
 }
 </script>
@@ -81,7 +91,7 @@ function onUpdateTags (e): void {
     <div class="dag-c-card__body">
       <Tokeniser
         on:update={onUpdateTags}
-        tokens={card.tags}
+        tokens={tags}
         tokenSemanticName="tag"
       />
     </div>
