@@ -120,7 +120,7 @@ async function addEntriesToQueue (): Promise<void> {
     const queue:CardList = await browser.storage.local.get(queueStoreKey).then(res => parseJSON(res[queueStoreKey], queueStoreDefaultVal, CardList));
     for (let i=0; i<filteredReqsInstance.length; i++) {
       const card:iCard = queue.getCard(filteredReqsInstance[i].url);
-      card.audioFile = audioFiles[i];
+      card.audioFile = audioFiles[i] as string;
       queue.updateCard(card);
     }
     setStore(queueStoreKey, queue);

@@ -19,4 +19,10 @@ export const notificationMap:{[key:string]:iNotificationReference} = {
     message: 'Connected to Anki',
     duration: 4
   },
+  invalidCardTagCharacter: {
+    code: 3,
+    priority: 1,
+    message: '',
+    duration: 6
+  }
 };

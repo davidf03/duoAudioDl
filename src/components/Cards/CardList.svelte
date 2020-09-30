@@ -9,7 +9,8 @@ export let cardGroups:iCardGroup[];
   {#each cardGroups as cardGroup}
     <li class="dag-c-card-list__group">
       <CardGroup
-        on:ignorecard
+        on:cardignored
+        on:fieldsupdated
         {cardGroup}
       />
     </li>

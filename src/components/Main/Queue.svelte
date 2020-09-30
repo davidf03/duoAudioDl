@@ -21,11 +21,14 @@ const unsubFromLng = lng.subscribe((): void => { // TODO type
 });
 onDestroy(unsubFromLng);
 
-function onIgnore (e) {
+function onIgnore (e): void {
   const { id, groupName } = e.detail;
   const card:iCard = $queue.clearCard(id);
   $queue = $queue;
   $ignored.addCard(card, groupName, $lng);
+}
+function onFieldsUpdated (): void {
+  $queue = $queue;
 }
 </script>
 
@@ -33,7 +36,8 @@ function onIgnore (e) {
   {#if $lng}
     {#if cardGroups?.length > 0}
       <CardList
-        on:ignorecard={onIgnore}
+        on:cardignored={onIgnore}
+        on:fieldsupdated={onFieldsUpdated}
         {cardGroups}
       />
     {:else}

@@ -18,11 +18,11 @@ import { lng, expandedCardId } from '../../store';
 import type { iCard } from '../../interfaces/iCards';
 import Spinner from '../Icons/Spinner.svelte';
 import MediaPlayer from '../MediaPlayer.svelte';
+import Tokeniser from '../Inputs/Tokeniser.svelte';
 
 
 const dispatch = createEventDispatcher();
 export let card:iCard;
-export let headingPriority:number = 3;
 const id:string = card.audioUrl;
 let isOpen:boolean = false;
 
@@ -42,11 +42,16 @@ function close (): void {
   isOpen = false;
 }
 
-function onClickMain (e): void {
+function onClickMain (): void {
   isOpen ? close() : open();
 }
-function onClickIgnore (e): void {
-  dispatch('ignorecard', { id });
+function onClickIgnore (): void {
+  dispatch('cardignored', { id });
+}
+function onUpdateTags (e): void {
+  const { tokens: tags } = e.detail;
+  card.tags = tags;
+  dispatch('fieldsupdated');
 }
 </script>
 
@@ -73,8 +78,12 @@ function onClickIgnore (e): void {
     ><span class="dag-u-accessible-hidden">{isOpen ? 'Collapse' : 'Expand'} card</span></button>
   </div>
   {#if isOpen}
-    <div>
-      card content
+    <div class="dag-c-card__body">
+      <Tokeniser
+        on:update={onUpdateTags}
+        tokens={card.tags}
+        tokenSemanticName="tag"
+      />
     </div>
   {/if}
 </div>

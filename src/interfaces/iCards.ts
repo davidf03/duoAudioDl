@@ -1,8 +1,10 @@
 export interface iCard {
   readonly audioUrl:string;
-  audioFile:string|ArrayBuffer;
+  audioFile:string;
   fields:string[];
-  lastFields:string[];
+  deckId?:number;
+  templateId?:number;
+  tags?:string[];
 }
 
 export interface iCardGroup {

@@ -17,8 +17,8 @@ const unsubFromLng = lng.subscribe(val => { // TODO type
 });
 onDestroy(unsubFromLng);
 
-function onIgnoreCard (e) {
-  dispatch('ignorecard', Object.assign(e.detail, { groupName: cardGroup.name }));
+function onCardIgnored (e) {
+  dispatch('cardignored', Object.assign(e.detail, { groupName: cardGroup.name }));
 }
 </script>
 
@@ -39,7 +39,8 @@ function onIgnoreCard (e) {
       {#each cardGroup.cards as card (card.audioUrl)}
         <li>
           <Card
-            on:ignorecard={onIgnoreCard}
+            on:cardignored={onCardIgnored}
+            on:fieldsupdated
             {card}
           />
         </li>
