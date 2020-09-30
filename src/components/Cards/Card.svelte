@@ -13,6 +13,7 @@
 //     [group: editable]
 //   save
 
+import { CARD_TAG_VALID_CHAR } from '../../consts';
 import { createEventDispatcher, onDestroy } from 'svelte';
 import { lng, expandedCardId, prefs } from '../../store';
 import type { iCard } from '../../interfaces/iCards';
@@ -22,6 +23,8 @@ import Tokeniser from '../Inputs/Tokeniser.svelte';
 
 
 const dispatch = createEventDispatcher();
+const validTagPatternRegex:RegExp = new RegExp(`^[${CARD_TAG_VALID_CHAR}]*$`);
+const invalidTagPatternRegex:RegExp = new RegExp(`[^${CARD_TAG_VALID_CHAR}]`, 'g');
 export let card:iCard;
 const id:string = card.audioUrl;
 let isOpen:boolean = false;
@@ -29,9 +32,8 @@ let isOpen:boolean = false;
 let defaultTags:string[] = [];
 if ($prefs?.lngs?.[$lng]?.useLngTag !== false) defaultTags = [...defaultTags, `dag-${$lng}`];
 if ($prefs?.lngs?.[$lng]?.useGroupTag !== false) defaultTags = [...defaultTags, ...card.groups.map(
-  (gn:string): string => `dag-${$lng}-${gn.replace(/[^\w\d\-_]/g, '').toLowerCase()}`
+  (gn:string): string => `dag-${$lng}-${gn.replace(invalidTagPatternRegex, '').toLowerCase()}`
 )];
-console.log(defaultTags);
 const tags:string[] = Array.from(new Set([].concat(
   defaultTags,
   card.tags || []
@@ -60,7 +62,7 @@ function onClickIgnore (): void {
 }
 function onUpdateTags (e): void {
   const { tokens } = e.detail;
-  card.tags = tokens.filter((tkn:string): boolean => !defaultTags.includes(tkn)); // TODO consider actually adding then removing these on settings change
+  card.tags = tokens.filter((tkn:string): boolean => !defaultTags.includes(tkn));
   dispatch('fieldsupdated');
 }
 </script>
@@ -92,6 +94,8 @@ function onUpdateTags (e): void {
       <Tokeniser
         on:update={onUpdateTags}
         tokens={tags}
+        validPatternRegex={validTagPatternRegex}
+        invalidPatternRegex={invalidTagPatternRegex}
         tokenSemanticName="tag"
       />
     </div>

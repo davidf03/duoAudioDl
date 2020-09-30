@@ -45,3 +45,11 @@
   [ ] settings per language for
 
     [ ] automatically adding language and group tags
+
+[ ] Tokeniser improvements
+
+  [ ] focus control for browsing tags w/ aria-live, for accessibility
+
+    [ ] aria-live
+
+    [ ] focus next in list on clear

@@ -7,15 +7,21 @@ import { notificationMap as nMap } from '../../maps/notificationMap';
 
 export let tokens:string[] = [];
 export let tokenSemanticName:string = 'token';
+export let validPatternRegex:RegExp = null;
+export let invalidPatternRegex:RegExp = null;
 
 const dispatch = createEventDispatcher();
 
-const patternRegex:RegExp = /[\w\d\-_]+/;
-const pattern:string = '[\\w\\d\\-_]+';
+let pattern:string = validPatternRegex?.source;
 let entry:string = '';
 
 function addToken (): void {
-  tokens = [...tokens, entry];
+  const index:number = tokens.indexOf(entry);
+  tokens = [
+    ...tokens.slice(0, index),
+    ...tokens.slice(index + 1),
+    entry
+  ];
   entry = '';
   dispatch('update', { tokens });
 }
@@ -32,14 +38,14 @@ function clearToken(e): void {
 }
 
 function onInput (e): void {
-  entry = entry.replace(/[^\w\d\-_]/g, '');
+  entry = entry.replace(invalidPatternRegex, '');
   const key:string = e.data;
   if (e.data === ' ' || e.data === ',') {
     addToken();
     return;
   }
   const nRef:iNotificationReference = nMap.invalidCardTagCharacter;
-  if (patternRegex.test(key)) return;
+  if (validPatternRegex.test(key)) return;
   notifications.add({
     id: uuid(),
     ...nRef,
