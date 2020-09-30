@@ -6,6 +6,7 @@ export let value:any = null;
 export let emptyText:string = '';
 export let id:string = '';
 export let label:string = '';
+export let required:boolean = false;
 export let classlist:string = '';
 
 const dispatch = createEventDispatcher();
@@ -28,6 +29,7 @@ function onBlur (): void {
     on:blur={onBlur}
     {id}
     disabled={options.length === 0}
+    {required}
   >
     {#if options.length === 0}
       <option selected>{emptyText}</option>
