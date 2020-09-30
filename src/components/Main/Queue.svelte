@@ -26,6 +26,7 @@ function onIgnore (e): void {
   const card:iCard = $queue.clearCard(id);
   $queue = $queue;
   $ignored.addCard(card, groupName, $lng);
+  $ignored = $ignored;
 }
 function onFieldsUpdated (): void {
   $queue = $queue;

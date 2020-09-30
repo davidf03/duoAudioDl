@@ -13,7 +13,7 @@ const dispatch = createEventDispatcher();
 let previousValue:any = value;
 
 function onBlur (): void {
-  if (value === previousValue) return; // to compensate for using blur instead of change
+  if (value === previousValue) return; // to compensate for having to use blur instead of change
   dispatch('change');
 }
 </script>

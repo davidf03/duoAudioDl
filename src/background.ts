@@ -70,6 +70,7 @@ async function addEntriesToQueue (): Promise<void> {
     const ttsName:string = audioUrlParser.getTTSName(audioUrl);
     if (
       !ttsNameMap[lng]?.includes(ttsName)
+      || queue.hasCard(audioUrl)
       || ignored.hasCard(audioUrl)
       || history.hasCard(audioUrl)
     ) return false;
