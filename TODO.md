@@ -29,7 +29,7 @@
 
 [ ] Anki connection status indicator, potentially with option to reload (idk why, but might be nice)
 
-[ ] Variable notifications (e.g. connecting -> connected)
+[ ] Variable/multi-stage notifications (e.g. connecting -> connected)
 
 [ ] Fix automatic setting of first language
 
@@ -53,3 +53,5 @@
     [ ] aria-live
 
     [ ] focus next in list on clear
+
+  [ ] autocomplete for previously used and not present tags
