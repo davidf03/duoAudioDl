@@ -68,16 +68,19 @@ function onClickMain (): void {
 function onClickIgnore (): void {
   dispatch('cardignored', { id });
 }
-function onUpdateTags (e): void {
-  const { tokens } = e.detail;
-  card.tags = tokens.filter((tkn:string): boolean => !defaultTags.includes(tkn));
-  dispatch('fieldsupdated');
+function onSubmit (): void {
+  dispatch('cardsubmitted', { card, tags });
 }
 function onChangeDeckSelector (): void {
   card.deckId = deckId;
 }
 function onChangeTemplateSelector (): void {
   card.templateId = templateId;
+}
+function onUpdateTags (e): void {
+  const { tokens } = e.detail;
+  card.tags = tokens.filter((tkn:string): boolean => !defaultTags.includes(tkn));
+  dispatch('fieldsupdated');
 }
 </script>
 
@@ -105,33 +108,42 @@ function onChangeTemplateSelector (): void {
   </div>
   {#if isOpen}
     <div class="dag-c-card__body">
-      <Selector
-        bind:value={deckId}
-        on:change={onChangeDeckSelector}
-        options={deckOptions.map(o => ({val:o.id, text:o.name}))}
-        emptyText="No decks found"
-        id={`${id}-deck-selector`}
-        label="Create in deck"
-        classlist="dag-u-d-b"
-      />
-      <Selector
-        bind:value={templateId}
-        on:change={onChangeTemplateSelector}
-        options={templateOptions.map(o => ({val:o.id, text:o.name}))}
-        emptyText="No templates found"
-        id={`${id}-template-selector`}
-        label="Use template"
-        classlist="dag-u-d-b"
-      />
-      <Tokeniser
-        on:update={onUpdateTags}
-        id={`${id}-tags-entry`}
-        tokens={tags}
-        validPatternRegex={validTagPatternRegex}
-        invalidPatternRegex={invalidTagPatternRegex}
-        tokenSemanticName="tag"
-        label="Add tags"
-      />
+      <form
+        on:submit|preventDefault={onSubmit}
+      >
+        <Selector
+          bind:value={deckId}
+          on:change={onChangeDeckSelector}
+          options={deckOptions.map(o => ({val:o.id, text:o.name}))}
+          emptyText="No decks found"
+          id={`${id}-deck-selector`}
+          label="Create in deck"
+          required
+          classlist="dag-u-d-b"
+        />
+        <Selector
+          bind:value={templateId}
+          on:change={onChangeTemplateSelector}
+          options={templateOptions.map(o => ({val:o.id, text:o.name}))}
+          emptyText="No templates found"
+          id={`${id}-template-selector`}
+          label="Use template"
+          required
+          classlist="dag-u-d-b"
+        />
+        <Tokeniser
+          on:update={onUpdateTags}
+          id={`${id}-tags-entry`}
+          tokens={tags}
+          validPatternRegex={validTagPatternRegex}
+          invalidPatternRegex={invalidTagPatternRegex}
+          tokenSemanticName="tag"
+          label="Add tags"
+        />
+        <button
+          type="submit"
+        >Create</button>
+      </form>
     </div>
   {/if}
 </div>

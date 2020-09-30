@@ -1,7 +1,13 @@
 <script lang="ts">
+import { v4 as uuid } from 'uuid';
 import { onDestroy } from 'svelte';
+import AnkiConnect from '../../ankiConnect';
+import AnkiParser from '../../util/AnkiParser';
 import type { iCard, iCardGroup } from '../../interfaces/iCards';
-import { queue, lng, loadingStore, ignored } from '../../store';
+import type { iCardAnki } from '../../interfaces/iCardAnki';
+import type { iNotification } from '../../interfaces/iNotification';
+import { notificationMap as nMap } from '../../maps/notificationMap';
+import { queue, lng, loadingStore, ignored, history, notifications } from '../../store';
 import CardList from '../Cards/CardList.svelte';
 
 let cardGroups:iCardGroup[];
@@ -26,7 +32,28 @@ function onIgnore (e): void {
   const card:iCard = $queue.clearCard(id);
   $queue = $queue;
   $ignored.addCard(card, groupName, $lng);
-  $ignored = $ignored;
+}
+async function onCardSubmitted (e): Promise<void> {
+  const { card, tags, groupName } = e.detail;
+  try {
+    // const note:iCardAnki = AnkiParser.cards.to(card);
+    // await AnkiConnect.invoke('addNote', 6, { note });
+
+    $queue.clearCard(card.audioUrl);
+    $queue = $queue;
+    card.tags = tags;
+    $history.addCard(card, groupName, $lng);
+
+    notifications.add({
+      id: uuid(),
+      ...nMap.cardCreated
+    } as iNotification)
+  } catch(err) {
+    notifications.addUniqueCode({
+      id: uuid(),
+      ...nMap.ankiNotConnected
+    } as iNotification)
+  }
 }
 function onFieldsUpdated (): void {
   $queue = $queue;
@@ -38,6 +65,7 @@ function onFieldsUpdated (): void {
     {#if cardGroups?.length > 0}
       <CardList
         on:cardignored={onIgnore}
+        on:cardsubmitted={onCardSubmitted}
         on:fieldsupdated={onFieldsUpdated}
         {cardGroups}
       />

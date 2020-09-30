@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
-import ankiconnect from './ankiConnect';
-import ankiParser from './util/ankiParser';
+import AnkiConnect from './ankiConnect';
+import AnkiParser from './util/AnkiParser';
 import { CardList } from './classes/CardList';
 import type { iPrefs } from './interfaces/iPrefs';
 import type { iNameAndId } from './interfaces/iNameAndId';
@@ -66,6 +66,9 @@ const createNotificationsStore = (): any => {
     subscribe,
     set,
     add: (n:iNotification): void => update((ns:iNotification[]): iNotification[] => [...ns, n]),
+    addUniqueCode: (n:iNotification) => update((ns:iNotification[]): iNotification[] =>
+      ns.findIndex((notification:iNotification): boolean => notification.code === n.code) === -1 ? [...ns, n] : ns
+    ),
     clearById: (id:string): void => update((ns:iNotification[]): iNotification[] => {
       const index = ns.findIndex(n => n.id === id);
       if (index !== -1) ns.splice(index, 1);
@@ -150,14 +153,14 @@ initJointStore(
   deckNamesAndIds,
   loadingLocalDeckNamesAndIds, loadedLocalDeckNamesAndIds,
   loadingAnkiDeckNamesAndIds, loadedAnkiDeckNamesAndIds,
-  ankiParser.namesAndIds.from
+  AnkiParser.namesAndIds.from
 );
 initJointStore(
   'modelNamesAndIds', 6,
   templateNamesAndIds,
   loadingLocalTemplateNamesAndIds, loadedLocalTemplateNamesAndIds,
   loadingAnkiTemplateNamesAndIds, loadedAnkiTemplateNamesAndIds,
-  ankiParser.namesAndIds.from
+  AnkiParser.namesAndIds.from
 );
 // initJointStore(
 //   'history',
@@ -186,7 +189,7 @@ async function initJointStore
   // load anki and local simultaneously; last to load calls callback; if local loads first set store while updates from anki load
   let anki:T;
   let local:U;
-  ankiconnect.invoke(action, version).then((res:T): void => {
+  AnkiConnect.invoke(action, version).then((res:T): void => {
     anki = res;
     completeJointStoreHalf(anki, local, store, ankiLoader, ankiLoaderDone, callback);
   })
@@ -217,13 +220,13 @@ function completeJointStoreHalf
 }
 function integrateHistoryUpdates(data:iCardAnki[], localData:CardList): CardList {
   const updatedData:CardList = localData;
-  // const ankiCards:iCard[] = ankiParser.cards.from(data);
+  // const ankiCards:iCard[] = AnkiParser.cards.from(data);
   // cards.forEach(); // by some id, update information in matching cards in history
   return updatedData;
 }
 function integrateTemplateUpdates(data:iTemplateAnki[], localData:iTemplate[]): iTemplate[] {
   const updatedData:iTemplate[] = localData;
-  // const ankiTemplates:iTemplate[] = ankiParser.templates.from(data);
+  // const ankiTemplates:iTemplate[] = AnkiParser.templates.from(data);
   // templates.forEach(); // delete previous templates, but keep ones for cards in queue that use them/lang prefs
   return updatedData;
 }

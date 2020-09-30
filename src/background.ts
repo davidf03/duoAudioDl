@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { ttsNameMap } from './maps/ttsNameMap';
 import { CardList } from './classes/CardList';
 import type { iCard } from './interfaces/iCards';
-import httpOriginUrlParser from './util/httpOriginUrlParser';
+import HTTPOriginUrlParser from './util/HTTPOriginUrlParser';
 import audioUrlParser from './util/audioUrlParser';
 
 const pattern:string = 'https://*.cloudfront.net/*/*';
@@ -55,13 +55,13 @@ async function addEntriesToQueue (): Promise<void> {
   for (const req of reqsInstance) {
     if (req.tabId === -1) continue;
     originUrl = await browser.tabs.get(req.tabId).then(res => res.url);
-    lng = httpOriginUrlParser.getLng(originUrl);
+    lng = HTTPOriginUrlParser.getLng(originUrl);
     if (lng && lngRegex.test(lng)) break;
   }
   // exit if no lng urls
   if (!lng) return;
 
-  const groupName:string = httpOriginUrlParser.getGroup(originUrl);
+  const groupName:string = HTTPOriginUrlParser.getGroup(originUrl);
 
   // skip cards if audioUrl TTS name not valid or card already exists
   const filteredReqsInstance = reqsInstance.filter(req => {

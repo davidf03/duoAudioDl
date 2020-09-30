@@ -24,5 +24,11 @@ export const notificationMap:{[key:string]:iNotificationReference} = {
     priority: 1,
     message: '',
     duration: 6
+  },
+  cardCreated: {
+    code: 4,
+    priority: 2,
+    message: 'Card created',
+    duration: 4
   }
 };

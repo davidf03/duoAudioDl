@@ -20,6 +20,9 @@ onDestroy(unsubFromLng);
 function onCardIgnored (e) {
   dispatch('cardignored', Object.assign(e.detail, { groupName: cardGroup.name }));
 }
+function onCardSubmitted (e) {
+  dispatch('cardsubmitted', Object.assign(e.detail, { groupName: cardGroup.name }));
+}
 </script>
 
 <div class="dag-c-card-group">
@@ -40,6 +43,7 @@ function onCardIgnored (e) {
         <li>
           <Card
             on:cardignored={onCardIgnored}
+            on:cardsubmitted={onCardSubmitted}
             on:fieldsupdated
             {card}
           />

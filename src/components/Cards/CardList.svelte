@@ -10,6 +10,7 @@ export let cardGroups:iCardGroup[];
     <li class="dag-c-card-list__group">
       <CardGroup
         on:cardignored
+        on:cardsubmitted
         on:fieldsupdated
         {cardGroup}
       />
