@@ -13,7 +13,7 @@
 //     [group: editable]
 //   save
 
-import { CARD_TAG_VALID_CHAR } from '../../consts';
+import { CARD_TAG_VALID_CHARS } from '../../consts';
 import { createEventDispatcher, onDestroy } from 'svelte';
 import { lng, expandedCardId, prefs } from '../../store';
 import type { iCard } from '../../interfaces/iCards';
@@ -23,8 +23,8 @@ import Tokeniser from '../Inputs/Tokeniser.svelte';
 
 
 const dispatch = createEventDispatcher();
-const validTagPatternRegex:RegExp = new RegExp(`^[${CARD_TAG_VALID_CHAR}]*$`);
-const invalidTagPatternRegex:RegExp = new RegExp(`[^${CARD_TAG_VALID_CHAR}]`, 'g');
+const validTagPatternRegex:RegExp = new RegExp(`^[${CARD_TAG_VALID_CHARS}]*$`);
+const invalidTagPatternRegex:RegExp = new RegExp(`[^${CARD_TAG_VALID_CHARS}]`, 'g');
 export let card:iCard;
 const id:string = card.audioUrl;
 let isOpen:boolean = false;
