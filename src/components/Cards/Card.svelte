@@ -93,10 +93,12 @@ function onUpdateTags (e): void {
     <div class="dag-c-card__body">
       <Tokeniser
         on:update={onUpdateTags}
+        id={`${id}-tags-entry`}
         tokens={tags}
         validPatternRegex={validTagPatternRegex}
         invalidPatternRegex={invalidTagPatternRegex}
         tokenSemanticName="tag"
+        label="Add tags"
       />
     </div>
   {/if}

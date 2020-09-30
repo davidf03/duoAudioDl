@@ -5,20 +5,22 @@ import type { iNotification, iNotificationReference } from '../../interfaces/iNo
 import { notifications } from '../../store';
 import { notificationMap as nMap } from '../../maps/notificationMap';
 
+export let id:string = '';
 export let tokens:string[] = [];
 export let tokenSemanticName:string = 'token';
 export let validPatternRegex:RegExp = null;
 export let invalidPatternRegex:RegExp = null;
+export let label:string = '';
 
 const dispatch = createEventDispatcher();
 
-let pattern:string = validPatternRegex?.source;
 let entry:string = '';
+let pattern:string = validPatternRegex?.source;
 
 function addToken (): void {
   const index:number = tokens.indexOf(entry);
   tokens = [
-    ...tokens.slice(0, index),
+    ...(index === -1 ? [] : tokens.slice(0, index)),
     ...tokens.slice(index + 1),
     entry
   ];
@@ -53,26 +55,32 @@ function onInput (e): void {
     Tags must conform to pattern '${pattern}'`
   } as iNotification);
 }
+function onClickMain (): void {
+  document.getElementById(id).focus();
+}
+function onClickToken (e): void {
+  clearToken(e);
+}
 </script>
 
+<label for={id}>{label}</label>
 <div
+  on:click={onClickMain}
   class="dag-c-tokeniser dag-u-d-x dag-u-xd-r dag-u-xw-w"
 >
   <ul class="dag-o-semantic-list dag-u-d-c">
-    {#each tokens as token (token)}
-      <li class="dag-c-tokeniser__token dag-o-bg-btn-set">
-        <span class="dag-c-tokeniser__token-text dag-o-badge dag-o-bg-btn-set__sibling dag-u-pe-n">{token}</span>
-        <button
-          on:click={clearToken}
-          data-token={token}
-          class="dag-c-tokeniser__token_btn dag-o-bg-btn-set__btn"
-        ><span class="dag-u-accessible-hidden">Clear {tokenSemanticName}: {token} from list</span></button>
-      </li>
+    {#each tokens as token}
+      <li
+        on:click|stopPropagation={onClickToken}
+        data-token={token}
+        class="dag-c-tokeniser__token dag-o-badge"
+      >{token}</li>
     {/each}
   </ul>
   <input
     bind:value={entry}
     on:input={onInput}
+    {id}
     type="text"
     {pattern}
     class="dag-c-tokeniser__input dag-u-xg-1"
