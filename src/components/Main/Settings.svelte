@@ -6,11 +6,8 @@ import {
   lng,
   deckNamesAndIds,
   templateNamesAndIds,
-  loadingStore,
-  loadingAnkiDeckNamesAndIds,
-  loadingAnkiTemplateNamesAndIds
+  loadingStore
 } from '../../store';
-import type { iLngPrefs } from '../../interfaces/iLngPrefs';
 import { iNameAndId } from '../../interfaces/iNameAndId';
 import Spinner from '../Icons/Spinner.svelte';
 
@@ -20,20 +17,20 @@ let deckId:number;
 let deckOptions:iNameAndId[] = $deckNamesAndIds.sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0);
 let templateId:number;
 let templateOptions:iNameAndId[] = $templateNamesAndIds.sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0);
+let useLngTag:boolean = $prefs?.lngs?.[$lng]?.useLngTag ?? true;
+let useGroupTag:boolean = $prefs?.lngs?.[$lng]?.useGroupTag ?? true;
 
-const unsubFromLoadingStore = loadingStore.subscribe(val => {
-  if (val) return;
-  setDeckToLngDefault();
-  setTemplateToLngDefault();
-});
+const unsubFromLoadingStore = loadingStore.subscribe(val => !val && setDefaults());
 onDestroy(unsubFromLoadingStore);
 
-const unsubFromLng = lng.subscribe(l => { // TODO type
+const unsubFromLng = lng.subscribe(() => setDefaults()) // TODO type
+onDestroy(unsubFromLng);
+
+function setDefaults (): void {
   if (!$lng) return;
   setDeckToLngDefault();
   setTemplateToLngDefault();
-});
-onDestroy(unsubFromLng);
+}
 
 function setDeckToLngDefault (): void {
   // if pref exists and can be found, otherwise use fallbacks
@@ -42,7 +39,6 @@ function setDeckToLngDefault (): void {
     || $deckNamesAndIds.some(d => d.id === fallbackDeckId) && fallbackDeckId
     || $deckNamesAndIds.sort((a, b) => a.id > b.id ? 1 : a.id < b.id ? -1 : 0)?.[0]?.id
 }
-
 function setTemplateToLngDefault (): void {
   // if pref exists and can be found, otherwise use fallbacks
   const lngPref = $prefs?.lngs?.[$lng]?.templateNameAndId;
@@ -50,16 +46,26 @@ function setTemplateToLngDefault (): void {
     || $templateNamesAndIds.sort((a, b) => a.id > b.id ? 1 : a.id < b.id ? -1 : 0)?.[0]?.id
 }
 
-function onBlurDecks (): void {
+function initLngPrefs (): void {
   $prefs.lngs ??= {};
   $prefs.lngs[$lng] ??= {};
-  $prefs.lngs[$lng].deckNameAndId = $deckNamesAndIds.find(d => d.id === deckId);
 }
 
+function onBlurDecks (): void {
+  initLngPrefs();
+  $prefs.lngs[$lng].deckNameAndId = $deckNamesAndIds.find(d => d.id === deckId);
+}
 function onBlurTemplates (): void {
-  $prefs.lngs ??= {};
-  $prefs.lngs[$lng] ??= {};
+  initLngPrefs();
   $prefs.lngs[$lng].templateNameAndId = $templateNamesAndIds.find(t => t.id === templateId);
+}
+async function onChangeLngTag (): Promise<void> {
+  initLngPrefs();
+  setTimeout(() => $prefs.lngs[$lng].useLngTag = useLngTag); // TODO is there a better way to wait for this change to occur, directly?
+}
+async function onChangeGroupTag (): Promise<void> {
+  initLngPrefs();
+  setTimeout(() => $prefs.lngs[$lng].useGroupTag = useGroupTag);
 }
 </script>
 
@@ -68,7 +74,7 @@ function onBlurTemplates (): void {
     <Spinner />
   </div>
 {:else}
-  <label for="settings-deck-selector">Create cards in deck</label>
+  <label for="settings-deck-selector" class="dag-u-d-b">Create cards in deck</label>
   <select
     id="settings-deck-selector"
     bind:value={deckId}
@@ -87,7 +93,7 @@ function onBlurTemplates (): void {
     {/if}
   </select>
 
-  <label for="settings-template-selector">Use template</label>
+  <label for="settings-template-selector" class="dag-u-d-b">Use template</label>
   <select
     id="settings-template-selector"
     bind:value={templateId}
@@ -105,4 +111,24 @@ function onBlurTemplates (): void {
       {/each}
     {/if}
   </select>
-{/if}
+
+  <label for="settings-lng-tag" class="dag-u-d-b">
+    <input
+      on:change={onChangeLngTag}
+      id="settings-lng-tag"
+      type="checkbox"
+      bind:checked={useLngTag}
+    />
+    <span>Add language tag to cards</span>
+  </label>
+
+  <label for="settings-group-tag" class="dag-u-d-b">
+    <input
+      on:change={onChangeGroupTag}
+      id="settings-group-tag"
+      type="checkbox"
+      bind:checked={useGroupTag}
+    />
+    <span>Add group tag to cards</span>
+  </label>
+  {/if}

@@ -8,10 +8,12 @@ import audioUrlParser from './util/audioUrlParser';
 const pattern:string = 'https://*.cloudfront.net/*/*';
 const queueStoreKey:string = 'queue';
 const lngsStoreKey:string = 'lngs';
+const lngStoreKey:string = 'lng';
 const localStores = [
   { key: queueStoreKey, defaultVal: new CardList(), class: CardList },
   { key: 'history', defaultVal: new CardList(), class: CardList },
-  { key: 'ignored', defaultVal: new CardList(), class: CardList }
+  { key: 'ignored', defaultVal: new CardList(), class: CardList },
+  { key: lngStoreKey, defaultVal: null } // TODO feels weird including this here, somehow
 ];
 let reqs = [], timeout; // TODO types
 
@@ -86,12 +88,14 @@ async function addEntriesToQueue (): Promise<void> {
   if (filteredReqsInstance.length === 0) return;
 
   // set lngs and queue added cards
-  setStore(lngsStoreKey, Array.from(new Set([].concat(
+  const lngs:string[] = Array.from(new Set([].concat(
     queue.getLngs(),
     history.getLngs(),
     ignored.getLngs()
-  ))));
-  await setStore(queueStoreKey, queue, CardList);
+  )));
+  setStore(lngsStoreKey, lngs);
+  !lng && setStore(lngStoreKey, lngs[0]);
+  await setStore(queueStoreKey, queue);
   console.log('cards added');
 
   // download files for all new cards and commit to queue
@@ -119,7 +123,7 @@ async function addEntriesToQueue (): Promise<void> {
       card.audioFile = audioFiles[i];
       queue.updateCard(card);
     }
-    setStore(queueStoreKey, queue, CardList);
+    setStore(queueStoreKey, queue);
   });
 }
 

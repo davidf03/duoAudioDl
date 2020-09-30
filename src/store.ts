@@ -8,7 +8,6 @@ import type { iTemplate } from './interfaces/iTemplate';
 import type { iCardAnki } from './interfaces/iCardAnki';
 import type { iTemplateAnki } from './interfaces/iTemplateAnki';
 import { iNotification } from './interfaces/iNotification';
-import { Result } from 'sass';
 
 
 interface iLocalStore<T> {
@@ -39,7 +38,7 @@ const createPersistentStore = <T>(key:string, startValue:T, tClass?:{ new(): T }
         val = !tClass ? parsed : Object.assign(new tClass(), parsed) as T;
         set(val);
       }
-      subscribe(val => browser.storage.local.set({ [key]: JSON.stringify(val) }))
+      subscribe(val => browser.storage.local.set({ [key]: JSON.stringify(val) }));
       return val;
     }
   };
@@ -138,10 +137,7 @@ Promise.allSettled([
   prefs.useLocalStorage(),
   templateHistory.useLocalStorage()
 ])
-.then((res:Response): void => {
-  res[1].value || res[0].value?.[0] && lng.set(res[0].value[0]);
-  loadingStore.off();
-});
+.then((): void => loadingStore.off());
 
 // init joint stores
 initJointStore(

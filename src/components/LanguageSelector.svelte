@@ -12,7 +12,7 @@ const id:string = 'dag-language-selector-label'
 <select
   {id}
   bind:value={$lng}
-  disabled={$loadingStore}
+  disabled={$lngs.length === 0}
 >
   {#if $loadingStore}
     <option value={undefined}>Loading...</option>
