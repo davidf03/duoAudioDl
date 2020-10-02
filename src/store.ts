@@ -114,7 +114,6 @@ export const loadingIgnored = createSwitchStore(true);
 export const loadedIgnored = createSwitchStore(false);
 export const loadingPrefs = createSwitchStore(true);
 export const loadedPrefs = createSwitchStore(false);
-
 export const loadingLngs = createSwitchStore(true);
 export const loadedLngs = createSwitchStore(false);
 export const loadingLng = createSwitchStore(true);
@@ -169,6 +168,7 @@ Promise.all([
     AnkiConnect.invoke('modelNamesAndIds', 6).then((res:iNamesAndIdsAnki): iNameAndId[] => AnkiParser.namesAndIds.from(res))
   ]).then((res:any): Promise<iTemplate[]> => {
     if (res[1].status !== 'fulfilled') {
+      loadingTemplates.off();
       throw new Error('Failed to fetch modelNamesAndIds');
     }
     const templateNamesAndIds:iNameAndId[] = res[1].value ?? [];
