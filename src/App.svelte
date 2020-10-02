@@ -1,17 +1,15 @@
 <script lang="ts">
 import { v4 as uuid } from 'uuid';
+import type { iNavItem } from './interfaces/iNav';
+import type { iNotification, iNotificationReference } from './interfaces/iNotification';
+import { notificationMap as nMap } from './maps/notificationMap';
 import {
   lngs,
   lng,
-  loadingStore,
   connectingToAnki,
   connectedToAnki,
   notifications
 } from './store';
-import type { iNavItem } from './interfaces/iNav';
-import type { iNotification, iNotificationReference } from './interfaces/iNotification';
-import { notificationMap as nMap } from './maps/notificationMap';
-import Spinner from './components/Icons/Spinner.svelte';
 import Nav from './components/Nav/Nav.svelte';
 import LanguageSelector from './components/LanguageSelector.svelte';
 import Notifier from './components/Notifier/Notifier.svelte';
@@ -96,11 +94,7 @@ function clearData (): void {
     {/if}
   </div>
   <div id={mainContentId}>
-    {#if $loadingStore}
-      <Spinner />
-    {:else}
-      <svelte:component this={currentSection.component}/>
-    {/if}
+    <svelte:component this={currentSection.component}/>
   </div>
   <Notifier />
   <button on:click={clearData}>clear data</button>

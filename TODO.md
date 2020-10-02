@@ -55,5 +55,3 @@
     [ ] focus next in list on clear
 
   [ ] autocomplete for previously used and not present tags
-
-[ ] get rid of templateNamesAndIds store and just use a mapped templates

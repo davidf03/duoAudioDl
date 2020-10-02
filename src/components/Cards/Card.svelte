@@ -15,7 +15,13 @@
 
 import { CARD_TAG_VALID_CHARS } from '../../consts';
 import { createEventDispatcher, onDestroy } from 'svelte';
-import { lng, expandedCardId, prefs, deckNamesAndIds, templates } from '../../store';
+import {
+  lng,
+  expandedCardId,
+  prefs,
+  deckNamesAndIds,
+  templates
+} from '../../store';
 import type { iCard } from '../../interfaces/iCards';
 import type { iNameAndId } from '../../interfaces/iNameAndId';
 import type { iTemplate } from '../../interfaces/iTemplate';
@@ -54,7 +60,6 @@ let templateId:number =
 let template:iTemplate;
 setTemplate();
 function setTemplate (): void {
-  console.log(templateId, templateOptions.find(t => t.id === templateId)?.name);
   template = $templates?.find((t:iTemplate): boolean => t.id === templateId) ?? null;
 }
 

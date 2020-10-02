@@ -1,22 +1,29 @@
 <script lang="ts">
 import { v4 as uuid } from 'uuid';
 import { onDestroy } from 'svelte';
-import AnkiConnect from '../../ankiConnect';
-import AnkiParser from '../../util/AnkiParser';
 import type { iCard, iCardGroup } from '../../interfaces/iCards';
-import type { iCardAnki } from '../../interfaces/iCardAnki';
 import type { iNotification } from '../../interfaces/iNotification';
 import { notificationMap as nMap } from '../../maps/notificationMap';
-import { queue, lng, loadingStore, ignored, history, notifications } from '../../store';
+import {
+  queue,
+  lng,
+  loadingQueue,
+  loadedQueue,
+  ignored,
+  history,
+  notifications
+} from '../../store';
 import CardList from '../Cards/CardList.svelte';
+import Spinner from '../Icons/Spinner.svelte';
+
 
 let cardGroups:iCardGroup[];
 function assignCardList (): void {
   cardGroups = $queue.getGroups($lng);
 };
 
-const unsubFromLoadingStore = loadingStore.subscribe((val:boolean): void => !val && assignCardList());
-onDestroy(unsubFromLoadingStore);
+const unsubFromLoadedQueue = loadedQueue.subscribe((val:boolean): void => val && assignCardList());
+onDestroy(unsubFromLoadedQueue);
 
 const unsubFromQueue = queue.subscribe((): void => assignCardList());
 onDestroy(unsubFromQueue);
@@ -61,18 +68,24 @@ function onFieldsUpdated (): void {
 </script>
 
 <div class="dag-c-home">
-  {#if $lng}
-    {#if cardGroups?.length > 0}
-      <CardList
-        on:cardignored={onIgnore}
-        on:cardsubmitted={onCardSubmitted}
-        on:fieldsupdated={onFieldsUpdated}
-        {cardGroups}
-      />
+  {#if $loadingQueue}
+    <Spinner />
+  {:else if $loadedQueue}
+    {#if $lng}
+      {#if cardGroups?.length > 0}
+        <CardList
+          on:cardignored={onIgnore}
+          on:cardsubmitted={onCardSubmitted}
+          on:fieldsupdated={onFieldsUpdated}
+          {cardGroups}
+        />
+      {:else}
+        <p>No cards in queue</p>
+      {/if}
     {:else}
-      <p>No cards in queue</p>
+      <p>Use DuoLingo to generate cards</p>
     {/if}
   {:else}
-    Use DuoLingo to generate cards
+    <p>Unable to load queue</p>
   {/if}
 </div>

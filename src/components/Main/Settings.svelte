@@ -5,8 +5,9 @@ import {
   prefs,
   lng,
   deckNamesAndIds,
-  loadingStore,
-  templates
+  templates,
+  loadingPrefs,
+  loadedPrefs
 } from '../../store';
 import { iNameAndId } from '../../interfaces/iNameAndId';
 import Spinner from '../Icons/Spinner.svelte';
@@ -27,8 +28,8 @@ let templateOptions:iNameAndId[] =
 let useLngTag:boolean = $prefs?.lngs?.[$lng]?.useLngTag ?? true;
 let useGroupTag:boolean = $prefs?.lngs?.[$lng]?.useGroupTag ?? true;
 
-const unsubFromLoadingStore = loadingStore.subscribe(val => !val && setDefaults());
-onDestroy(unsubFromLoadingStore);
+const unsubFromLoadedPrefs = loadedPrefs.subscribe(val => val && setDefaults());
+onDestroy(unsubFromLoadedPrefs);
 
 const unsubFromLng = lng.subscribe(() => setDefaults()) // TODO type
 onDestroy(unsubFromLng);
@@ -78,11 +79,11 @@ async function onChangeGroupTag (): Promise<void> {
 }
 </script>
 
-{#if $loadingStore}
+{#if $loadingPrefs}
   <div class="dag-u-ta-c">
     <Spinner />
   </div>
-{:else}
+{:else if $loadedPrefs}
   <Selector
     bind:value={deckId}
     on:change={onChangeDecks}
@@ -122,4 +123,6 @@ async function onChangeGroupTag (): Promise<void> {
     />
     <span>Add group tag to cards</span>
   </label>
-  {/if}
+{:else}
+  <p>Unable to load preferences</p>
+{/if}
