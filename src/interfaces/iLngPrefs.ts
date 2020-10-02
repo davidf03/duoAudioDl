@@ -1,8 +1,6 @@
-import type { iNamesAndIdsAnki } from './iNameAndIdAnkiAnki';
-
 export interface iLngPref {
-  deckNameAndId?:iNamesAndIdsAnki;
-  templateNameAndId?:iNamesAndIdsAnki;
+  deckId?:number;
+  templateId?:number;
   useLngTag?:boolean;
   useGroupTag?:boolean;
 }

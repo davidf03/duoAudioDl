@@ -8,6 +8,7 @@ import type { iTemplate } from './interfaces/iTemplate';
 import type { iCardAnki } from './interfaces/iCardAnki';
 import type { iTemplateAnki } from './interfaces/iTemplateAnki';
 import { iNotification } from './interfaces/iNotification';
+import { iNamesAndIdsAnki } from './interfaces/iNamesAndIdsAnki';
 
 
 interface iLocalStore<T> {
@@ -50,12 +51,10 @@ export const ignored = createPersistentStore('ignored', new CardList(), CardList
 export const lngs = createPersistentStore('lngs', [] as string[]);
 export const lng = createPersistentStore('lng', '' as string);
 export const prefs = createPersistentStore('prefs', {} as iPrefs);
-export const templateHistory = createPersistentStore('templateHistory', [] as iTemplate[]);
 
 // joint local-anki stores
 export const history = createPersistentStore('cards', new CardList(), CardList);
 export const deckNamesAndIds = createPersistentStore('deckNamesAndIds', [] as iNameAndId[]);
-export const templateNamesAndIds = createPersistentStore('templateNamesAndIds', [] as iNameAndId[]);
 export const templates = createPersistentStore('templates', [] as iTemplate[])
 
 // temporary stores
@@ -105,7 +104,19 @@ const createSwitchStore = (initialState:boolean): any => {
     off: (): void => set(false)
   };
 }
-export const loadingStore = createSwitchStore(true);
+export const loadingStore = createSwitchStore(false); // TODO split this up
+
+export const loadingQueue = createSwitchStore(true);
+export const loadedQueue = createSwitchStore(false);
+export const loadingIgnored = createSwitchStore(true);
+export const loadedIgnored = createSwitchStore(false);
+export const loadingPrefs = createSwitchStore(true);
+export const loadedPrefs = createSwitchStore(false);
+
+export const loadingLngs = createSwitchStore(true);
+export const loadedLngs = createSwitchStore(false);
+export const loadingLng = createSwitchStore(true);
+export const loadedLng = createSwitchStore(false);
 
 export const loadingLocalCards = createSwitchStore(true);
 export const loadedLocalCards = createSwitchStore(false);
@@ -117,11 +128,6 @@ export const loadedLocalDeckNamesAndIds = createSwitchStore(false);
 export const loadingAnkiDeckNamesAndIds = createSwitchStore(true);
 export const loadedAnkiDeckNamesAndIds = createSwitchStore(false);
 
-export const loadingLocalTemplateNamesAndIds = createSwitchStore(true);
-export const loadedLocalTemplateNamesAndIds = createSwitchStore(false);
-export const loadingAnkiTemplateNamesAndIds = createSwitchStore(true);
-export const loadedAnkiTemplateNamesAndIds = createSwitchStore(false);
-
 export const loadingLocalTemplates = createSwitchStore(true);
 export const loadedLocalTemplates = createSwitchStore(false);
 export const loadingAnkiTemplates = createSwitchStore(true);
@@ -131,76 +137,101 @@ export const connectingToAnki = createSwitchStore(true);
 export const connectedToAnki = createSwitchStore(false);
 
 
-// init local stores
-Promise.allSettled([
-  lngs.useLocalStorage(),
-  lng.useLocalStorage(),
-  queue.useLocalStorage(),
-  ignored.useLocalStorage(),
-  prefs.useLocalStorage(),
-  templateHistory.useLocalStorage()
-])
-.then((res): void => {
-  const lngRes:string = res[1].value;
-  const lngsRes:string[] = res[0].value;
+initLocalStore(queue, loadingQueue, loadedQueue);
+initLocalStore(ignored, loadingIgnored, loadedIgnored);
+initLocalStore(prefs, loadingPrefs, loadedPrefs);
+
+Promise.all([
+  initLocalStore(lngs, loadingLngs, loadedLngs),
+  initLocalStore(lng, loadingLng, loadedLng)
+]).then((res:any): void => {
+  const lngRes:string = res[1];
+  const lngsRes:string[] = res[0];
+  // set lng for the first time, if possible and never set before
   !lngRes && lngsRes?.length > 0 && lng.set(lngsRes[0]);
-  loadingStore.off();
 });
 
-// init joint stores
 initJointStore(
-  'deckNamesAndIds', 6,
+  'deckNamesAndIds', 6, undefined,
   deckNamesAndIds,
   loadingLocalDeckNamesAndIds, loadedLocalDeckNamesAndIds,
   loadingAnkiDeckNamesAndIds, loadedAnkiDeckNamesAndIds,
   AnkiParser.namesAndIds.from
 );
-initJointStore(
-  'modelNamesAndIds', 6,
-  templateNamesAndIds,
-  loadingLocalTemplateNamesAndIds, loadedLocalTemplateNamesAndIds,
-  loadingAnkiTemplateNamesAndIds, loadedAnkiTemplateNamesAndIds,
-  AnkiParser.namesAndIds.from
-);
-// initJointStore(
-//   'history',
-//   'findCards', 6,
-//   history, loadingAnkiCards,
-//   integrateHistoryUpdates
-// );
-// getAnkiUpdates(
-//   'templates',
-//   'findModels', 6,
-//   templates, loadingAnkiTemplates,
-//   integrateTemplateUpdates
-// );
 
-async function initJointStore
+Promise.allSettled([
+  initLocalStore(templates, loadingLocalTemplates, loadedLocalTemplates),
+  AnkiConnect.invoke('modelNamesAndIds', 6).then((res:iNamesAndIdsAnki): iNameAndId[] => AnkiParser.namesAndIds.from(res))
+]).then((res:any): Promise<iTemplate[]> => {
+  const templateNamesAndIds:iNameAndId[] = res[1]?.value ?? [];
+  if (templateNamesAndIds.length === 0) return Promise.resolve([]);
+  // ankiConnect kind of useless here, requires calling individually for each, otherwise could use iniJointStore()
+  return Promise.all(templateNamesAndIds?.map((templateInfo:iNameAndId): Promise<iTemplateAnki> =>
+    AnkiConnect.invoke('modelFieldNames', 6, { modelName: templateInfo.name })
+  )).then((ankiTemplates:iTemplateAnki[]): iTemplate[] => {
+    const updatedTemplates:iTemplate[] = AnkiParser.templates.from(ankiTemplates, templateNamesAndIds);
+    templates.set(updatedTemplates);
+    loadedAnkiTemplates.on();
+    loadingAnkiTemplates.off();
+    return updatedTemplates;
+  }).catch((err:string): iTemplate[] => {
+    connectedToAnki.off();
+    connectingToAnki.off();
+    return;
+  })
+}).catch((err:string): void => {
+  connectedToAnki.off();
+  connectingToAnki.off();
+});
+
+async function initLocalStore
+  <T>(
+    store:iLocalStore<T>,
+    loader:iSwitchStore,
+    loaderDone:iSwitchStore
+  ): Promise<T> {
+  return store.useLocalStorage().then((res:T): T => {
+    loaderDone.on();
+    loader.off();
+    return res;
+  }).catch((err:string): T => {
+    loader.off();
+    return;
+  });
+}
+
+async function initJointStore // TODO this function is still serviceable, but is no longer semantic, and should be rewritten, given that all anki-based stores completely supplant their local counter parts and/or require more nuance; the only reason anki waits for local is to ensure it writes over the local store set during useLocalStore()
   <T, U>(
     action:string,
     version:number,
+    params:any,
     store:iLocalStore<U>,
     localLoader:iSwitchStore,
     localLoaderDone:iSwitchStore,
     ankiLoader:iSwitchStore,
     ankiLoaderDone:iSwitchStore,
     callback:iUpdatesCallback<T, U>
-  ): Promise<void> {
+
+  ): Promise<U> {
   // load anki and local simultaneously; last to load calls callback; if local loads first set store while updates from anki load
   let anki:T;
   let local:U;
-  AnkiConnect.invoke(action, version).then((res:T): void => {
-    anki = res;
-    completeJointStoreHalf(anki, local, store, ankiLoader, ankiLoaderDone, callback);
-  })
-  .catch((err:string) => {
-    connectedToAnki.off();
-    connectingToAnki.off();
-  });
-  store.useLocalStorage().then((res:U): void => {
-    local = res;
-    completeJointStoreHalf(anki, local, store, localLoader, localLoaderDone, callback);
-  });
+  return Promise.allSettled([
+    AnkiConnect.invoke(action, version, params).then((res:T): U => {
+      anki = res;
+      return completeJointStoreHalf(anki, local, store, ankiLoader, ankiLoaderDone, callback);
+    })
+    .catch((err:string): U => {
+      ankiLoader.off();
+      connectedToAnki.off();
+      connectingToAnki.off();
+      return;
+    }),
+    store.useLocalStorage().then((res:U): U => {
+      local = res;
+      return completeJointStoreHalf(anki, local, store, localLoader, localLoaderDone, callback);
+    })
+  ]).then((res): U => res[0].value ?? res[1].value);
 }
 function completeJointStoreHalf
   <T, U>(
@@ -210,23 +241,19 @@ function completeJointStoreHalf
     loader:iSwitchStore,
     loaderDone:iSwitchStore,
     callback:iUpdatesCallback<T, U>
-  ): void {
+  ): U {
   loaderDone.on();
   loader.off();
   if (!anki || !local) return;
-  store.set(callback(anki, local));
+  const updatedData:U = callback(anki, local);
+  store.set(updatedData);
   connectedToAnki.on();
   connectingToAnki.off();
+  return updatedData;
 }
 function integrateHistoryUpdates(data:iCardAnki[], localData:CardList): CardList {
   const updatedData:CardList = localData;
   // const ankiCards:iCard[] = AnkiParser.cards.from(data);
   // cards.forEach(); // by some id, update information in matching cards in history
-  return updatedData;
-}
-function integrateTemplateUpdates(data:iTemplateAnki[], localData:iTemplate[]): iTemplate[] {
-  const updatedData:iTemplate[] = localData;
-  // const ankiTemplates:iTemplate[] = AnkiParser.templates.from(data);
-  // templates.forEach(); // delete previous templates, but keep ones for cards in queue that use them/lang prefs
   return updatedData;
 }

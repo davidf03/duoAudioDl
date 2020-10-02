@@ -15,12 +15,14 @@
 
 import { CARD_TAG_VALID_CHARS } from '../../consts';
 import { createEventDispatcher, onDestroy } from 'svelte';
-import { lng, expandedCardId, prefs, deckNamesAndIds, templateNamesAndIds } from '../../store';
+import { lng, expandedCardId, prefs, deckNamesAndIds, templates } from '../../store';
 import type { iCard } from '../../interfaces/iCards';
 import type { iNameAndId } from '../../interfaces/iNameAndId';
+import type { iTemplate } from '../../interfaces/iTemplate';
 import Spinner from '../Icons/Spinner.svelte';
 import MediaPlayer from '../MediaPlayer.svelte';
 import Selector from '../Inputs/Selector.svelte';
+import Field from '../Inputs/Field.svelte';
 import Tokeniser from '../Inputs/Tokeniser.svelte';
 
 
@@ -31,11 +33,30 @@ export let card:iCard;
 const id:string = card.audioUrl;
 let isOpen:boolean = false;
 
-let deckOptions:iNameAndId[] = $deckNamesAndIds?.sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0);
-let deckId:number = card.deckId ?? $prefs?.lngs?.[$lng]?.deckNameAndId?.id ?? deckOptions?.[0]?.id;
+let deckOptions:iNameAndId[] =
+  $deckNamesAndIds?.sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0) // alphabetical
+  ?? [];
+const prefsDeckId:number = $prefs?.lngs?.[$lng]?.deckId?.id;
+let deckId:number = 
+  $deckNamesAndIds?.find((d:iNameAndId): boolean => d.id === card.deckId)?.id // ensures saved ids map
+  ?? $deckNamesAndIds?.find((d:iNameAndId): boolean => d.id === prefsDeckId)?.id
+  ?? deckOptions?.[0]?.id;
 
-let templateOptions:iNameAndId[] = $templateNamesAndIds?.sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0);
-let templateId:number = card.templateId ?? $prefs?.lngs?.[$lng]?.templateNameAndId?.id ?? templateOptions?.[0]?.id;
+let templateOptions:iNameAndId[] =
+  ($templates?.map(({fields, ...t}): iNameAndId => t as iNameAndId) ?? [])
+  .sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0); // alphabetical
+const prefsTemplateId:number = $prefs?.lngs?.[$lng]?.templateId?.id;
+let templateId:number =
+  templateOptions.find((t:iNameAndId): boolean => t.id === card.templateId)?.id // ensures saved id maps
+  ?? templateOptions.find((t:iNameAndId): boolean => t.id === prefsTemplateId)?.id
+  ?? templateOptions?.[0]?.id;
+
+let template:iTemplate;
+setTemplate();
+function setTemplate (): void {
+  console.log(templateId, templateOptions.find(t => t.id === templateId)?.name);
+  template = $templates?.find((t:iTemplate): boolean => t.id === templateId) ?? null;
+}
 
 let defaultTags:string[] = [];
 if ($prefs?.lngs?.[$lng]?.useLngTag !== false) defaultTags = [...defaultTags, `dag-${$lng}`];
@@ -69,13 +90,18 @@ function onClickIgnore (): void {
   dispatch('cardignored', { id });
 }
 function onSubmit (): void {
-  dispatch('cardsubmitted', { card, tags });
+  dispatch('cardsubmitted', { card, tags, deckId, templateId });
 }
 function onChangeDeckSelector (): void {
   card.deckId = deckId;
 }
 function onChangeTemplateSelector (): void {
   card.templateId = templateId;
+  setTemplate();
+}
+function onChangeField (): void {}
+function onBlurField (): void {
+  dispatch('fieldsupdated');
 }
 function onUpdateTags (e): void {
   const { tokens } = e.detail;
@@ -96,11 +122,13 @@ function onUpdateTags (e): void {
       />
     {/if}
     <h3 class="dag-c-card__name">{card.audioUrl}</h3>
-    <button
-      on:click={onClickIgnore}
-      title="Ignore"
-      class="dag-c-card__ignore dag-o-bg-btn-set__sibling"
-    >I</button>
+    {#if !isOpen}
+      <button
+        on:click={onClickIgnore}
+        title="Ignore"
+        class="dag-c-card__ignore dag-o-bg-btn-set__sibling"
+      >I</button>
+    {/if}
     <button
       on:click={onClickMain}
       class="dag-o-bg-btn-set__btn dag-o-unbutton"
@@ -131,6 +159,21 @@ function onUpdateTags (e): void {
           required
           classlist="dag-u-d-b"
         />
+        {#if $templates.length === 0 || !template}
+          <p>Open Anki to begin creating cards</p>
+        {:else}
+          {#each template?.fields || [] as field (field)}
+            <Field
+              bind:value={card.fields[field]}
+              on:change={onChangeField}
+              on:blur={onBlurField}
+              placeholder="Complete field"
+              id={`${id}-${field.replace(/\s/g,'-').toLowerCase()}`}
+              label={field}
+              classlist="dag-u-d-b"
+            />
+          {/each}
+        {/if}
         <Tokeniser
           on:update={onUpdateTags}
           id={`${id}-tags-entry`}
@@ -143,6 +186,9 @@ function onUpdateTags (e): void {
         <button
           type="submit"
         >Create</button>
+        <button
+          on:click={onClickIgnore}
+        >Ignore</button>
       </form>
     </div>
   {/if}

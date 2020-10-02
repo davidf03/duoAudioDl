@@ -5,19 +5,25 @@ import {
   prefs,
   lng,
   deckNamesAndIds,
-  templateNamesAndIds,
-  loadingStore
+  loadingStore,
+  templates
 } from '../../store';
 import { iNameAndId } from '../../interfaces/iNameAndId';
 import Spinner from '../Icons/Spinner.svelte';
 import Selector from '../Inputs/Selector.svelte';
 
-const fallbackDeckId = FALLBACK_DECK_ID;
+const fallbackDeckId:number = FALLBACK_DECK_ID;
 
 let deckId:number;
-let deckOptions:iNameAndId[] = $deckNamesAndIds.sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0);
+let deckOptions:iNameAndId[] =
+  $deckNamesAndIds?.sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0)
+  ?? [];
+
 let templateId:number;
-let templateOptions:iNameAndId[] = $templateNamesAndIds.sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0);
+let templateOptions:iNameAndId[] =
+  ($templates.map(({fields, ...t}): iNameAndId => t as iNameAndId) ?? [])
+  .sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0);
+
 let useLngTag:boolean = $prefs?.lngs?.[$lng]?.useLngTag ?? true;
 let useGroupTag:boolean = $prefs?.lngs?.[$lng]?.useGroupTag ?? true;
 
@@ -35,16 +41,18 @@ function setDefaults (): void {
 
 function setDeckToLngDefault (): void {
   // if pref exists and can be found, otherwise use fallbacks
-  const lngPref = $prefs?.lngs?.[$lng]?.deckNameAndId;
-  deckId = lngPref && $deckNamesAndIds.find(d => d.id === lngPref.id)?.id
-    || $deckNamesAndIds.some(d => d.id === fallbackDeckId) && fallbackDeckId
-    || $deckNamesAndIds.sort((a, b) => a.id > b.id ? 1 : a.id < b.id ? -1 : 0)?.[0]?.id
+  const lngPref = $prefs?.lngs?.[$lng]?.deckId;
+  deckId =
+    (lngPref >= 0 && $deckNamesAndIds.find(d => d.id === lngPref)?.id)
+    ?? ($deckNamesAndIds.some(d => d.id === fallbackDeckId) && fallbackDeckId)
+    ?? deckOptions?.[0]?.id;
 }
 function setTemplateToLngDefault (): void {
   // if pref exists and can be found, otherwise use fallbacks
-  const lngPref = $prefs?.lngs?.[$lng]?.templateNameAndId;
-  templateId = lngPref && $templateNamesAndIds.find(t => t.id === lngPref.id)?.id
-    || $templateNamesAndIds.sort((a, b) => a.id > b.id ? 1 : a.id < b.id ? -1 : 0)?.[0]?.id
+  const lngPref = $prefs?.lngs?.[$lng]?.templateId;
+  templateId =
+    (lngPref >= 0 && templateOptions.find(t => t.id === lngPref)?.id)
+    ?? templateOptions?.[0]?.id;
 }
 
 function initLngPrefs (): void {
@@ -54,11 +62,11 @@ function initLngPrefs (): void {
 
 function onChangeDecks (): void {
   initLngPrefs();
-  $prefs.lngs[$lng].deckNameAndId = $deckNamesAndIds.find(d => d.id === deckId);
+  $prefs.lngs[$lng].deckId = deckId;
 }
 function onChangeTemplates (): void {
   initLngPrefs();
-  $prefs.lngs[$lng].templateNameAndId = $templateNamesAndIds.find(t => t.id === templateId);
+  $prefs.lngs[$lng].templateId = templateId;
 }
 async function onChangeLngTag (): Promise<void> {
   initLngPrefs();

@@ -15,6 +15,7 @@ let previousValue:any = value;
 
 function onBlur (): void {
   if (value === previousValue) return; // to compensate for having to use blur instead of change
+  previousValue = value;
   dispatch('change');
 }
 </script>

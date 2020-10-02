@@ -14,8 +14,18 @@ export default {
     from: (data:iCardAnki[]) => data as iCard[],
     to: (data:iCard[]) => data as iCardAnki[]
   },
-  templates: { // TODO
-    from: (data:iTemplateAnki[]) => data as iTemplate[],
-    to: (data:iTemplate[]) => data as iTemplateAnki[]
+  templates: {
+    from: (data:iTemplateAnki[], namesAndIds:iNameAndId[]) => {
+      data ??= [];
+      const templates:iTemplate[] = [];
+      for (let i=0; i<data.length; i++) {
+        const t:iTemplateAnki = data[i];
+        if (!t) continue;
+        const { id, name } = namesAndIds[i];
+        templates.push({ id, name, fields: data[i] });
+      }
+      return templates;
+    },
+    to: (data:iTemplate[]) => data.map((t:iTemplate): iTemplateAnki => t.fields)
   }
 };

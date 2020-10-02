@@ -23,7 +23,7 @@
     display: none;
     margin-inline-start: auto;
   }
-  &:hover &__ignore {
+  &__header:hover &__ignore {
     display: block;
   }
 

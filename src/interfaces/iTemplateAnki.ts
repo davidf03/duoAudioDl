@@ -1,3 +1,1 @@
-export interface iTemplateAnki {
-  
-}
+export interface iTemplateAnki extends Array<string> { }
