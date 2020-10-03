@@ -128,7 +128,11 @@ function decodeBase64 (data:string): string {
         classlist="dag-c-card__media dag-o-bg-btn-set__sibling dag-u-d-b"
       />
     {/if}
-    <h3 class="dag-c-card__name">{card.audioUrl}</h3>
+    <h3 class="dag-c-card__name">{card.fields[template?.fields?.[0]] || card.audioUrl}</h3>
+    <button
+      on:click={onClickMain}
+      class="dag-o-bg-btn-set__btn dag-o-unbutton"
+    ><span class="dag-u-accessible-hidden">{isOpen ? 'Collapse' : 'Expand'} card</span></button>
     {#if !isOpen}
       <button
         on:click={onClickIgnore}
@@ -136,13 +140,11 @@ function decodeBase64 (data:string): string {
         class="dag-c-card__ignore dag-o-bg-btn-set__sibling"
       >I</button>
     {/if}
-    <button
-      on:click={onClickMain}
-      class="dag-o-bg-btn-set__btn dag-o-unbutton"
-    ><span class="dag-u-accessible-hidden">{isOpen ? 'Collapse' : 'Expand'} card</span></button>
   </div>
   {#if isOpen}
-    <div class="dag-c-card__body">
+    <div
+      class="dag-c-card__body"
+    >
       <form
         on:submit|preventDefault={onSubmit}
         class="dag-o-form dag-u-d-x dag-u-xd-r dag-u-xw-w"
@@ -194,7 +196,7 @@ function decodeBase64 (data:string): string {
           label="Add tags"
           classlist="dag-o-form__field"
         />
-        <div class="dag-u-d-x dag-u-xd-rr">
+        <div class="dag-u-d-x dag-u-xd-rr dag-u-xb-1">
           <button
             type="submit"
           >Create</button>
