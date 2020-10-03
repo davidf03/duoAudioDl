@@ -40,6 +40,12 @@ function clearToken(e): void {
   dispatch('update', { tokens });
 }
 
+function onKeydown (e): void {
+  if (e.key !== 'Enter' || entry.length === 0) return;
+  e.preventDefault();
+  addToken();
+}
+
 function onInput (e): void {
   entry = entry.replace(invalidPatternRegex, '');
   const key:string = e.data;
@@ -84,6 +90,7 @@ function onClickToken (e): void {
     <input
       bind:value={entry}
       on:input={onInput}
+      on:keydown={onKeydown}
       {id}
       type="text"
       {pattern}
