@@ -2,6 +2,7 @@
 import { createEventDispatcher } from 'svelte';
 
 export let value:string = '';
+export let disabled:boolean = false;
 export let id:string = '';
 export let label:string = '';
 export let placeholder:string = '';
@@ -9,8 +10,8 @@ export let classlist:string = '';
 
 const dispatch = createEventDispatcher();
 
-function onChange (e): void {
-  dispatch('change');
+function onInput (e): void {
+  dispatch('input');
 }
 function onBlur (e): void {
   dispatch('blur');
@@ -18,18 +19,20 @@ function onBlur (e): void {
 </script>
 
 <div
-  class={classlist}
+  class={`dag-o-input ${classlist}`}
 >
   <label
     for={id}
-    class="dag-u-d-b"
+    class="dag-o-input__label dag-u-d-b"
   >{label}</label>
   <input
-    on:change={onChange}
+    on:input={onInput}
     on:blur={onBlur}
     bind:value={value}
+    {disabled}
     {id}
     type="text"
     {placeholder}
+    class="dag-o-input__field"
   />
 </div>

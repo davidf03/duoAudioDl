@@ -1,0 +1,19 @@
+.dag-o-form {
+  $column-gap: 16px;
+  column-gap: $column-gap;
+  row-gap: 8px;
+
+  &__field {
+    flex: 100%;
+  }
+  &__field-1\/2 {
+    flex: calc(50% - #{$column-gap});
+  }
+}
+
+.dag-o-input {
+
+  &__field {
+    width: 100%;
+  }
+}

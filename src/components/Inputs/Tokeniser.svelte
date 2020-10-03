@@ -11,6 +11,7 @@ export let tokenSemanticName:string = 'token';
 export let validPatternRegex:RegExp = null;
 export let invalidPatternRegex:RegExp = null;
 export let label:string = '';
+export let classlist:string = '';
 
 const dispatch = createEventDispatcher();
 
@@ -63,26 +64,30 @@ function onClickToken (e): void {
 }
 </script>
 
-<label for={id}>{label}</label>
 <div
-  on:click={onClickMain}
-  class="dag-c-tokeniser dag-u-d-x dag-u-xd-r dag-u-xw-w"
+  class={classlist}
 >
-  <ul class="dag-o-semantic-list dag-u-d-c">
-    {#each tokens as token}
-      <li
-        on:click|stopPropagation={onClickToken}
-        data-token={token}
-        class="dag-c-tokeniser__token dag-o-badge"
-      >{token}</li>
-    {/each}
-  </ul>
-  <input
-    bind:value={entry}
-    on:input={onInput}
-    {id}
-    type="text"
-    {pattern}
-    class="dag-c-tokeniser__input dag-u-xg-1"
-  />
+  <label for={id}>{label}</label>
+  <div
+    on:click={onClickMain}
+    class="dag-c-tokeniser dag-u-d-x dag-u-xd-r dag-u-xw-w"
+  >
+    <ul class="dag-o-semantic-list dag-u-d-c">
+      {#each tokens as token}
+        <li
+          on:click|stopPropagation={onClickToken}
+          data-token={token}
+          class="dag-c-tokeniser__token dag-o-badge"
+        >{token}</li>
+      {/each}
+    </ul>
+    <input
+      bind:value={entry}
+      on:input={onInput}
+      {id}
+      type="text"
+      {pattern}
+      class="dag-c-tokeniser__input dag-u-xg-1"
+    />
+  </div>
 </div>

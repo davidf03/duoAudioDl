@@ -13,8 +13,8 @@
 //     [group: editable]
 //   save
 
-import { CARD_TAG_VALID_CHARS } from '../../consts';
 import { createEventDispatcher, onDestroy } from 'svelte';
+import { CARD_TAG_VALID_CHARS } from '../../consts';
 import {
   lng,
   expandedCardId,
@@ -42,7 +42,7 @@ let isOpen:boolean = false;
 let deckOptions:iNameAndId[] =
   $deckNamesAndIds?.sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0) // alphabetical
   ?? [];
-const prefsDeckId:number = $prefs?.lngs?.[$lng]?.deckId?.id;
+const prefsDeckId:number = $prefs?.lngs?.[$lng]?.deckId;
 let deckId:number = 
   $deckNamesAndIds?.find((d:iNameAndId): boolean => d.id === card.deckId)?.id // ensures saved ids map
   ?? $deckNamesAndIds?.find((d:iNameAndId): boolean => d.id === prefsDeckId)?.id
@@ -51,7 +51,7 @@ let deckId:number =
 let templateOptions:iNameAndId[] =
   ($templates?.map(({fields, ...t}): iNameAndId => t as iNameAndId) ?? [])
   .sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0); // alphabetical
-const prefsTemplateId:number = $prefs?.lngs?.[$lng]?.templateId?.id;
+const prefsTemplateId:number = $prefs?.lngs?.[$lng]?.templateId;
 let templateId:number =
   templateOptions.find((t:iNameAndId): boolean => t.id === card.templateId)?.id // ensures saved id maps
   ?? templateOptions.find((t:iNameAndId): boolean => t.id === prefsTemplateId)?.id
@@ -104,8 +104,7 @@ function onChangeTemplateSelector (): void {
   card.templateId = templateId;
   setTemplate();
 }
-function onChangeField (): void {}
-function onBlurField (): void {
+function onInputField (): void {
   dispatch('fieldsupdated');
 }
 function onUpdateTags (e): void {
@@ -143,6 +142,7 @@ function onUpdateTags (e): void {
     <div class="dag-c-card__body">
       <form
         on:submit|preventDefault={onSubmit}
+        class="dag-o-form dag-u-d-x dag-u-xd-r dag-u-xw-w"
       >
         <Selector
           bind:value={deckId}
@@ -152,31 +152,33 @@ function onUpdateTags (e): void {
           id={`${id}-deck-selector`}
           label="Create in deck"
           required
-          classlist="dag-u-d-b"
+          classlist="dag-o-form__field-1/2"
         />
         <Selector
           bind:value={templateId}
           on:change={onChangeTemplateSelector}
           options={templateOptions.map(o => ({val:o.id, text:o.name}))}
+          useOnChange
           emptyText="No templates found"
           id={`${id}-template-selector`}
           label="Use template"
           required
-          classlist="dag-u-d-b"
+          classlist="dag-o-form__field-1/2"
         />
         {#if $templates.length === 0 || !template}
           <p>Open Anki to begin creating cards</p>
         {:else}
           {#each template?.fields || [] as field (field)}
-            <Field
-              bind:value={card.fields[field]}
-              on:change={onChangeField}
-              on:blur={onBlurField}
-              placeholder="Complete field"
-              id={`${id}-${field.replace(/\s/g,'-').toLowerCase()}`}
-              label={field}
-              classlist="dag-u-d-b"
-            />
+            {#if field !== 'audio'}
+              <Field
+                bind:value={card.fields[field]}
+                on:input={onInputField}
+                placeholder="Enter data"
+                id={`${id}-${field.replace(/\s/g,'-').toLowerCase()}`}
+                label={field.charAt(0).toUpperCase() + field.slice(1)}
+                classlist="dag-o-form__field"
+              />
+            {/if}
           {/each}
         {/if}
         <Tokeniser
@@ -187,13 +189,17 @@ function onUpdateTags (e): void {
           invalidPatternRegex={invalidTagPatternRegex}
           tokenSemanticName="tag"
           label="Add tags"
+          classlist="dag-o-form__field"
         />
-        <button
-          type="submit"
-        >Create</button>
-        <button
-          on:click={onClickIgnore}
-        >Ignore</button>
+        <div class="dag-u-d-x dag-u-xd-rr">
+          <button
+            type="submit"
+          >Create</button>
+          <button
+            on:click={onClickIgnore}
+            class="dag-u-mie-a"
+          >Ignore</button>
+        </div>
       </form>
     </div>
   {/if}
