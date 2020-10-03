@@ -1,6 +1,6 @@
 {
   "name": "duo-anki-generator",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "scripts": {
     "start": "concurrently \"parcel src/manifest.json\" \"web-ext run --source-dir ./dist/ -f nightly --start-url https://www.duolingo.com/ \"",
     "build": "parcel build src/manifest.json --no-source-maps"

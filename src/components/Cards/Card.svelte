@@ -112,6 +112,10 @@ function onUpdateTags (e): void {
   card.tags = tokens.filter((tkn:string): boolean => !defaultTags.includes(tkn));
   dispatch('fieldsupdated');
 }
+
+function decodeBase64 (data:string): string {
+  return atob(data);
+}
 </script>
 
 <div class="dag-c-card">
@@ -121,7 +125,7 @@ function onUpdateTags (e): void {
     {:else}
       <MediaPlayer
         {id}
-        audioFile={card.audioFile}
+        audioFile={decodeBase64(card.audioFile)}
         classlist="dag-c-card__media dag-o-bg-btn-set__sibling dag-u-d-b"
       />
     {/if}

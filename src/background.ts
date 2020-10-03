@@ -79,7 +79,7 @@ async function addEntriesToQueue (): Promise<void> {
       audioUrl,
       audioFile: null,
       groups: [groupName],
-      fields: []
+      fields: {}
     };
     return queue.addCard(card, groupName, lng);
   });
@@ -95,6 +95,7 @@ async function addEntriesToQueue (): Promise<void> {
   setStore(lngsStoreKey, lngs);
   await setStore(queueStoreKey, queue);
 
+  // TODO downloading is basically useless, except for playback, because ankiConnect doesn't provide an API for attaching the files to cards ('notes'), despite providing one for managing files in the db
   // download files for all new cards and commit to queue
   Promise.all(filteredReqsInstance.map(req => {
     const audioUrl:string = req.url;
@@ -108,7 +109,7 @@ async function addEntriesToQueue (): Promise<void> {
       xhr.addEventListener('load', () => resolve(), false);
       xhr.send();
     }).then(() => new Promise<string|ArrayBuffer>((resolve) => {
-      const blob:Blob = new Blob([xhr.response], {type: 'audio/ogg'});
+      const blob:Blob = new Blob([xhr.response], {type: 'audio/mp3'});
       fileReader.onload = (e) => resolve(e.target.result);
       fileReader.readAsDataURL(blob);
     }));
@@ -117,7 +118,7 @@ async function addEntriesToQueue (): Promise<void> {
     const queue:CardList = await browser.storage.local.get(queueStoreKey).then(res => parseJSON(res[queueStoreKey], queueStoreDefaultVal, CardList));
     for (let i=0; i<filteredReqsInstance.length; i++) {
       const card:iCard = queue.getCard(filteredReqsInstance[i].url);
-      card.audioFile = audioFiles[i] as string;
+      card.audioFile = btoa(audioFiles[i]) as string;
       queue.updateCard(card);
     }
     setStore(queueStoreKey, queue);

@@ -1,18 +1,35 @@
-import { iNamesAndIdsAnki } from "../interfaces/iNamesAndIdsAnki";
-import { iNameAndId } from "../interfaces/iNameAndId";
-import { iCardAnki } from "../interfaces/iCardAnki";
-import { iCard } from "src/interfaces/iCards";
-import { iTemplateAnki } from "../interfaces/iTemplateAnki";
-import { iTemplate } from "../interfaces/iTemplate";
+import AnkiConnect from '../ankiConnect';
+import AudioUrlParser from '../util/audioUrlParser';
+import type { iNamesAndIdsAnki } from "../interfaces/iNamesAndIdsAnki";
+import type { iNameAndId } from "../interfaces/iNameAndId";
+import type { iCardAnki } from "../interfaces/iCardAnki";
+import type { iCard } from "../interfaces/iCards";
+import type { iTemplateAnki } from "../interfaces/iTemplateAnki";
+import type { iTemplate } from "../interfaces/iTemplate";
 
 export default {
   namesAndIds: {
     from: (data:iNamesAndIdsAnki) => Object.keys(data).map(name => ({name, id: data[name]})),
     to: (data:iNameAndId[]) => data.reduce((obj, item) => (obj[item.name] = item.id, obj), {})
   },
-  cards: { // TODO
-    from: (data:iCardAnki[]) => data as iCard[],
-    to: (data:iCard[]) => data as iCardAnki[]
+  cards: {
+    from: (data:iCardAnki): iCard => null, // TODO
+    to: async (data:iCard, tags:string[], deckName:string, modelName:string): Promise<iCardAnki> => {
+      const { fields, audioUrl } = data;
+      const filename:string = AudioUrlParser.getId(audioUrl);
+      // await AnkiConnect.invoke('storeMediaFile', 6, { filename, data: audioFile }); // what's even the point of this API if I can't add it to the note
+      return {
+        fields,
+        deckName,
+        modelName,
+        tags,
+        audio: [{
+          filename,
+          url: audioUrl,
+          fields: ['audio']
+        }]
+      };
+    }
   },
   templates: {
     from: (data:iTemplateAnki[], namesAndIds:iNameAndId[]) => {
