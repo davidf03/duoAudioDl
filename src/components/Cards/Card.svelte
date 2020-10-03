@@ -68,7 +68,7 @@ if ($prefs?.lngs?.[$lng]?.useLngTag !== false) defaultTags = [...defaultTags, `d
 if ($prefs?.lngs?.[$lng]?.useGroupTag !== false) defaultTags = [...defaultTags, ...card.groups.map(
   (gn:string): string => `dag-${$lng}-${gn.replace(invalidTagPatternRegex, '').toLowerCase()}`
 )];
-const tags:string[] = Array.from(new Set([].concat(
+let tags:string[] = Array.from(new Set([].concat(
   defaultTags,
   card.tags || []
 )));
@@ -107,9 +107,8 @@ function onChangeTemplateSelector (): void {
 function onInputField (): void {
   dispatch('fieldsupdated');
 }
-function onUpdateTags (e): void {
-  const { tokens } = e.detail;
-  card.tags = tokens.filter((tkn:string): boolean => !defaultTags.includes(tkn));
+function onUpdateTags (): void {
+  card.tags = tags.filter((tkn:string): boolean => !defaultTags.includes(tkn));
   dispatch('fieldsupdated');
 }
 
@@ -186,9 +185,9 @@ function decodeBase64 (data:string): string {
           {/each}
         {/if}
         <Tokeniser
+          bind:tokens={tags}
           on:update={onUpdateTags}
           id={`${id}-tags-entry`}
-          tokens={tags}
           validPatternRegex={validTagPatternRegex}
           invalidPatternRegex={invalidTagPatternRegex}
           tokenSemanticName="tag"

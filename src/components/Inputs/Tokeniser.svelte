@@ -26,7 +26,7 @@ function addToken (): void {
     entry
   ];
   entry = '';
-  dispatch('update', { tokens });
+  dispatch('update');
 }
 
 function clearToken(e): void {
@@ -37,7 +37,7 @@ function clearToken(e): void {
     ...tokens.slice(0, index),
     ...tokens.slice(index + 1)
   ];
-  dispatch('update', { tokens });
+  dispatch('update');
 }
 
 function onKeydown (e): void {
@@ -53,13 +53,13 @@ function onInput (e): void {
     addToken();
     return;
   }
-  const nRef:iNotificationReference = nMap.invalidCardTagCharacter;
   if (validPatternRegex.test(key)) return;
+  const nRef:iNotificationReference = nMap.invalidCardTagCharacter;
   notifications.add({
     id: uuid(),
     ...nRef,
     message: `Invalid character '${key}'
-    Tags must conform to pattern '${pattern}'`
+    Tags must conform to pattern: ${pattern}`
   } as iNotification);
 }
 function onClickMain (): void {
