@@ -4,47 +4,37 @@
   background: none;
 }
 
-.dag-o-bg-btn-set {
-  position: relative;
-
-  &__btn {
-    z-index: 1;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-  }
-
-  &__sibling {
-    z-index: 2;
-    position: relative;
-  }
-}
-
 .dag-o-btn {
-  padding-inline: $dag-gap-l;
-  padding-block: $dag-gap-m;
-  font-size: $dag-font-size-m;
+  text-decoration: none;
+
+  &--v-main {
+    padding-inline: $dag-gap-l;
+    padding-block: $dag-gap-m;
+    font-size: $dag-font-size-l;
+  }
+  &--v-skip {
+    padding-inline: $dag-gap-s;
+    padding-block: $dag-gap-xs;
+    font-size: $dag-font-size-m;
+  }
 
   &--t-main {
     border-radius: var(--dag-border-radius-m);
-    background-color: var(--dag-btn);
+    background-color: var(--dag-btn-main);
     color: var(--dag-btn-type);
   }
   &--t-main:hover,
   &--t-main.dag-is-hover {
-    background-color: var(--dag-btn-hover);
+    background-color: var(--dag-btn-main-hover);
   }
   &--t-main:active,
   &--t-main.dag-is-active {
-    background-color: var(--dag-btn-active);
+    background-color: var(--dag-btn-main-active);
   }
   &--t-main:disabled,
   &--t-main.dag-is-disabled {
     cursor: $dag-cursor-disabled;
-    background-color: var(--dag-btn-disabled);
+    background-color: var(--dag-btn-main-disabled);
   }
 }
 
@@ -68,5 +58,34 @@
   &--t-main.dag-is-disabled {
     cursor: $dag-cursor-disabled;
     color: var(--dag-clear-btn-disabled);
+  }
+}
+
+.dag-o-skip-btn {
+  position: absolute;
+  left:-999999px;
+
+  &:focus {
+    left: $dag-gap-m;
+    top: $dag-gap-m;
+  }
+}
+
+.dag-o-bg-btn-set {
+  position: relative;
+
+  &__btn {
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+  }
+
+  &__sibling {
+    z-index: 2;
+    position: relative;
   }
 }

@@ -118,7 +118,7 @@ function decodeBase64 (data:string): string {
 </script>
 
 <div class="dag-c-card">
-  <div class="dag-c-card__header dag-o-bg-btn-set">
+  <div class="dag-c-card__header dag-o-bg-btn-set dag-u-d-x dag-u-xd-r dag-u-ai-c">
     {#if !card.audioFile}
       <Spinner />
     {:else}
@@ -199,6 +199,7 @@ function decodeBase64 (data:string): string {
         <div class="dag-u-d-x dag-u-xd-rr dag-u-xb-1">
           <button
             type="submit"
+            class="dag-o-btn dag-o-btn--v-main dag-o-btn--t-main"
           >Create</button>
           <button
             on:click={onClickIgnore}
@@ -209,3 +210,28 @@ function decodeBase64 (data:string): string {
     </div>
   {/if}
 </div>
+
+<style lang="scss">
+.dag-c-card {
+  &__name {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    width: 0;
+    flex-grow: 1;
+
+    font-size: unset;
+    font-weight: unset;
+  }
+
+  &__ignore {
+    display: none;
+    margin-inline-start: auto;
+  }
+  &__header:hover &__ignore,
+  &__header:focus-within &__ignore {
+    display: block;
+  }
+}
+</style>

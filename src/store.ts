@@ -57,6 +57,9 @@ export const history = createPersistentStore('cards', new CardList(), CardList);
 export const deckNamesAndIds = createPersistentStore('deckNamesAndIds', [] as iNameAndId[]);
 export const templates = createPersistentStore('templates', [] as iTemplate[])
 
+// stores to supplement styles
+export const mainNavDisplacement = createPersistentStore('mainNavDisplacement', '0px');
+
 // temporary stores
 const createNotificationsStore = (): any => {
   const startValue:iNotification[] = [];
@@ -129,6 +132,9 @@ export const loadedTemplates = createSwitchStore(false);
 export const connectingToAnki = createSwitchStore(true);
 export const connectedToAnki = createSwitchStore(false);
 
+
+// init style-supplementing stores
+mainNavDisplacement.useLocalStorage();
 
 // init local stores
 Promise.all([

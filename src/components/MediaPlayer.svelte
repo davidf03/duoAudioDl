@@ -1,6 +1,4 @@
 <script lang="ts">
-const testUrl:string = 'https://freesound.org/data/previews/534/534313_11861866-lq.mp3';
-
 import { createEventDispatcher, onMount, onDestroy } from 'svelte';
 import { playingAudioId } from '../store';
 import PlayPause from './Icons/PlayPause/PlayPause.svelte';
@@ -38,7 +36,7 @@ function play (): void {
   isPlaying = true;
 }
 
-function onClickPlay (e): void {
+function onClickPlay (): void {
   returnIsPaused() ? play() : pause();
 }
 </script>
@@ -55,3 +53,11 @@ function onClickPlay (e): void {
     on:click={onClickPlay}
   />
 </button>
+
+<style lang="scss">
+.dag-c-audio-btn {
+  width: $dag-audio-btn-w;
+  border-radius: $dag-audio-btn-w/2 - 2;
+  overflow: hidden;
+}
+</style>

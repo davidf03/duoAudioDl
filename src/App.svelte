@@ -1,5 +1,6 @@
 <script lang="ts">
 import { v4 as uuid } from 'uuid';
+import { onDestroy } from 'svelte';
 import type { iNavItem } from './interfaces/iNav';
 import type { iNotification, iNotificationReference } from './interfaces/iNotification';
 import { notificationMap as nMap } from './maps/notificationMap';
@@ -8,17 +9,20 @@ import {
   lng,
   connectingToAnki,
   connectedToAnki,
-  notifications
+  notifications,
+  mainNavDisplacement
 } from './store';
+import icons from '../../img/icons/*.svg';
 import Nav from './components/Nav/Nav.svelte';
 import LanguageSelector from './components/LanguageSelector.svelte';
 import Notifier from './components/Notifier/Notifier.svelte';
 import Queue from './components/Main/Queue.svelte';
 import History from './components/Main/History.svelte';
 import Settings from './components/Main/Settings.svelte';
-import { onDestroy } from 'svelte';
 
-const mainContentId:string = 'main-content';
+const navId:string = 'dag-nav';
+const mainContentId:string = 'dag-main-content';
+
 let navItems:iNavItem[] = buildNavItems();
 function buildNavItems (): iNavItem[] {
   return [
@@ -26,28 +30,34 @@ function buildNavItems (): iNavItem[] {
       alias: 'queue',
       component: Queue,
       name: 'Queue',
-      icon: 'Q',
+      icon: icons.queue,
       disabled: !$lng
     },
     {
       alias: 'history',
       component: History,
       name: 'History',
-      icon: 'H',
+      icon: icons.history,
       disabled: !$lng
     },
     {
       alias: 'settings',
       component: Settings,
       name: 'Settings',
-      icon: 'S',
+      icon: icons.settings,
       disabled: !$lng
     }
   ];
 };
 let currentSection:iNavItem = navItems[0];
 
-const unsubFromLng = lng.subscribe(l => navItems = buildNavItems());
+export let navDisplacement:string = $mainNavDisplacement ?? '0px';
+function onMountNav (): void {
+  $mainNavDisplacement = `${document.getElementById(navId).offsetHeight}px`;
+  navDisplacement = $mainNavDisplacement;
+}
+
+const unsubFromLng = lng.subscribe(() => navItems = buildNavItems());
 onDestroy(unsubFromLng);
 
 const unsubFromConnectingToAnki = connectingToAnki.subscribe((val:boolean): void => {
@@ -81,16 +91,25 @@ function clearData (): void {
 }
 </script>
 
-<div class="dag-c-main">
-  <div class="dag-c-main__nav">
+<div
+  style="--nav-displacement:{navDisplacement}"
+  class="dag-c-main dag-u-p-r"
+>
+  <div
+    id={navId}
+    class="dag-c-main__nav"
+  >
     <Nav
+      on:mount={onMountNav}
       skipId={mainContentId}
       {navItems}
       {currentSection}
       on:move-to-section={moveToSection}
     />
     {#if $lngs.length > 0}
-      <LanguageSelector />
+      <LanguageSelector
+        on:mount={onMountNav}
+      />
     {/if}
   </div>
   <div id={mainContentId}>
@@ -99,3 +118,24 @@ function clearData (): void {
   <Notifier />
   <button on:click={clearData}>clear data</button>
 </div>
+
+<style lang="scss">
+.dag-c-main {
+  margin: 0;
+  padding: 0;
+  padding-top: var(--nav-displacement);
+
+  width: 320px;
+  min-height: 240px;
+  max-height: 420px;
+
+  border: $dag-border-s solid var(--dag-border-light);
+  background-color: var(--dag-bg);
+
+  &__nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+  }
+}
+</style>

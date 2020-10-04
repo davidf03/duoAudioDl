@@ -1,5 +1,5 @@
 <script lang="ts">
-import PlayPauseInterior from './PlayPauseInterior.svelte';
+import PlayPauseInterior from './PlayPauseIcon.svelte';
 
 export let isPlaying:boolean = true;
 
@@ -52,19 +52,17 @@ function onMouseOut (e): void {
 }
 </script>
 
-<svg
-  viewBox={`0 0 ${2*r} ${2*r + btnHFull}`}
+<div
   on:mouseover={onMouseOver}
   on:mousedown={onMouseDown}
   on:mouseup={onMouseUp}
   on:mouseout={onMouseOut}
-  class="dag-c-play-icon"
-  class:dag-c-play-icon--hover={isHovered}
-  class:dag-c-play-icon--pressed={isPressed}
 >
   {#if isPressed}
     <PlayPauseInterior
       {isPlaying}
+      {isHovered}
+      {isPressed}
       {r}
       {btnHFull}
       btnH={btnHDepressed}
@@ -78,6 +76,8 @@ function onMouseOut (e): void {
     <!-- TODO wtf is this necessary lol -->
     <PlayPauseInterior
       {isPlaying}
+      {isHovered}
+      {isPressed}
       {r}
       {btnHFull}
       btnH={btnHFull}
@@ -88,4 +88,7 @@ function onMouseOut (e): void {
       {barGap}
     />
   {/if}
-</svg>
+</div>
+
+<style lang="scss">
+</style>

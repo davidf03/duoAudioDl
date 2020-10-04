@@ -63,3 +63,31 @@ function describeArc(x:number, y:number, radius:number, startAngle:number, endAn
     />
   </g>
 </svg>
+
+<style lang="scss">
+@keyframes spin {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
+}
+
+.dag-c-spinner {
+  width: $dag-spinner-w;
+  border-radius: 50%;
+  animation: spin .5s infinite linear;
+
+  &__track {
+    stroke: var(--dag-spinner-track);
+    fill: none;
+  }
+  &__progress {
+    stroke: var(--dag-spinner-progress);
+    stroke-linecap: round;
+    fill: none;
+
+  }
+}
+</style>

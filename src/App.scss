@@ -1,8 +1,8 @@
 // principals
-@import "scss/principals/mixins.scss";
-@import "scss/principals/theme.scss";
-@import "scss/principals/config.scss";
-@import "scss/principals/base.scss";
+@import "scss/mixins.scss";
+@import "scss/theme.scss";
+@import "scss/config.scss";
+@import "scss/base.scss";
 
 // objects
 @import "scss/objects/containers.scss";
@@ -10,21 +10,6 @@
 @import "scss/objects/buttons.scss";
 @import "scss/objects/lists.scss";
 @import "scss/objects/forms.scss";
-
-// components
-@import "scss/components/icons/Spinner.scss";
-@import "scss/components/icons/Play.scss";
-@import "scss/components/icons/ListCollapseChevron.scss";
-@import "scss/components/AudioBtn.scss";
-
-@import "scss/components/Card.scss";
-@import "scss/components/CardGroup.scss";
-@import "scss/components/CardList.scss";
-
-// pages
-@import "scss/pages/Main.scss";
-@import "scss/pages/Home.scss";
-@import "scss/pages/Settings.scss";
 
 // utilities
 @import "scss/utilities/abstract.scss";

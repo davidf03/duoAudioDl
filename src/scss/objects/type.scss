@@ -1,7 +1,3 @@
-.dag-o-key-type {
-  color: var(--dag-brand-main-1);
-}
-
 .dag-o-h-xl {
   margin-block-end: $dag-gap-xs;
   font-size: $dag-font-size-xl;
@@ -31,4 +27,8 @@
   &--t-subtle {
     color: var(--dag-type-subtle);
   }
+}
+
+.dag-o-key-type {
+  color: var(--dag-brand-main-1);
 }

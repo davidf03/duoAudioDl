@@ -52,3 +52,22 @@ function onCardSubmitted (e) {
     </ol>
   {/if}
 </div>
+
+<style lang="scss">
+.dag-c-card-group {
+  &__header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  &__name {
+    font-size: unset;
+    font-weight: unset;
+  }
+
+  &__counter {
+    margin-inline-start: auto;
+  }
+}
+</style>

@@ -1,4 +1,5 @@
 <script lang="ts">
+import { onMount, createEventDispatcher } from 'svelte';
 import {
   lngs,
   lng,
@@ -8,7 +9,11 @@ import {
 } from '../store'
 // import ISO6391 from 'iso-639-1'
 
-const id:string = 'dag-language-selector-label'
+const dispatch = createEventDispatcher();
+
+onMount(() => dispatch('mount'));
+
+const id:string = 'dag-language-selector-label';
 </script>
 
 <label
