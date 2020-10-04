@@ -10,7 +10,7 @@
     padding-block: $dag-gap-m;
     padding-inline: $dag-gap-l;
 
-    border-top: $dag-border-s solid var(--dag-border-light);
+    border-block-start: $dag-border-s solid var(--dag-border-light);
     background-color: var(--dag-bg);
     color: var(--dag-type);
   }
@@ -23,7 +23,7 @@
     color: var(--dag-brand-main-0);
   }
   &__item:last-child {
-    border-bottom: $dag-border-s solid var(--dag-border-light);
+    border-block-end: $dag-border-s solid var(--dag-border-light);
   }
 
   &:after {
@@ -32,8 +32,8 @@
     margin-inline: auto;
     margin-block: $dag-gap-m;
 
-    width: $dag-list-stop-w;
-    height: $dag-list-stop-w;
+    inline-size: $dag-list-stop-w;
+    block-size: $dag-list-stop-w;
 
     border-radius: 50%;
     background-color: var(--dag-list-stop);

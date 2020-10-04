@@ -1,6 +1,6 @@
 * {
   box-sizing: border-box;
-  max-width: 100%; // TODO
+  max-inline-size: 100%; // TODO
 }
 
 body {
@@ -21,5 +21,5 @@ i {
 img,
 video,
 svg {
-  max-width: 100%;
+  max-inline-size: 100%;
 }

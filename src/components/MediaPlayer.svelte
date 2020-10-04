@@ -46,7 +46,7 @@ function onClickPlay (): void {
 </audio>
 <button
   on:click={onClickPlay}
-  class={`dag-c-audio-btn dag-o-unbutton ${classlist}`}
+  class="dag-c-audio-btn dag-o-unbutton {classlist}"
 >
   <PlayPause
     {isPlaying}
@@ -56,7 +56,7 @@ function onClickPlay (): void {
 
 <style lang="scss">
 .dag-c-audio-btn {
-  width: $dag-audio-btn-w;
+  inline-size: $dag-audio-btn-w;
   border-radius: $dag-audio-btn-w/2 - 2;
   overflow: hidden;
 }

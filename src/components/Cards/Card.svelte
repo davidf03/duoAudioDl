@@ -218,7 +218,7 @@ function decodeBase64 (data:string): string {
     text-overflow: ellipsis;
     overflow: hidden;
 
-    width: 0;
+    inline-size: 0;
     flex-grow: 1;
 
     font-size: unset;

@@ -6,6 +6,7 @@ const scssConfigPath = path.resolve(process.cwd(), 'src/scss/config.scss').repla
 module.exports = {
   preprocess: sveltePreprocess({
     defaults: {
+      markup: 'html',
       script: 'typescript',
       style: 'scss'
     },

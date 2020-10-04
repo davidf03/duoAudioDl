@@ -97,7 +97,7 @@ function clearData (): void {
 >
   <div
     id={navId}
-    class="dag-c-main__nav"
+    class="dag-u-p-f dag-u-ibs-0 dag-u-is-1"
   >
     <Nav
       on:mount={onMountNav}
@@ -115,7 +115,9 @@ function clearData (): void {
   <div id={mainContentId}>
     <svelte:component this={currentSection.component}/>
   </div>
-  <Notifier />
+  <Notifier
+    classlist="dag-u-p-f dag-u-ibe-0 dag-u-is-1"
+  />
   <button on:click={clearData}>clear data</button>
 </div>
 
@@ -123,19 +125,13 @@ function clearData (): void {
 .dag-c-main {
   margin: 0;
   padding: 0;
-  padding-top: var(--nav-displacement);
+  padding-block-start: var(--nav-displacement);
 
-  width: 320px;
-  min-height: 240px;
-  max-height: 420px;
+  inline-size: 320px;
+  min-block-size: 240px;
+  max-block-size: 420px;
 
   border: $dag-border-s solid var(--dag-border-light);
   background-color: var(--dag-bg);
-
-  &__nav {
-    position: fixed;
-    top: 0;
-    width: 100%;
-  }
 }
 </style>

@@ -25,7 +25,7 @@ function onBlur (): void {
 </script>
 
 <div
-  class={`dag-o-input ${classlist}`}
+  class="dag-o-input {classlist}"
 >
   <label
     for={id}

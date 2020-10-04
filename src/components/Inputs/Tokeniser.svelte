@@ -71,7 +71,7 @@ function onClickToken (e): void {
 </script>
 
 <div
-  class={classlist}
+  class="{classlist}"
 >
   <label for={id}>{label}</label>
   <div

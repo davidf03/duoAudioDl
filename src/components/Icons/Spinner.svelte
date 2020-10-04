@@ -48,7 +48,7 @@ function describeArc(x:number, y:number, radius:number, startAngle:number, endAn
 <svg
   version="1.1" xmlns="http://www.w3.org/2000/svg"
   viewBox={`0 0 ${2*totalR} ${2*totalR}`}
-  class={`dag-c-spinner ${classlist}`}
+  class="dag-c-spinner {classlist}"
 >
   <g>
     <circle
@@ -75,7 +75,7 @@ function describeArc(x:number, y:number, radius:number, startAngle:number, endAn
 }
 
 .dag-c-spinner {
-  width: $dag-spinner-w;
+  inline-size: $dag-spinner-w;
   border-radius: 50%;
   animation: spin .5s infinite linear;
 
@@ -87,7 +87,6 @@ function describeArc(x:number, y:number, radius:number, startAngle:number, endAn
     stroke: var(--dag-spinner-progress);
     stroke-linecap: round;
     fill: none;
-
   }
 }
 </style>

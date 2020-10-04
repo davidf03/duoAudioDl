@@ -1,8 +1,8 @@
 .dag-u-accessible-hidden {
   position: absolute;
-  left: -999999px;
-  height: 0;
-  width: 0;
+  inset-inline-start: -999999px;
+  block-size: 0;
+  inline-size: 0;
   overflow: hidden;
 }
 
@@ -60,5 +60,31 @@
 }
 
 .dag-u-p-r {
-  position: relative;
+  position: relative !important;
+}
+.dag-u-p-a {
+  position: absolute !important;
+}
+.dag-u-p-f {
+  position: fixed !important;
+}
+
+.dag-u-ibs-0 {
+  inset-block-start: 0 !important;
+}
+.dag-u-ibe-0 {
+  inset-block-end: 0 !important;
+}
+.dag-u-iis-0 {
+  inset-inline-start: 0 !important;
+}
+.dag-u-iie-0 {
+  inset-inline-end: 0 !important;
+}
+
+.dag-u-bs-1 {
+  block-size: 100% !important;
+}
+.dag-u-is-1 {
+  inline-size: 100% !important;
 }

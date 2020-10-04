@@ -63,11 +63,11 @@
 
 .dag-o-skip-btn {
   position: absolute;
-  left:-999999px;
+  inset-inline-start:-999999px;
 
   &:focus {
-    left: $dag-gap-m;
-    top: $dag-gap-m;
+    inset-inline-start: $dag-gap-m;
+    inset-block-start: $dag-gap-m;
   }
 }
 
@@ -81,7 +81,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    width: 100%;
+    inline-size: 100%;
   }
 
   &__sibling {

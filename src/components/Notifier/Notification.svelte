@@ -29,5 +29,5 @@ function onClick (e): void {
 
 <div
   on:click={onClick}
-  class={`${classlist} dag-c-notification ${modifier}`}
+  class="dag-c-notification {modifier} {classlist}"
 >{notification.message}</div>

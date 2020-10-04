@@ -24,7 +24,7 @@ onMount(() => dispatch('mount'));
     {#each navItems as navItem, index}
       <li
         aria-hidden={navItem.disabled}
-        class={`dag-c-nav__item ${index === 0 ? 'dag-u-mis-a' : ''}`}
+        class="dag-c-nav__item {index === 0 ? 'dag-u-mis-a' : ''}"
       >
         <NavItem
           {navItem}
@@ -40,8 +40,8 @@ onMount(() => dispatch('mount'));
 .dag-c-nav {
 
   &__item {
-    height: 100%;
-    width: 32px;
+    block-size: 100%;
+    inline-size: 32px;
   }
 }
 </style>

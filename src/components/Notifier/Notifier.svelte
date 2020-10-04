@@ -6,6 +6,7 @@ import type { iNotification } from '../../interfaces/iNotification';
 import Notification from './Notification.svelte';
 import { onDestroy } from 'svelte';
 
+export let classlist:string = '';
 let notificationList:iNotification[];
 
 const unsub = notifications.subscribe(val => notificationList = val);
@@ -16,7 +17,7 @@ function onClear (e): void {
 }
 </script>
 
-<div class="dag-c-notifier">
+<div class="dag-c-notifier {classlist}">
   <ul class="dag-o-semantic-list">
     {#each notificationList as notification (notification.id)}
       <li>
