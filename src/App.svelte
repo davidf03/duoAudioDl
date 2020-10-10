@@ -3,7 +3,6 @@ import { v4 as uuid } from 'uuid';
 import { onDestroy } from 'svelte';
 import type { iNavItem } from './interfaces/iNav';
 import type { iNotification, iNotificationReference } from './interfaces/iNotification';
-import { notificationMap as nMap } from './maps/notificationMap';
 import {
   lngs,
   lng,
@@ -12,7 +11,10 @@ import {
   notifications,
   mainNavDisplacement
 } from './store';
-import icons from '../../img/icons/*.svg';
+import { notificationMap as nMap } from './maps/notificationMap';
+import QueueIcon from './components/Icons/Queue.svelte';
+import HistoryIcon from './components/Icons/History.svelte';
+import SettingsIcon from './components/Icons/Settings.svelte';
 import Nav from './components/Nav/Nav.svelte';
 import LanguageSelector from './components/LanguageSelector.svelte';
 import Notifier from './components/Notifier/Notifier.svelte';
@@ -30,21 +32,21 @@ function buildNavItems (): iNavItem[] {
       alias: 'queue',
       component: Queue,
       name: 'Queue',
-      icon: icons.queue,
+      icon: QueueIcon,
       disabled: !$lng
     },
     {
       alias: 'history',
       component: History,
       name: 'History',
-      icon: icons.history,
+      icon: HistoryIcon,
       disabled: !$lng
     },
     {
       alias: 'settings',
       component: Settings,
       name: 'Settings',
-      icon: icons.settings,
+      icon: SettingsIcon,
       disabled: !$lng
     }
   ];
@@ -97,8 +99,16 @@ function clearData (): void {
 >
   <div
     id={navId}
-    class="dag-u-p-f dag-u-ibs-0 dag-u-is-1"
+    class="dag-u-p-f dag-u-ibs-0 dag-u-is-1 dag-u-d-x dag-u-xd-cr"
   >
+    <div>
+      <h1>{currentSection.name}</h1>
+      {#if $lngs.length > 0}
+        <LanguageSelector
+          on:mount={onMountNav}
+        />
+      {/if}
+    </div>
     <Nav
       on:mount={onMountNav}
       skipId={mainContentId}
@@ -106,11 +116,6 @@ function clearData (): void {
       {currentSection}
       on:move-to-section={moveToSection}
     />
-    {#if $lngs.length > 0}
-      <LanguageSelector
-        on:mount={onMountNav}
-      />
-    {/if}
   </div>
   <div id={mainContentId}>
     <svelte:component this={currentSection.component}/>

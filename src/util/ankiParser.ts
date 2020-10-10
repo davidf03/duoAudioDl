@@ -1,5 +1,5 @@
 import AnkiConnect from '../ankiConnect';
-import AudioUrlParser from '../util/audioUrlParser';
+import { v4 as uuid } from 'uuid';
 import type { iNamesAndIdsAnki } from "../interfaces/iNamesAndIdsAnki";
 import type { iNameAndId } from "../interfaces/iNameAndId";
 import type { iCardAnki } from "../interfaces/iCardAnki";
@@ -16,7 +16,7 @@ export default {
     from: (data:iCardAnki): iCard => null, // TODO
     to: async (data:iCard, tags:string[], deckName:string, modelName:string): Promise<iCardAnki> => {
       const { fields, audioUrl } = data;
-      const filename:string = AudioUrlParser.getId(audioUrl);
+      const filename:string = uuid();
       // await AnkiConnect.invoke('storeMediaFile', 6, { filename, data: audioFile }); // what's even the point of this API if I can't add it to the note
       return {
         fields,

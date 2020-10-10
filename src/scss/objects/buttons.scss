@@ -5,11 +5,13 @@
 }
 
 .dag-o-btn {
+  cursor: pointer;
+  border: 0;
   text-decoration: none;
 
   &--v-main {
-    padding-inline: $dag-gap-l;
-    padding-block: $dag-gap-m;
+    padding-inline: $dag-gap-m;
+    padding-block: $dag-gap-s;
     font-size: $dag-font-size-l;
   }
   &--v-skip {

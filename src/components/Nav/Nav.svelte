@@ -41,7 +41,7 @@ onMount(() => dispatch('mount'));
 
   &__item {
     block-size: 100%;
-    inline-size: 32px;
+    inline-size: 40px;
   }
 }
 </style>

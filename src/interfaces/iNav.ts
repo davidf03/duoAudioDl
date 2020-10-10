@@ -2,6 +2,6 @@ export interface iNavItem {
   alias:string;
   component:any; // TODO type
   name:string;
-  icon:string;
+  icon:any; // TODO type
   disabled:boolean;
 }
