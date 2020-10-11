@@ -1,10 +1,10 @@
 <script lang="ts">
 import { v4 as uuid } from 'uuid';
+import { SpeechSynthesisRecorder } from './customPackages/SpeechSynthesisRecorder';
 import type { iNavItem } from './interfaces/iNav';
 import type { iNotification, iNotificationReference } from './interfaces/iNotification';
 import { notificationMap as nMap } from './maps/notificationMap';
 import {
-  lngs,
   lng,
   connectingToAnki,
   connectedToAnki,
@@ -47,7 +47,27 @@ function buildNavItems (): iNavItem[] {
 };
 let currentSection:iNavItem = navItems[0];
 
-const unsubFromLng = lng.subscribe(l => navItems = buildNavItems());
+const ttsRecorder = new SpeechSynthesisRecorder({
+   text: "The revolution will not be televised", 
+   utteranceOptions: {
+     voice: "english-us espeak",
+     lang: "en-US",
+     pitch: .75,
+     rate: 1
+   }
+ });
+ ttsRecorder.start()
+ .then((tts:any) => tts.audioBuffer())
+ .then(({tts, data}) => {
+   // `data` : `AudioBuffer`
+   let source = tts.audioContext.createBufferSource();
+   source.buffer = data;
+   console.log(data);
+   source.connect(tts.audioContext.destination);
+   source.start()
+ })
+
+const unsubFromLng = lng.subscribe(() => navItems = buildNavItems());
 onDestroy(unsubFromLng);
 
 const unsubFromConnectingToAnki = connectingToAnki.subscribe((val:boolean): void => {
@@ -89,7 +109,7 @@ function clearData (): void {
       {currentSection}
       on:move-to-section={moveToSection}
     />
-    {#if $lngs.length > 0}
+    {#if $lng}
       <LanguageSelector />
     {/if}
   </div>

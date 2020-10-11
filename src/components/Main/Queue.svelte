@@ -1,7 +1,7 @@
 <script lang="ts">
 import { v4 as uuid } from 'uuid';
 import { onDestroy } from 'svelte';
-import AnkiConnect from '../../ankiConnect';
+import AnkiConnect from '../../customPackages/ankiConnect';
 import AnkiParser from '../../util/ankiParser';
 import AudioUrlParser from '../../util/audioUrlParser';
 import type { iCard, iCardGroup } from '../../interfaces/iCards';
@@ -18,8 +18,8 @@ import {
   ignored,
   history,
   notifications,
-deckNamesAndIds,
-templates
+  decks,
+  templates
 } from '../../store';
 import CardList from '../Cards/CardList.svelte';
 import Spinner from '../Icons/Spinner.svelte';
@@ -51,7 +51,7 @@ function onIgnore (e): void {
 async function onCardSubmitted (e): Promise<void> {
   const { card, tags, deckId, templateId, groupName } = e.detail;
   try {
-    const deckName:string = $deckNamesAndIds.find((d:iNameAndId): boolean => d.id === deckId).name;
+    const deckName:string = $decks.find((d:iNameAndId): boolean => d.id === deckId).name;
     const templateName:string = $templates.find((t:iTemplate): boolean => t.id === templateId).name;
     const note:iCardAnki = await AnkiParser.cards.to(
       card,

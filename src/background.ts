@@ -7,7 +7,6 @@ import audioUrlParser from './util/audioUrlParser';
 
 const pattern:string = 'https://*.cloudfront.net/*/*';
 const queueStoreKey:string = 'queue';
-const lngsStoreKey:string = 'lngs';
 const localStores = [
   { key: queueStoreKey, defaultVal: new CardList(), class: CardList },
   { key: 'history', defaultVal: new CardList(), class: CardList },
@@ -86,13 +85,6 @@ async function addEntriesToQueue (): Promise<void> {
 
   if (filteredReqsInstance.length === 0) return;
 
-  // set lngs and queue added cards
-  const lngs:string[] = Array.from(new Set([].concat(
-    queue.getLngs(),
-    history.getLngs(),
-    ignored.getLngs()
-  )));
-  setStore(lngsStoreKey, lngs);
   await setStore(queueStoreKey, queue);
 
   // TODO downloading is basically useless, except for playback, because ankiConnect doesn't provide an API for attaching the files to cards ('notes'), despite providing one for managing files in the db
@@ -109,7 +101,7 @@ async function addEntriesToQueue (): Promise<void> {
       xhr.addEventListener('load', () => resolve(), false);
       xhr.send();
     }).then(() => new Promise<string|ArrayBuffer>((resolve) => {
-      const blob:Blob = new Blob([xhr.response], {type: 'audio/mp3'});
+      const blob:Blob = new Blob([xhr.response], {type: 'audio/ogg'});
       fileReader.onload = (e) => resolve(e.target.result);
       fileReader.readAsDataURL(blob);
     }));

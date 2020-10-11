@@ -1,4 +1,4 @@
-import AnkiConnect from '../ankiConnect';
+import AnkiConnect from '../customPackages/ankiConnect';
 import AudioUrlParser from '../util/audioUrlParser';
 import type { iNamesAndIdsAnki } from "../interfaces/iNamesAndIdsAnki";
 import type { iNameAndId } from "../interfaces/iNameAndId";

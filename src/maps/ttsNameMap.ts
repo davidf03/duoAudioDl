@@ -1,4 +1,4 @@
 export const ttsNameMap:{[key:string]:string[];} = {
-  sv: ['astrid'],
+  sv: ['astrid', 'lottie'],
   fi: ['aino']
 };

@@ -4,7 +4,7 @@ import { onDestroy } from 'svelte';
 import {
   prefs,
   lng,
-  deckNamesAndIds,
+  decks,
   templates,
   loadingPrefs,
   loadedPrefs
@@ -17,7 +17,7 @@ const fallbackDeckId:number = FALLBACK_DECK_ID;
 
 let deckId:number;
 let deckOptions:iNameAndId[] =
-  $deckNamesAndIds?.sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0)
+  $decks?.sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0)
   ?? [];
 
 let templateId:number;
@@ -44,8 +44,8 @@ function setDeckToLngDefault (): void {
   // if pref exists and can be found, otherwise use fallbacks
   const lngPref = $prefs?.lngs?.[$lng]?.deckId;
   deckId =
-    (lngPref >= 0 && $deckNamesAndIds.find(d => d.id === lngPref)?.id)
-    ?? ($deckNamesAndIds.some(d => d.id === fallbackDeckId) && fallbackDeckId)
+    (lngPref >= 0 && $decks.find(d => d.id === lngPref)?.id)
+    ?? ($decks.some(d => d.id === fallbackDeckId) && fallbackDeckId)
     ?? deckOptions?.[0]?.id;
 }
 function setTemplateToLngDefault (): void {

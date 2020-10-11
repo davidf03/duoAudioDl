@@ -19,7 +19,7 @@ import {
   lng,
   expandedCardId,
   prefs,
-  deckNamesAndIds,
+  decks,
   templates
 } from '../../store';
 import type { iCard } from '../../interfaces/iCards';
@@ -40,12 +40,12 @@ const id:string = card.audioUrl;
 let isOpen:boolean = false;
 
 let deckOptions:iNameAndId[] =
-  $deckNamesAndIds?.sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0) // alphabetical
+  $decks?.sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0) // alphabetical
   ?? [];
 const prefsDeckId:number = $prefs?.lngs?.[$lng]?.deckId;
 let deckId:number = 
-  $deckNamesAndIds?.find((d:iNameAndId): boolean => d.id === card.deckId)?.id // ensures saved ids map
-  ?? $deckNamesAndIds?.find((d:iNameAndId): boolean => d.id === prefsDeckId)?.id
+  $decks?.find((d:iNameAndId): boolean => d.id === card.deckId)?.id // ensures saved ids map
+  ?? $decks?.find((d:iNameAndId): boolean => d.id === prefsDeckId)?.id
   ?? deckOptions?.[0]?.id;
 
 let templateOptions:iNameAndId[] =
